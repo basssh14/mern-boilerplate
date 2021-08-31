@@ -1,0 +1,67 @@
+ <div
+                        className="
+                    grid grid-cols-1
+                    md:grid-cols-3
+                    gap-5
+                    md:gap-8
+                    mt-5
+                    mx-7
+                  "
+                      >
+
+#only one item per line
+
+<div className="grid grid-cols-1">
+                          <label
+                            className="
+                        uppercase
+                        md:text-sm
+                        text-xs text-gray-500 text-light
+                        font-semibold
+                      "
+                          >
+                            Mobile
+                          </label>
+                          <input
+                            className="
+                        py-2
+                        px-3
+                        rounded-lg
+                        border border-gray-300
+                        mt-1
+                        focus:outline-none
+                        focus:ring-1
+                        focus:ring-gray-600
+                        focus:border-transparent
+                      "
+                            type="text"
+                            value="+56-569-5987-8965"
+                          />
+                        </div>
+                        <div className="grid grid-cols-1">
+                          <label
+                            className="
+                        uppercase
+                        md:text-sm
+                        text-xs text-gray-500 text-light
+                        font-semibold
+                      "
+                          >
+                            Phone
+                          </label>
+                          <input
+                            className="
+                        py-2
+                        px-3
+                        rounded-lg
+                        border border-gray-300
+                        mt-1
+                        focus:outline-none
+                        focus:ring-1
+                        focus:ring-gray-600
+                        focus:border-transparent
+                      "
+                            type="text"
+                            value="451268594"
+                          />
+                        </div>

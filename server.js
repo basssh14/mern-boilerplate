@@ -5,22 +5,22 @@ const connectDB = require("./config/db");
 //deploy in heroku stuff
 const path = require("path");
 //passport stuff
-const sessions = require("express-session");
-const passport = require("passport");
+// const sessions = require("express-session");
+// const passport = require("passport");
 
-require("./config/passport")(passport);
-app.use(express.json({ extended: false }));
+// require("./config/passport")(passport);
+//app.use(express.json({ extended: false }));
 
-app.use(
-  sessions({
-    secret: config.get("secret"),
-    resave: true,
-    saveUninitialized: false,
-  })
-);
+// app.use(
+//     sessions({
+//         secret: config.get("secret"),
+//         resave: true,
+//         saveUninitialized: false,
+//     })
+// );
 
-app.use(passport.initialize());
-app.use(passport.session());
+// app.use(passport.initialize());
+// app.use(passport.session());
 
 connectDB();
 
@@ -33,11 +33,11 @@ app.use("/api/notes", require("./routes/api/notes"));
 //heroku stuff
 //Serve static assets into production
 if (process.env.NODE_ENV === "production") {
-  //Set static folder
-  app.use(express.static("client/build"));
-  app.get("*", (req, res) => {
-    res.sendFile(path.resolve(__dirname, "client", "build", "index.html"));
-  });
+    //Set static folder
+    app.use(express.static("client/build"));
+    app.get("*", (req, res) => {
+        res.sendFile(path.resolve(__dirname, "client", "build", "index.html"));
+    });
 }
 const PORT = process.env.PORT || 5000;
 

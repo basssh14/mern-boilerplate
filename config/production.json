@@ -1,6 +1,6 @@
 {
-    "mongoURI" : "mongodb+srv://sebas1498:Thekaizz3r@mern.mgpwl.mongodb.net/attendantApp",
-    "secret": "theairplanedigimoninyogurtforthedrunksanta",
+    "mongoURI": "mongodb+srv://developer:DeVeloPer123@cluster0.ou92x.mongodb.net/myFirstDatabase?retryWrites=true&w=majority",
+    "secret": "thegirlinthecupiscalculatorofpanenlacasalaterazadetarzan",
     "idClient": "465164051773-1flt1g08sum8bbd2b3usih51oqq25m5e.apps.googleusercontent.com",
     "secClient": "El6kXV7kt5HRRz3BI9ZgEioH"
 }

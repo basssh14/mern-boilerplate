@@ -18,7 +18,7 @@ app.use(cors());
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
 app.use(morgan('dev'));
-app.use(express.static('public'))
+app.use(express.static(__dirname + '/public'))
     //passport stuff
     // const sessions = require("express-session");
     // const passport = require("passport");

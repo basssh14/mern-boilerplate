@@ -1,20 +1,54 @@
-import React, { Fragment, useState } from "react";
+import React, { Fragment, useState, useEffect } from "react";
 import PropTypes from "prop-types";
+import axios from "axios";
+import { connect } from "react-redux";
+import { newParent, updateParent, getParents } from "../../actions/parents";
 import HeaderUser from "../individual/HeaderUser";
 import { Link } from "react-router-dom";
+import ParentPopUp from "./ParentPopUp";
+import { setAlert } from "../../actions/alert";
+import {uploadCnic, uploadQuali, uploadSalary} from "../../actions/parents";
 
-function ParentsST(props) {
-  const [parentPop, setParentPop] = useState("hidden");
+function ParentsST({ newParent, updateParent, getParents, parents, setAlert, uploadCnic, uploadQuali, uploadSalary }) {
+  //take care of the data
+  const [userParents, setUserParents] = useState([]);
+  const [startParent, setStartParent] = useState();
+  const [formData, setFormData] = useState({
+    type: "",
+    gender: "",
+    name: "",
+    cnic: "",
+    email: "",
+    mobile: "",
+    phone: "",
+  });
+  const [cnicPhoto, setCnicCopy] = useState("");
+  const [ salaryPhoto, setSalaryPhoto] = useState("");
+  const [ qualiPhoto, setQualiPhoto] = useState("");
+  const onChange = (e) =>
+    setStartParent({ ...startParent, [e.target.name]: e.target.value });
+    const onChangeFormData = (e) =>
+    setFormData({ ...formData, [e.target.name]: e.target.value });
+    const onChangeCnic = (e) =>
+    setCnicCopy(e.target.files[0]);
+    const onChangeSalary = (e) =>
+    setSalaryPhoto(e.target.files[0]);
+    const onChangeQuali = (e) =>
+    setQualiPhoto(e.target.files[0]);
+  const [parentIdToComp, setParentIdToComp] = useState({
+    id: undefined,
+  });
+  console.log(parentIdToComp.id);
+  //0000000000000000000000000000000000000000000000000000000000000000000000000000
+  //take care of the dinamic
+  const [parentPop, setParentPop] = useState(false);
   const [newParentPop, setNewParentPop] = useState("hidden");
   const [imagePop, setImagePop] = useState("hidden");
   const changeParentPop = () => {
-    if (parentPop === "hidden") {
-      setParentPop(" ");
-    } else {
-      setParentPop("hidden");
-    }
+    setParentPop(!parentPop);
   };
   const changeNewParentPop = () => {
+    console.log('this function');
     if (newParentPop === "hidden") {
       setNewParentPop(" ");
     } else {
@@ -28,7 +62,75 @@ function ParentsST(props) {
       setImagePop("hidden");
     }
   };
+  const changeParentIdToComp = (e) => {
+    setParentIdToComp({...parentIdToComp, ["id"]: e.target.id});
+    changeParentPop();
+  }
+  const onSubmitNewParent = async (e) => {
+    e.preventDefault();
+    newParent(formData);
+    if(formData.cnic === ""){
+      setAlert("please fill all the form", "error");
+    } else {
+        
+        
+        
+        const fileName = formData.cnic + ".jpg";
+        
+        
+        
+        //cnicCopy.cnicCopy.name = "test22222.jpg";
+        //cnicCopy.set("name", "newName.jpg");
 
+        
+        try {
+          if(cnicPhoto !== ""){
+            const cnicCopy = new FormData();
+            cnicCopy.append('cnicCopy',cnicPhoto, fileName);
+            uploadCnic(cnicCopy);
+            // const res = await axios.post('/api/uploads/parents/cnicphotos', cnicCopy, {
+            //   headers: {
+            //     'Content-Type': 'multipart/form-data'
+            //   },
+            // });
+          }
+          if(salaryPhoto !== ""){
+            const salarySlip = new FormData();
+            salarySlip.append('salarySlip', salaryPhoto, fileName);
+            uploadSalary(salarySlip);
+            // const res2 = await axios.post('/api/uploads/parents/salaryphotos', salarySlip, {
+            //   headers: {
+            //     'Content-Type': 'multipart/form-data'
+            //   },
+            // });
+          }
+          if(qualiPhoto !== ""){
+            const qualiDoc = new FormData();
+            qualiDoc.append('qualiDoc', qualiPhoto, fileName);
+            uploadQuali(qualiDoc);
+            // const res3 = await axios.post('/api/uploads/parents/qualiDocphotos', qualiDoc, {
+            //   headers: {
+            //     'Content-Type': 'multipart/form-data'
+            //   },
+            // });
+          }
+        } catch (err) {
+          if (err.response.status === 500) {
+            console.log('There was a problem with the server');
+          } else {
+            console.log(err.response.data.msg);
+          }
+        }
+    }
+    
+    changeNewParentPop();
+    getParents();
+    console.log(formData);
+  }
+  //000000000000000000000000000000000000000000000000000000000000000000000000000000000
+  useEffect(() => {
+    getParents();
+  }, []);
   return (
     <Fragment>
       <div className="w-full h-full relative">
@@ -59,6 +161,8 @@ function ParentsST(props) {
                 border-2 border-gray-200
                 rounded-lg
                 shadow-sm
+                py-10
+                cursor-pointer
                 dark:bg-gray-800
                 relative
                 text-center
@@ -72,91 +176,53 @@ function ParentsST(props) {
                       alt="add logo"
                       className="w-full h-full bg-cover"
                     />
-                    <div>
-                      <p className="mb-2 text-md font-medium text-gray-900"></p>
-                      <p className="text-sm font-normal text-gray-800"></p>
-                      <p className="text-sm font-normal text-gray-800"></p>
-                      <p className="text-sm font-normal text-gray-800">
-                        <span className="text-white bg-green-400"></span>
-                      </p>
-                      <p className="text-sm font-normal text-gray-800">
-                        <span className="text-white bg-gray-500"></span>
-                      </p>
-                    </div>
+                   
                   </div>
                 </div>
-                {/* <!-- Card 2 --> */}
-                <div
-                  className="
-                flex
-                items-center
-                p-4
-                bg-white
-                border-2 border-gray-200
-                rounded-lg
-                shadow-sm
-                dark:bg-gray-800
-              "
-                  onClick={() => changeParentPop()}
-                >
-                  <div className="mr-4 bg-blue-500 text-white rounded-full">
-                    <img
-                      className="rounded-full w-12 h-12"
-                      src="https://images.pexels.com/photos/5212324/pexels-photo-5212324.jpeg?auto=compress&cs=tinysrgb&dpr=3&h=750&w=1260"
-                      alt=""
-                      loading="lazy"
-                    />
-                  </div>
-                  <div>
-                    <p className="mb-2 text-md font-medium text-gray-900">
-                      Kashif Khan
-                    </p>
-                    <p className="text-sm font-normal text-gray-800">
-                      CNIC: 1542748485745
-                    </p>
-                    <p className="text-sm font-normal text-gray-800">
-                      RELATION: FATHER
-                    </p>
-                  </div>
-                </div>
-                {/* <!-- Card 3 --> */}
-                <div
-                  className="
-                flex
-                items-center
-                p-4
-                bg-white
-                border-2 border-gray-200
-                rounded-lg
-                shadow-sm
-                dark:bg-gray-800
-              "
-                >
-                  <div className="mr-4 bg-blue-500 text-white rounded-full">
-                    <img
-                      className="rounded-full w-12 h-12"
-                      src="https://images.pexels.com/photos/5212324/pexels-photo-5212324.jpeg?auto=compress&cs=tinysrgb&dpr=3&h=750&w=1260"
-                      alt=""
-                      loading="lazy"
-                    />
-                  </div>
-                  <div>
-                    <p className="mb-2 text-md font-medium text-gray-900">
-                      Aisha Khan
-                    </p>
-                    <p className="text-sm font-normal text-gray-800">
-                      CNIC: 1542748485745
-                    </p>
-                    <p className="text-sm font-normal text-gray-800">
-                      RELATION: MOTHER
-                    </p>
-                  </div>
-                </div>
+                {/* <!-- Cards --> */}
+                {parents.parents !== null
+                  ? parents.parents.parents.map((parent) => (
+                      <div
+                        id={parent._id}
+                        className="
+                  flex
+                  items-center
+                  p-4
+                  bg-white
+                  border-2 border-gray-200
+                  rounded-lg
+                  shadow-sm
+                  dark:bg-gray-800
+                  cursor-pointer
+                "
+
+                        onClick={(e) => changeParentIdToComp(e)}
+                      >
+                        <div className="mr-4 bg-blue-500 text-white rounded-full pointer-events-none">
+                          <img
+                            className="rounded-full w-12 h-12"
+                            src={`./img/parents.png`}
+                            alt=""
+                            loading="lazy"
+                          />
+                        </div>
+                        <div className="pointer-events-none">
+                          <p className="mb-2 text-md font-medium text-gray-900 ">
+                            {parent.name}
+                          </p>
+                          <p className="text-sm font-normal text-gray-800">
+                            CNIC: {parent.cnic}
+                          </p>
+                        </div>
+                      </div>
+                    ))
+                  : " "}
               </div>
               {/* start of new parent pop up */}
               <div
                 className={`h-full w-full bg-white absolute top-0 left-0 ${newParentPop}`}
               >
+                <form onSubmit={(e) => onSubmitNewParent(e)}>
                 <div className="grid h-auto bg-white rounded-lg shadow-xl w-full">
                   <div className="flex justify-center">
                     <div className="flex">
@@ -188,9 +254,13 @@ function ParentsST(props) {
                   bg-gray-100
                   focus:ring-gray-600 focus:border-transparent
                 "
+                name="type"
+                value={formData.type}
+                onChange={(e) => onChangeFormData(e)}
                     >
-                      <option>Parent</option>
-                      <option>Guardian</option>
+                      <option defualt>Select</option>
+                      <option value="parent">Parent</option>
+                      <option value="guardian">Guardian</option>
                     </select>
                   </div>
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-5 md:gap-8 mt-5 mx-7">
@@ -218,9 +288,13 @@ function ParentsST(props) {
                     focus:ring-gray-600
                     focus:border-transparent
                   "
+                  name="gender"
+                value={formData.gender}
+                onChange={(e) => onChangeFormData(e)}
                       >
-                        <option>Male</option>
-                        <option>Female</option>
+                        <option defualt>Select</option>
+                        <option value="male">Male</option>
+                        <option value="female">Female</option>
                       </select>
                     </div>
                     <div className="grid grid-cols-1">
@@ -248,6 +322,9 @@ function ParentsST(props) {
                   "
                         type="text"
                         placeholder="Name"
+                        name="name"
+                value={formData.name}
+                onChange={(e) => onChangeFormData(e)}
                       />
                     </div>
                   </div>
@@ -277,6 +354,9 @@ function ParentsST(props) {
                   "
                         type="text"
                         placeholder="CNIC"
+                        name="cnic"
+                value={formData.cnic}
+                onChange={(e) => onChangeFormData(e)}
                       />
                     </div>
                     <div className="grid grid-cols-1">
@@ -304,6 +384,9 @@ function ParentsST(props) {
                   "
                         type="text"
                         placeholder="Email"
+                        name="email"
+                value={formData.email}
+                onChange={(e) => onChangeFormData(e)}
                       />
                     </div>
                   </div>
@@ -333,6 +416,9 @@ function ParentsST(props) {
                   "
                         type="text"
                         placeholder="Mobile"
+                        name="mobile"
+                value={formData.mobile}
+                onChange={(e) => onChangeFormData(e)}
                       />
                     </div>
                     <div className="grid grid-cols-1">
@@ -360,6 +446,9 @@ function ParentsST(props) {
                   "
                         type="text"
                         placeholder="Phone"
+                        name="phone"
+                value={formData.phone}
+                onChange={(e) => onChangeFormData(e)}
                       />
                     </div>
                   </div>
@@ -377,54 +466,9 @@ function ParentsST(props) {
                         CNIC COPY
                       </label>
                       <div className="flex items-center justify-left w-full">
-                        {/* <label
-                          className="
-                      flex flex-col
-                      border-4 border-dashed
-                      w-full
-                      h-32
-                      hover:bg-gray-100 hover:border-gray-300
-                      group
-                    "
-                        >
-                          <div className="flex flex-col items-center justify-center pt-7">
-                             <svg
-                              className="
-                          w-10
-                          h-10
-                          text-gray-400
-                          group-hover:text-gray-600
-                        "
-                              fill="none"
-                              stroke="currentColor"
-                              viewBox="0 0 24 24"
-                              xmlns="http://www.w3.org/2000/svg"
-                            >
-                              <path
-                                stroke-linecap="round"
-                                stroke-linejoin="round"
-                                stroke-width="2"
-                                d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"
-                              ></path>
-                            </svg> 
-                            <p
-                              className="
-                          lowercase
-                          text-sm text-gray-400
-                          group-hover:text-gray-600
-                          pt-1
-                          tracking-wider
-                        "
-                            >
-                              CHOOSE FILE
-                            </p>
-                          </div>
-                          <input type="file" className="hidden" />
-                        </label>  */}
-                        <input type="file" className="" />
-                        {/* <button className="w-auto h-auto py-3 px-3 rounded-lg bg-gray-700">
-                          Check
-                        </button> */}
+                        
+                        <input type="file" className="" name="cnicCopy" onChange={(e) => onChangeCnic(e)}/>
+                       
                       </div>
                     </div>
                     <div className="grid grid-cols-1">
@@ -440,51 +484,8 @@ function ParentsST(props) {
                         SALARY SLIP
                       </label>
                       <div className="flex items-center justify-left w-full">
-                        {/* <label
-                          className="
-                      flex flex-col
-                      border-4 border-dashed
-                      w-full
-                      h-32
-                      hover:bg-gray-100 hover:border-gray-300
-                      group
-                    "
-                        >
-                          <div className="flex flex-col items-center justify-center pt-7">
-                            <svg
-                              className="
-                          w-10
-                          h-10
-                          text-gray-400
-                          group-hover:text-gray-600
-                        "
-                              fill="none"
-                              stroke="currentColor"
-                              viewBox="0 0 24 24"
-                              xmlns="http://www.w3.org/2000/svg"
-                            >
-                              <path
-                                stroke-linecap="round"
-                                stroke-linejoin="round"
-                                stroke-width="2"
-                                d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"
-                              ></path>
-                            </svg>
-                            <p
-                              className="
-                          lowercase
-                          text-sm text-gray-400
-                          group-hover:text-gray-600
-                          pt-1
-                          tracking-wider
-                        "
-                            >
-                              CHOOSE FILE
-                            </p>
-                          </div>
-                          
-                        </label> */}
-                        <input type="file" className="" />
+                       
+                        <input type="file" className="" name="salarySlip" onChange={(e) => onChangeSalary(e)}/>
                       </div>
                     </div>
                   </div>
@@ -501,7 +502,7 @@ function ParentsST(props) {
                       QUALIFICATION DOCUMENT
                     </label>
                     <div className="flex items-center justify-left w-full">
-                      <input type="file" className="" />
+                      <input type="file" className="" name="qualiDoc" onChange={(e) => onChangeQuali(e)}/>
                     </div>
                   </div>
                   <div className="flex items-center justify-center md:gap-8 gap-4 pt-5 pb-5">
@@ -517,7 +518,8 @@ function ParentsST(props) {
                   px-4
                   py-2
                 "
-                      onClick={() => changeNewParentPop()}
+                     type="button" 
+                     onClick={() => changeNewParentPop()}
                     >
                       Cancel
                     </button>
@@ -533,40 +535,46 @@ function ParentsST(props) {
                   px-4
                   py-2
                 "
+                type="submit"
                     >
                       Add
                     </button>
                   </div>
                 </div>
+                </form>
               </div>
+              {parentPop && <ParentPopUp   changeVisibility={changeParentPop} parentId={parentIdToComp}/>}
               {/* end of new parent pop up */}
               {/* parent information */}
               {/* start of new parent pop up */}
-              <div
+              {/* <div
                 className={`h-full w-full bg-white absolute top-0 left-0 ${parentPop}`}
               >
-                <div className="grid h-auto bg-white rounded-lg shadow-xl w-full">
-                  <div className="flex justify-center">
-                    <div className="flex">
-                      <h1 className="text-gray-600 font-bold pt-5 md:text-2xl text-xl">
-                        Kashif Khan
-                      </h1>
+                <form onClick={() => onsubmit()}>
+                  <div className="grid h-auto bg-white rounded-lg shadow-xl w-full">
+                    <div className="flex justify-center">
+                      <div className="flex">
+                        <h1 className="text-gray-600 font-bold pt-5 md:text-2xl text-xl">
+                          {startParent !== undefined ? startParent.name : " "}
+                        </h1>
+                      </div>
                     </div>
-                  </div>
-                  {/* <!-- 1 row --> */}
-                  <div className="grid grid-cols-1 mx-7">
-                    <label
-                      className="
+                     <!-- 1 row -->
+                    <div className="grid grid-cols-1 mx-7">
+                      <label
+                        className="
                       uppercase
                       md:text-sm
                       text-xs text-gray-500 text-light
                       font-semibold
                     "
-                    >
-                      Type
-                    </label>
-                    <select
-                      className="
+                      ></label>
+                      <select
+                        value={
+                          startParent !== undefined ? startParent.name : ""
+                        }
+                        onChange={(e) => onChangeFormData(e)}
+                        className="
                       py-2
                       px-3
                       rounded-lg
@@ -576,12 +584,13 @@ function ParentsST(props) {
                       bg-gray-100
                       focus:ring-gray-600 focus:border-transparent
                     "
-                    >
-                      <option>Parent</option>
-                    </select>
-                  </div>
-                  <div
-                    className="
+                      >
+                        <option value="Parent">Parent</option>
+                        <option value="Guardian">Parent</option>
+                      </select>
+                    </div>
+                    <div
+                      className="
                     grid grid-cols-1
                     md:grid-cols-2
                     gap-5
@@ -589,20 +598,20 @@ function ParentsST(props) {
                     mt-5
                     mx-7
                   "
-                  >
-                    <div className="grid grid-cols-1">
-                      <label
-                        className="
+                    >
+                      <div className="grid grid-cols-1">
+                        <label
+                          className="
                         uppercase
                         md:text-sm
                         text-xs text-gray-500 text-light
                         font-semibold
                       "
-                      >
-                        Gender
-                      </label>
-                      <select
-                        className="
+                        >
+                          Gender
+                        </label>
+                        <select
+                          className="
                         py-2
                         px-3
                         rounded-lg
@@ -614,248 +623,250 @@ function ParentsST(props) {
                         focus:ring-gray-600
                         focus:border-transparent
                       "
-                      >
-                        <option>Male</option>
-                      </select>
-                    </div>
-                    <div className="grid grid-cols-1">
-                      <label
-                        className="
-                        uppercase
-                        md:text-sm
-                        text-xs text-gray-500 text-light
-                        font-semibold
-                      "
-                      >
-                        Name
-                      </label>
-                      <input
-                        className="
-                        py-2
-                        px-3
-                        rounded-lg
-                        border border-gray-300
-                        mt-1
-                        focus:outline-none
-                        focus:ring-1
-                        focus:ring-gray-600
-                        focus:border-transparent
-                      "
-                        type="text"
-                        value="kashif khan"
-                      />
-                    </div>
-                  </div>
-                  <div
-                    className="
-                    grid grid-cols-1
-                    md:grid-cols-2
-                    gap-5
-                    md:gap-8
-                    mt-5
-                    mx-7
-                  "
-                  >
-                    <div className="grid grid-cols-1">
-                      <label
-                        className="
-                        uppercase
-                        md:text-sm
-                        text-xs text-gray-500 text-light
-                        font-semibold
-                      "
-                      >
-                        CNIC
-                      </label>
-                      <input
-                        className="
-                        py-2
-                        px-3
-                        rounded-lg
-                        border border-gray-300
-                        mt-1
-                        focus:outline-none
-                        focus:ring-1
-                        focus:ring-gray-600
-                        focus:border-transparent
-                      "
-                        type="text"
-                        value="1542578659452"
-                      />
-                    </div>
-                    <div className="grid grid-cols-1">
-                      <label
-                        className="
-                        uppercase
-                        md:text-sm
-                        text-xs text-gray-500 text-light
-                        font-semibold
-                      "
-                      >
-                        Email
-                      </label>
-                      <input
-                        className="
-                        py-2
-                        px-3
-                        rounded-lg
-                        border border-gray-300
-                        mt-1
-                        focus:outline-none
-                        focus:ring-1
-                        focus:ring-gray-600
-                        focus:border-transparent
-                      "
-                        type="text"
-                        value="paren1@email.com"
-                      />
-                    </div>
-                  </div>
-                  <div
-                    className="
-                    grid grid-cols-1
-                    md:grid-cols-2
-                    gap-5
-                    md:gap-8
-                    mt-5
-                    mx-7
-                  "
-                  >
-                    <div className="grid grid-cols-1">
-                      <label
-                        className="
-                        uppercase
-                        md:text-sm
-                        text-xs text-gray-500 text-light
-                        font-semibold
-                      "
-                      >
-                        Mobile
-                      </label>
-                      <input
-                        className="
-                        py-2
-                        px-3
-                        rounded-lg
-                        border border-gray-300
-                        mt-1
-                        focus:outline-none
-                        focus:ring-1
-                        focus:ring-gray-600
-                        focus:border-transparent
-                      "
-                        type="text"
-                        value="+54-569-5896-5896"
-                      />
-                    </div>
-                    <div className="grid grid-cols-1">
-                      <label
-                        className="
-                        uppercase
-                        md:text-sm
-                        text-xs text-gray-500 text-light
-                        font-semibold
-                      "
-                      >
-                        Phone
-                      </label>
-                      <input
-                        className="
-                        py-2
-                        px-3
-                        rounded-lg
-                        border border-gray-300
-                        mt-1
-                        focus:outline-none
-                        focus:ring-1
-                        focus:ring-gray-600
-                        focus:border-transparent
-                      "
-                        type="text"
-                        value="564587512"
-                      />
-                    </div>
-                  </div>
-                  <div
-                    className="
-                    grid grid-cols-1
-                    md:grid-cols-2
-                    gap-5
-                    md:gap-8
-                    mt-5
-                    mx-7
-                  "
-                  >
-                    <div className="grid grid-cols-1">
-                      <label
-                        className="
-                        uppercase
-                        md:text-sm
-                        text-xs text-gray-500 text-light
-                        font-semibold
-                        mb-1
-                      "
-                      >
-                        CNIC PHOTO
-                      </label>
-                      <div className="flex items-center justify-left w-full">
-                        <button
-                          className="w-auto h-8 px-2 mb-3  bg-gray-100 usm:mb-3 border border-gray-500"
-                          onClick={() => changeImagePop()}
                         >
-                          Check Image
-                        </button>
+                          <option>Male</option>
+                        </select>
                       </div>
-                      <div className="flex items-center justify-left w-full">
-                        <input type="file" />
+                      <div className="grid grid-cols-1">
+                        <label
+                          className="
+                        uppercase
+                        md:text-sm
+                        text-xs text-gray-500 text-light
+                        font-semibold
+                      "
+                        >
+                          Name
+                        </label>
+                        <input
+                          className="
+                        py-2
+                        px-3
+                        rounded-lg
+                        border border-gray-300
+                        mt-1
+                        focus:outline-none
+                        focus:ring-1
+                        focus:ring-gray-600
+                        focus:border-transparent
+                      "
+                          type="text"
+                          value={
+                            startParent !== undefined ? startParent.name : " "
+                          }
+                        />
                       </div>
                     </div>
-                    <div className="grid grid-cols-1">
-                      <label
-                        className="
+                    <div
+                      className="
+                    grid grid-cols-1
+                    md:grid-cols-2
+                    gap-5
+                    md:gap-8
+                    mt-5
+                    mx-7
+                  "
+                    >
+                      <div className="grid grid-cols-1">
+                        <label
+                          className="
+                        uppercase
+                        md:text-sm
+                        text-xs text-gray-500 text-light
+                        font-semibold
+                      "
+                        >
+                          CNIC
+                        </label>
+                        <input
+                          className="
+                        py-2
+                        px-3
+                        rounded-lg
+                        border border-gray-300
+                        mt-1
+                        focus:outline-none
+                        focus:ring-1
+                        focus:ring-gray-600
+                        focus:border-transparent
+                      "
+                          type="text"
+                          value="1542578659452"
+                        />
+                      </div>
+                      <div className="grid grid-cols-1">
+                        <label
+                          className="
+                        uppercase
+                        md:text-sm
+                        text-xs text-gray-500 text-light
+                        font-semibold
+                      "
+                        >
+                          Email
+                        </label>
+                        <input
+                          className="
+                        py-2
+                        px-3
+                        rounded-lg
+                        border border-gray-300
+                        mt-1
+                        focus:outline-none
+                        focus:ring-1
+                        focus:ring-gray-600
+                        focus:border-transparent
+                      "
+                          type="text"
+                          value="paren1@email.com"
+                        />
+                      </div>
+                    </div>
+                    <div
+                      className="
+                    grid grid-cols-1
+                    md:grid-cols-2
+                    gap-5
+                    md:gap-8
+                    mt-5
+                    mx-7
+                  "
+                    >
+                      <div className="grid grid-cols-1">
+                        <label
+                          className="
+                        uppercase
+                        md:text-sm
+                        text-xs text-gray-500 text-light
+                        font-semibold
+                      "
+                        >
+                          Mobile
+                        </label>
+                        <input
+                          className="
+                        py-2
+                        px-3
+                        rounded-lg
+                        border border-gray-300
+                        mt-1
+                        focus:outline-none
+                        focus:ring-1
+                        focus:ring-gray-600
+                        focus:border-transparent
+                      "
+                          type="text"
+                          value="+54-569-5896-5896"
+                        />
+                      </div>
+                      <div className="grid grid-cols-1">
+                        <label
+                          className="
+                        uppercase
+                        md:text-sm
+                        text-xs text-gray-500 text-light
+                        font-semibold
+                      "
+                        >
+                          Phone
+                        </label>
+                        <input
+                          className="
+                        py-2
+                        px-3
+                        rounded-lg
+                        border border-gray-300
+                        mt-1
+                        focus:outline-none
+                        focus:ring-1
+                        focus:ring-gray-600
+                        focus:border-transparent
+                      "
+                          type="text"
+                          value="564587512"
+                        />
+                      </div>
+                    </div>
+                    <div
+                      className="
+                    grid grid-cols-1
+                    md:grid-cols-2
+                    gap-5
+                    md:gap-8
+                    mt-5
+                    mx-7
+                  "
+                    >
+                      <div className="grid grid-cols-1">
+                        <label
+                          className="
                         uppercase
                         md:text-sm
                         text-xs text-gray-500 text-light
                         font-semibold
                         mb-1
                       "
-                      >
-                        SALARY SLIP
-                      </label>
-                      <div className="flex items-center justify-left w-full">
-                        <button className="w-auto h-8 px-2 mb-3  bg-gray-100 usm:mb-3 border border-gray-500">
-                          Download Image
-                        </button>
+                        >
+                          CNIC PHOTO
+                        </label>
+                        <div className="flex items-center justify-left w-full">
+                          <button
+                            className="w-auto h-8 px-2 mb-3  bg-gray-100 usm:mb-3 border border-gray-500"
+                            onClick={() => changeImagePop()}
+                          >
+                            Check Image
+                          </button>
+                        </div>
+                        <div className="flex items-center justify-left w-full">
+                          <input type="file" />
+                        </div>
                       </div>
-                      <div className="flex items-center justify-left w-full">
-                        <input type="file" />
+                      <div className="grid grid-cols-1">
+                        <label
+                          className="
+                        uppercase
+                        md:text-sm
+                        text-xs text-gray-500 text-light
+                        font-semibold
+                        mb-1
+                      "
+                        >
+                          SALARY SLIP
+                        </label>
+                        <div className="flex items-center justify-left w-full">
+                          <button className="w-auto h-8 px-2 mb-3  bg-gray-100 usm:mb-3 border border-gray-500">
+                            Download Image
+                          </button>
+                        </div>
+                        <div className="flex items-center justify-left w-full">
+                          <input type="file" />
+                        </div>
                       </div>
                     </div>
-                  </div>
-                  <div className="grid grid-cols-1 mt-5 mx-7">
-                    <label
-                      className="
+                    <div className="grid grid-cols-1 mt-5 mx-7">
+                      <label
+                        className="
                       uppercase
                       md:text-sm
                       text-xs text-gray-500 text-light
                       font-semibold
                       mb-1
                     "
-                    >
-                      QUALIFICATION DOCUMENT
-                    </label>
-                    <div className="flex items-center justify-left w-full">
-                      <button className="w-auto h-8 px-2 mb-3  bg-gray-100 usm:mb-3 border border-gray-500">
-                        Donwload file
-                      </button>
+                      >
+                        QUALIFICATION DOCUMENT
+                      </label>
+                      <div className="flex items-center justify-left w-full">
+                        <button className="w-auto h-8 px-2 mb-3  bg-gray-100 usm:mb-3 border border-gray-500">
+                          Donwload file
+                        </button>
+                      </div>
+                      <div className="flex items-center justify-left w-full">
+                        <input type="file" />
+                      </div>
                     </div>
-                    <div className="flex items-center justify-left w-full">
-                      <input type="file" />
-                    </div>
-                  </div>
-                  <div className="flex items-center justify-center md:gap-8 gap-4 pt-5 pb-5">
-                    <button
-                      className="
+                    <div className="flex items-center justify-center md:gap-8 gap-4 pt-5 pb-5">
+                      <button
+                        className="
                   w-auto
                   bg-red-400
                   hover:bg-red-200
@@ -866,12 +877,12 @@ function ParentsST(props) {
                   px-4
                   py-2
                 "
-                      onClick={() => changeParentPop()}
-                    >
-                      Cancel
-                    </button>
-                    <button
-                      className="
+                        onClick={() => changeParentPop()}
+                      >
+                        Cancel
+                      </button>
+                      <button
+                        className="
                   w-auto
                   bg-green-400
                   hover:bg-green-200
@@ -882,29 +893,32 @@ function ParentsST(props) {
                   px-4
                   py-2
                 "
-                    >
-                      Save
-                    </button>
-                  </div>
-                </div>
-                {/* end of parent information */}
-                <div
-                  className={`w-2/3 h-1/2 bg-white centerSom usm:h-1/3 border ${imagePop}`}
-                >
-                  <div className="w-full h-full relative">
-                    <img
-                      src="./img/Pakistani-CNIC-of-chinese-man.jpg"
-                      className="w-full h-full bg-cover"
-                    />
-                    <button
-                      className="w-10 h-10 absolute top-0 right-0 text-4xl text-black"
-                      onClick={() => changeImagePop()}
-                    >
-                      X
-                    </button>
-                  </div>
-                </div>
-              </div>
+                      >
+                        Save
+                      </button>
+                    </div>
+                  </div> */}
+                  {/* end of parent information */}
+                  {/* <div
+                    className={`w-2/3 h-1/2 bg-white centerSom usm:h-1/3 border ${imagePop}`}
+                  >
+                    <div className="w-full h-full relative">
+                      <img
+                        src="./img/Pakistani-CNIC-of-chinese-man.jpg"
+                        className="w-full h-full bg-cover"
+                      />
+                      <button
+                        className="w-10 h-10 absolute top-0 right-0 text-4xl text-black"
+                        onClick={() => changeImagePop()}
+                      >
+                        X
+                      </button>
+                    </div>
+                  </div> 
+                  
+                </form>*/}
+                
+              
             </div>
           </div>
         </main>
@@ -913,6 +927,26 @@ function ParentsST(props) {
   );
 }
 
-ParentsST.propTypes = {};
+ParentsST.propTypes = {
+  newParent: PropTypes.func.isRequired,
+  updateParent: PropTypes.func.isRequired,
+  getParents: PropTypes.func.isRequired,
+  setAlert: PropTypes.func.isRequired,
+  uploadCnic: PropTypes.func.isRequired,
+  uploadSalary: PropTypes.func.isRequired,
+  uploadQuali: PropTypes.func.isRequired,
+};
 
-export default ParentsST;
+const mapStateToProps = (state) => ({
+  parents: state.parents,
+});
+
+export default connect(mapStateToProps, {
+  setAlert,
+  newParent,
+  updateParent,
+  getParents,
+  uploadCnic,
+  uploadQuali,
+  uploadSalary
+})(ParentsST);

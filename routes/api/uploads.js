@@ -95,7 +95,7 @@ router.post('/parents/qualiDocphotos', auth, async(req, res) => {
             //we might need to change this to __dirname in the future.
 
             //Use the mv() method to place the file in upload directory (i.e. "uploads")
-            qualiDoc.mv('img/parents/cnic/' + qualiDoc.name);
+            qualiDoc.mv('/img/parents/cnic/' + qualiDoc.name);
 
             //send response
             // res.send({

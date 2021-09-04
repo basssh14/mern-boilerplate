@@ -35,7 +35,7 @@ router.post(
             check("type", "Please enter a valid type").isIn(["parent", "guardian"]),
             check("gender", "Please enter a valid gender").isIn(["female", "male"]),
             check("name", "Please enter a name").not().isEmpty().trim().escape(),
-            check("cnic", "Please enter a cnic").not().isEmpty().trim().escape(),
+            check("cnic", "Please enter a cnic").not().isEmpty().trim().escape().isLength({ max: 13, min: 13 }),
             check("email", "Please enter a email").isEmail().normalizeEmail(),
             check("mobile", "Please enter a mobile phone")
             .not()

@@ -1,5 +1,6 @@
 import React, { Fragment, useState, useEffect } from "react";
 import PropTypes from "prop-types";
+import InputMask from "react-input-mask";
 import axios from "axios";
 import { connect } from "react-redux";
 import { newParent, updateParent, getParents } from "../../actions/parents";
@@ -255,6 +256,7 @@ function ParentsST({ newParent, updateParent, getParents, parents, setAlert, upl
                   focus:ring-gray-600 focus:border-transparent
                 "
                 name="type"
+                required
                 value={formData.type}
                 onChange={(e) => onChangeFormData(e)}
                     >
@@ -289,6 +291,7 @@ function ParentsST({ newParent, updateParent, getParents, parents, setAlert, upl
                     focus:border-transparent
                   "
                   name="gender"
+                  required
                 value={formData.gender}
                 onChange={(e) => onChangeFormData(e)}
                       >
@@ -321,6 +324,7 @@ function ParentsST({ newParent, updateParent, getParents, parents, setAlert, upl
                     focus:border-transparent
                   "
                         type="text"
+                        required
                         placeholder="Name"
                         name="name"
                 value={formData.name}
@@ -340,7 +344,7 @@ function ParentsST({ newParent, updateParent, getParents, parents, setAlert, upl
                       >
                         CNIC
                       </label>
-                      <input
+                      <InputMask
                         className="
                     py-2
                     px-3
@@ -352,12 +356,14 @@ function ParentsST({ newParent, updateParent, getParents, parents, setAlert, upl
                     focus:ring-gray-600
                     focus:border-transparent
                   "
+                  required
                         type="text"
-                        placeholder="CNIC"
+                        mask='99999-9999999-9'
+                        placeholder="99999-9999999-9"
                         name="cnic"
                 value={formData.cnic}
                 onChange={(e) => onChangeFormData(e)}
-                      />
+                      ></InputMask>
                     </div>
                     <div className="grid grid-cols-1">
                       <label
@@ -383,6 +389,7 @@ function ParentsST({ newParent, updateParent, getParents, parents, setAlert, upl
                     focus:border-transparent
                   "
                         type="text"
+                        required
                         placeholder="Email"
                         name="email"
                 value={formData.email}
@@ -402,7 +409,7 @@ function ParentsST({ newParent, updateParent, getParents, parents, setAlert, upl
                       >
                         Mobile
                       </label>
-                      <input
+                      <InputMask
                         className="
                     py-2
                     px-3
@@ -414,12 +421,13 @@ function ParentsST({ newParent, updateParent, getParents, parents, setAlert, upl
                     focus:ring-gray-600
                     focus:border-transparent
                   "
+                    mask="9999-9999999"
                         type="text"
-                        placeholder="Mobile"
+                        placeholder="9999-9999999"
                         name="mobile"
                 value={formData.mobile}
                 onChange={(e) => onChangeFormData(e)}
-                      />
+                      ></InputMask>
                     </div>
                     <div className="grid grid-cols-1">
                       <label
@@ -432,7 +440,7 @@ function ParentsST({ newParent, updateParent, getParents, parents, setAlert, upl
                       >
                         Phone
                       </label>
-                      <input
+                      <InputMask
                         className="
                     py-2
                     px-3
@@ -444,12 +452,13 @@ function ParentsST({ newParent, updateParent, getParents, parents, setAlert, upl
                     focus:ring-gray-600
                     focus:border-transparent
                   "
+                  mask="9999-9999999"
                         type="text"
-                        placeholder="Phone"
+                        placeholder="9999-9999999"
                         name="phone"
                 value={formData.phone}
                 onChange={(e) => onChangeFormData(e)}
-                      />
+                      ></InputMask>
                     </div>
                   </div>
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-5 md:gap-8 mt-5 mx-7">

@@ -25,7 +25,7 @@ router.post('/parents/cnicphotos', auth, async(req, res) => {
             //we might need to change this to __dirname in the future.
 
             //Use the mv() method to place the file in upload directory (i.e. "uploads")
-            cnicCopy.mv(__dirname + '/img/parents/cnic/' + cnicCopy.name);
+            cnicCopy.mv(__dirname + './client/public/img/parents/cnic/' + cnicCopy.name);
 
             //send response
             // res.send({
@@ -60,7 +60,7 @@ router.post('/parents/salaryphotos', auth, async(req, res) => {
             //we might need to change this to __dirname in the future.
 
             //Use the mv() method to place the file in upload directory (i.e. "uploads")
-            salarySlip.mv('./img/parents/cnic/' + salarySlip.name);
+            salarySlip.mv('./client/public/img/parents/salary/' + salarySlip.name);
 
             //send response
             // res.send({
@@ -95,7 +95,7 @@ router.post('/parents/qualiDocphotos', auth, async(req, res) => {
             //we might need to change this to __dirname in the future.
 
             //Use the mv() method to place the file in upload directory (i.e. "uploads")
-            qualiDoc.mv('/img/parents/cnic/' + qualiDoc.name);
+            qualiDoc.mv('./client/public/img/parents/quali/' + qualiDoc.name);
 
             //send response
             // res.send({

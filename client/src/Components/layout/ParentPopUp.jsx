@@ -1,5 +1,6 @@
 import React, { Fragment, useState, useEffect, Profiler } from "react";
 import PropTypes from "prop-types";
+import InputMask from "react-input-mask";
 import { connect } from "react-redux";
 import axios from "axios";
 import { newParent, updateParent, getParents } from "../../actions/parents";
@@ -241,6 +242,7 @@ function ParentPopUp({ updateParent, getParents, parents, changeVisibility, pare
                         focus:border-transparent
                       "
                   type="text"
+                  required
                   value={formData.name}
                 onChange={(e) => onChange(e)}
                 />
@@ -267,7 +269,7 @@ function ParentPopUp({ updateParent, getParents, parents, changeVisibility, pare
                 >
                   CNIC
                 </label>
-                <input
+                <InputMask
                 name="cnic"
                   className="
                         py-2
@@ -281,9 +283,12 @@ function ParentPopUp({ updateParent, getParents, parents, changeVisibility, pare
                         focus:border-transparent
                       "
                   type="text"
+                  required 
+                  mask='99999-9999999-9'
+                  placeholder="99999-9999999-9"
                   value={formData.cnic}
                 onChange={(e) => onChange(e)}
-                />
+                ></InputMask>
               </div>
               <div className="grid grid-cols-1">
                 <label
@@ -310,6 +315,7 @@ function ParentPopUp({ updateParent, getParents, parents, changeVisibility, pare
                         focus:border-transparent
                       "
                   type="text"
+                  required
                   value={formData.email}
                 onChange={(e) => onChange(e)}
                 />
@@ -336,8 +342,9 @@ function ParentPopUp({ updateParent, getParents, parents, changeVisibility, pare
                 >
                   Mobile
                 </label>
-                <input
+                <InputMask
                 name="mobile"
+                required
                   className="
                         py-2
                         px-3
@@ -350,9 +357,11 @@ function ParentPopUp({ updateParent, getParents, parents, changeVisibility, pare
                         focus:border-transparent
                       "
                   type="text"
+                  mask="9999-9999999"
+                  placeholder="9999-9999999"
                   value={formData.mobile}
                 onChange={(e) => onChange(e)}
-                />
+                ></InputMask>
               </div>
               <div className="grid grid-cols-1">
                 <label
@@ -365,8 +374,9 @@ function ParentPopUp({ updateParent, getParents, parents, changeVisibility, pare
                 >
                   Phone
                 </label>
-                <input
+                <InputMask
                 name="phone"
+                required
                   className="
                         py-2
                         px-3
@@ -379,9 +389,11 @@ function ParentPopUp({ updateParent, getParents, parents, changeVisibility, pare
                         focus:border-transparent
                       "
                   type="text"
+                  mask="9999-9999999"
+                  placeholder="9999-9999999"
                   value={formData.phone}
                 onChange={(e) => onChange(e)}
-                />
+                ></InputMask>
               </div>
             </div>
             <div

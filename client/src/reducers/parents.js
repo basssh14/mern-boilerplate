@@ -9,6 +9,7 @@ import {
     SALARY_PHOTO_SUCCESS,
     QUALI_PHOTO_SUCCESS,
     QUALI_PHOTO_ERROR,
+    LOG_OUT,
 } from "../actions/types";
 const initialState = {
     loading: true,
@@ -26,6 +27,7 @@ export default function(state = initialState, action) {
                 parents: payload,
             };
         case PARENTS_ERRORS:
+        case LOG_OUT:
             return {
                 ...state,
                 loading: false,

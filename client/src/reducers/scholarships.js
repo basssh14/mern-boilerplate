@@ -4,6 +4,7 @@ import {
     GET_USER_SCHOLARSHIPS,
     UPLOAD_USER_REPORT,
     ERROR_USER_SCHOLARSHIP,
+    LOG_OUT,
 } from "../actions/types";
 const initialState = {
     loading: true,
@@ -22,6 +23,7 @@ export default function(state = initialState, action) {
                 scholarships: payload,
             };
         case ERROR_USER_SCHOLARSHIP:
+        case LOG_OUT:
             return {
                 ...state,
                 loading: false,

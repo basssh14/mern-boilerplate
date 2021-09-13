@@ -3,6 +3,7 @@ import {
     UPDATE_USER_APPLI,
     GET_USER_APPLI,
     ERROR_USER_APPLI,
+    LOG_OUT,
 } from "../actions/types";
 const initialState = {
     loading: true,
@@ -20,6 +21,7 @@ export default function(state = initialState, action) {
                 applicants: payload,
             };
         case ERROR_USER_APPLI:
+        case LOG_OUT:
             return {
                 ...state,
                 loading: false,

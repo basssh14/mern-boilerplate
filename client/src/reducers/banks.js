@@ -3,6 +3,7 @@ import {
     UPDATE_USER_BANK,
     GET_USER_BANKS,
     USER_BANKS_ERRORS,
+    LOG_OUT,
 } from "../actions/types";
 const initialState = {
     loading: true,
@@ -20,6 +21,7 @@ export default function(state = initialState, action) {
                 banks: payload,
             };
         case USER_BANKS_ERRORS:
+        case LOG_OUT:
             return {
                 ...state,
                 loading: false,

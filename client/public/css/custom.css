@@ -163,6 +163,17 @@ nav ul li ul li a {
     }
 }
 
+@media screen and (max-width: 700px) {
+    .filepond--item {
+        width: 100% !important;
+        height: 10rem;
+    }
+    .filepond--wrapper {
+        width: 100% !important;
+        height: 5rem;
+    }
+}
+
 #nav-toggle {
     position: absolute;
     left: 18px;
@@ -212,4 +223,44 @@ nav ul li ul li a {
 
 .moreIndex {
     z-index: 1000;
+}
+
+.filepond--item {
+    width: 50%;
+    padding: 10px 5px;
+    height: auto;
+}
+
+.filepond--wrapper {
+    width: 50%;
+    padding: 10px 5px;
+    height: auto;
+}
+
+.filepond--credits {
+    display: none;
+}
+
+.filepond--browser {
+    margin-bottom: 20px;
+}
+
+.filepond--root {
+    min-height: 1rem !important;
+}
+
+.filepond--drop-label {
+    text-align: center;
+    vertical-align: middle;
+    line-height: normal;
+    min-height: 2.5rem !important;
+    align-items: unset !important;
+}
+
+.filepond--file {
+    display: none;
+}
+
+.translateBox {
+    --tw-translate-y: -200%;
 }

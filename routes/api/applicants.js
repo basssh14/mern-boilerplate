@@ -1,11 +1,12 @@
 const express = require("express");
 const router = express.Router();
-const bodyParser = require("body-parser");
+
 const { check, validationResult } = require("express-validator");
 const auth = require("../../middleware/auth");
-const Parents = require("../../models/Parents");
+const Applicants = require("../../models/Applicants");
 
 const app = express();
+const bodyParser = require("body-parser");
 app.use(
     bodyParser.json({
         extended: true,
@@ -18,31 +19,40 @@ app.use(
         limit: "5mb",
     })
 );
+//app.use(bodyParser.urlencoded({ limit: "500MB", extended: true }));
 
-//@route GET api/parents
+//@route GET api/applicants
 //@desc give us the req.user object back
 //@access private
 
 router.get("/", auth, async(req, res) => {
     try {
-        let parents = await Parents.findOne({ user: req.user.id });
-        res.json(parents);
+        let applicants = await Applicants.findOne({ user: req.user.id });
+        res.json(applicants);
     } catch (err) {
         console.log(err.message);
         res.status(500).send("Server error");
     }
 });
 
-//@route POST api/parents
-//@desc create a new parent
+//@route POST api/applicants
+//@desc create a new applicant
 //@access private
 
 router.post(
     "/", [
         auth, [
-            check("type", "Please enter a valid type").isIn(["parent", "guardian"]),
+            check("name", "Please enter a valid name")
+            .not()
+            .isEmpty()
+            .trim()
+            .escape(),
             check("gender", "Please enter a valid gender").isIn(["female", "male"]),
-            check("name", "Please enter a name").not().isEmpty().trim().escape(),
+            check("dateOfBirth", "Please enter a valid birthday")
+            .not()
+            .isEmpty()
+            .trim()
+            .escape(),
             check("cnic", "Please enter a valid cnic")
             .not()
             .isEmpty()
@@ -63,12 +73,9 @@ router.post(
             .isLength({ max: 12, min: 12 })
             .trim()
             .escape(),
-            check("cnicFront", "Please upload cnic front image").not().isEmpty(),
-            check("cnicBack", "Please upload cnic back image").not().isEmpty(),
-            check("salarySlip", "Please upload salary slip image").not().isEmpty(),
-            check("qualiDoc", "Please upload qualification document image")
-            .not()
-            .isEmpty(),
+            check("cnicFront").not().isEmpty(),
+            check("cnicBack").not().isEmpty(),
+            check("studentPhoto").not().isEmpty(),
         ],
     ],
     async(req, res) => {
@@ -79,23 +86,22 @@ router.post(
             return res.status(400).json({ errors: errors.array() });
         }
         const {
-            type,
-            gender,
             name,
+            gender,
+            dateOfBirth,
             cnic,
             email,
             mobile,
             phone,
             cnicFront,
             cnicBack,
-            salarySlip,
-            qualiDoc,
+            studentPhoto,
         } = req.body;
         const userId = req.user.id;
-        const newParent = {
-            type,
-            gender,
+        const newApplicant = {
             name,
+            gender,
+            dateOfBirth,
             cnic,
             email,
             mobile,
@@ -104,90 +110,93 @@ router.post(
             cnicFrontImgType: "",
             cnicBackImg: "",
             cnicBackImgType: "",
-            salarySlipImg: "",
-            salarySlipImgType: "",
-            qualiDocImg: "",
-            qualiDocImgType: "",
+            studentImg: "",
+            studentImgType: "",
         };
         if (cnicFront !== null) {
             const newImg = JSON.parse(cnicFront);
             if (newImg !== null) {
-                newParent.cnicFrontImg = new Buffer.from(newImg.data, "base64");
-                newParent.cnicFrontImgType = newImg.type;
+                newApplicant.cnicFrontImg = new Buffer.from(newImg.data, "base64");
+                newApplicant.cnicFrontImgType = newImg.type;
             }
         }
         if (cnicBack !== null) {
             const newImg = JSON.parse(cnicBack);
             if (newImg !== null) {
-                newParent.cnicBackImg = new Buffer.from(newImg.data, "base64");
-                newParent.cnicBackImgType = newImg.type;
+                newApplicant.cnicBackImg = new Buffer.from(newImg.data, "base64");
+                newApplicant.cnicBackImgType = newImg.type;
             }
         }
-        if (salarySlip !== null) {
-            const newImg = JSON.parse(salarySlip);
+        if (studentPhoto !== null) {
+            const newImg = JSON.parse(studentPhoto);
             if (newImg !== null) {
-                newParent.salarySlipImg = new Buffer.from(newImg.data, "base64");
-                newParent.salarySlipImgType = newImg.type;
+                newApplicant.studentImg = new Buffer.from(newImg.data, "base64");
+                newApplicant.studentImgType = newImg.type;
             }
         }
-        if (qualiDoc !== null) {
-            const newImg = JSON.parse(qualiDoc);
-            if (newImg !== null) {
-                newParent.qualiDocImg = new Buffer.from(newImg.data, "base64");
-                newParent.qualiDocImgType = newImg.type;
-            }
-        }
-        let parentsUser = await Parents.findOne({ user: userId });
-        if (parentsUser === null) {
-            console.log("not working");
+        console.log(newApplicant);
+        let userApplicants = await Applicants.findOne({ user: userId });
+        if (userApplicants === null) {
             try {
-                const parentUser = new Parents({
+                const ApplicantsUser = new Applicants({
                     user: req.user.id,
-                    parents: [newParent],
+                    applicants: [newApplicant],
                 });
-                await parentUser.save();
-                res.redirect("/api/parents");
+                await ApplicantsUser.save();
+                res.redirect("/api/applicants");
             } catch (err) {
                 console.log(err.message);
-                res.status(500).send("Server error 1");
+                console.log("error 1");
+                res.status(500).send("Server error bank account total");
             }
         } else {
-            console.log("working");
             try {
-                if (parentsUser.parents.find((element) => element.cnic === cnic)) {
+                if (
+                    userApplicants.applicants.find((element) => element.cnic === cnic)
+                ) {
+                    console.log("error 2");
                     return res
                         .status(400)
-                        .json({ errors: [{ msg: "Parent cnic already registered" }] });
+                        .json({ errors: [{ msg: "Cnic number already registered" }] });
                 }
 
-                parentsUser.parents.push(newParent);
-                await parentsUser.save();
-                res.redirect("/api/parents");
+                userApplicants.applicants.push(newApplicant);
+                await userApplicants.save();
+                res.redirect("/api/applicants");
             } catch (err) {
                 console.log(err.message);
-                res.status(500).send("Server Error 2");
+                console.log("error 3");
+                res.status(500).send("Server Error bank account new");
             }
         }
     }
 );
 
-//@route POST api/parents/edit/:parentId
+//@route POST api/applicants/edit/:appId
 //@desc edit existing parent route
 //@access private
 
 router.post(
-    "/edit/:parentId", [
+    "/edit/:applicationId", [
         auth, [
-            check("type", "Please enter a valid type").isIn(["parent", "guardian"]),
-            check("gender", "Please enter a valid gender").isIn(["male", "female"]),
-            check("name", "Please enter a name").not().isEmpty().trim().escape(),
+            check("name", "Please enter a valid name")
+            .not()
+            .isEmpty()
+            .trim()
+            .escape(),
+            check("gender", "Please enter a valid gender").isIn(["female", "male"]),
+            check("dateOfBirth", "Please enter a valid birthday")
+            .not()
+            .isEmpty()
+            .trim()
+            .escape(),
             check("cnic", "Please enter a valid cnic")
             .not()
             .isEmpty()
             .trim()
             .escape()
             .isLength({ max: 15, min: 15 }),
-            check("email", "Please enter a email").isEmail().normalizeEmail(),
+            check("email", "Please enter a valid email").isEmail().normalizeEmail(),
             check("mobile", "Please enter a  valid mobile phone")
             .not()
             .isEmpty()
@@ -201,12 +210,9 @@ router.post(
             .isLength({ max: 12, min: 12 })
             .trim()
             .escape(),
-            check("cnicFront", "Please upload cnic front image").not().isEmpty(),
-            check("cnicBack", "Please upload cnic back image").not().isEmpty(),
-            check("salarySlip", "Please upload salary slip image").not().isEmpty(),
-            check("qualiDoc", "Please upload qualification document image")
-            .not()
-            .isEmpty(),
+            check("cnicFront").not().isEmpty(),
+            check("cnicBack").not().isEmpty(),
+            check("studentPhoto").not().isEmpty(),
         ],
     ],
     async(req, res) => {
@@ -215,23 +221,22 @@ router.post(
             return res.status(400).json({ errors: errors.array() });
         }
         const {
-            type,
-            gender,
             name,
+            gender,
+            dateOfBirth,
             cnic,
             email,
             mobile,
             phone,
             cnicFront,
             cnicBack,
-            salarySlip,
-            qualiDoc,
+            studentPhoto,
         } = req.body;
         const userId = req.user.id;
-        const newParent = {
-            type,
-            gender,
+        const newApplicant = {
             name,
+            gender,
+            dateOfBirth,
             cnic,
             email,
             mobile,
@@ -240,66 +245,61 @@ router.post(
             cnicFrontImgType: "",
             cnicBackImg: "",
             cnicBackImgType: "",
-            salarySlipImg: "",
-            salarySlipImgType: "",
-            qualiDocImg: "",
-            qualiDocImgType: "",
+            studentImg: "",
+            studentImgType: "",
         };
         if (cnicFront !== null) {
             const newImg =
                 typeof cnicFront === "string" ? JSON.parse(cnicFront) : cnicFront;
+            console.log(typeof cnicFront);
+            console.log("hello");
             if (newImg !== null) {
-                newParent.cnicFrontImg = new Buffer.from(newImg.data, "base64");
-                newParent.cnicFrontImgType = newImg.type;
+                newApplicant.cnicFrontImg = new Buffer.from(newImg.data, "base64");
+                newApplicant.cnicFrontImgType = newImg.type;
             }
         }
         if (cnicBack !== null) {
             const newImg =
                 typeof cnicBack === "string" ? JSON.parse(cnicBack) : cnicBack;
             if (newImg !== null) {
-                newParent.cnicBackImg = new Buffer.from(newImg.data, "base64");
-                newParent.cnicBackImgType = newImg.type;
+                newApplicant.cnicBackImg = new Buffer.from(newImg.data, "base64");
+                newApplicant.cnicBackImgType = newImg.type;
             }
         }
-        if (salarySlip !== null) {
+        if (studentPhoto !== null) {
             const newImg =
-                typeof salarySlip === "string" ? JSON.parse(salarySlip) : salarySlip;
+                typeof studentPhoto === "string" ?
+                JSON.parse(studentPhoto) :
+                studentPhoto;
             if (newImg !== null) {
-                newParent.salarySlipImg = new Buffer.from(newImg.data, "base64");
-                newParent.salarySlipImgType = newImg.type;
+                newApplicant.studentImg = new Buffer.from(newImg.data, "base64");
+                newApplicant.studentImgType = newImg.type;
             }
         }
-        if (qualiDoc !== null) {
-            const newImg =
-                typeof qualiDoc === "string" ? JSON.parse(qualiDoc) : qualiDoc;
-            if (newImg !== null) {
-                newParent.qualiDocImg = new Buffer.from(newImg.data, "base64");
-                newParent.qualiDocImgType = newImg.type;
-            }
-        }
+
         try {
-            const parentsUser = await Parents.findOne({ user: userId });
+            const userApplication = await Applicants.findOne({ user: userId });
 
             if (
-                parentsUser.parents.find(
-                    (element) => element.id === req.params.parentId
+                userApplication.applicants.find(
+                    (element) => element.id === req.params.applicationId
                 ) === undefined
             ) {
                 return res
                     .status(400)
-                    .json({ errors: [{ msg: "Parent doesnt exists" }] });
+                    .json({ errors: [{ msg: "Application doesnt exists" }] });
             }
-            // if (parentsUser.parents.find((element) => element.cnic === cnic)) {
+            // if (userApplication.parents.find((element) => element.cnic === cnic)) {
             //     return res
             //         .status(400)
             //         .json({ errors: [{ msg: "Parent cnic already registered" }] });
             // } else {
-            const indexToUpdate = parentsUser.parents
+            const indexToUpdate = userApplication.applicants
                 .map((element) => element.id)
-                .indexOf(req.params.parentId);
-            parentsUser.parents[indexToUpdate] = newParent;
-            await parentsUser.save();
-            res.redirect("/api/parents");
+                .indexOf(req.params.applicationId);
+            userApplication.applicants[indexToUpdate] = newApplicant;
+            await userApplication.save();
+            res.redirect("/api/applicants");
             // }
         } catch (err) {
             console.log(err.message);

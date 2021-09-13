@@ -7,34 +7,152 @@ import { newParent, updateParent, getParents } from "../../actions/parents";
 import HeaderUser from "../individual/HeaderUser";
 import { Link } from "react-router-dom";
 import { setAlert } from "../../actions/alert";
-import {uploadCnic, uploadQuali, uploadSalary} from "../../actions/parents";
+import { uploadCnic, uploadQuali, uploadSalary } from "../../actions/parents";
+//filepond stuff
+import { FilePond, registerPlugin } from "react-filepond";
+import FilePondPluginFileEncode from "filepond-plugin-file-encode";
+import FilePondPluginImagePreview from "filepond-plugin-image-preview";
+import "filepond/dist/filepond.min.css";
+import "filepond-plugin-image-preview/dist/filepond-plugin-image-preview.css";
+//filepond
+registerPlugin(FilePondPluginFileEncode);
+registerPlugin(FilePondPluginImagePreview);
 
-function ParentPopUp({ updateParent, getParents, parents, changeVisibility, parentId, setAlert, uploadCnic, uploadQuali, uploadSalary }) {
+function ParentPopUp({
+  updateParent,
+  getParents,
+  parents,
+  changeVisibility,
+  parentId,
+  setAlert,
+  uploadCnic,
+  uploadQuali,
+  uploadSalary,
+}) {
+  //handle images
+  const [cnicFront, setCnciFront] = useState();
+  const [cnicBack, setCnicBack] = useState();
+  const [salarySlip, setSalarySlip] = useState();
+  const [qualiDoc, setQualiDoc] = useState();
+  //display image center of screen
+  const [imgTop, setImgTop] = useState(0);
   //take care of the data
   const [userParents, setUserParents] = useState([]);
   const [startParent, setStartParent] = useState();
   const [cnicPhoto, setCnicCopy] = useState("");
-  const [ salaryPhoto, setSalaryPhoto] = useState("");
-  const [ qualiPhoto, setQualiPhoto] = useState("");
-  const onChangeCnic = (e) =>
-    setCnicCopy(e.target.files[0]);
-    const onChangeSalary = (e) =>
-    setSalaryPhoto(e.target.files[0]);
-    const onChangeQuali = (e) =>
-    setQualiPhoto(e.target.files[0]);
+  const [salaryPhoto, setSalaryPhoto] = useState("");
+  const [qualiPhoto, setQualiPhoto] = useState("");
+  const onChangeCnic = (e) => setCnicCopy(e.target.files[0]);
+  const onChangeSalary = (e) => setSalaryPhoto(e.target.files[0]);
+  const onChangeQuali = (e) => setQualiPhoto(e.target.files[0]);
   //console.log(parentId);
-  const clickedParent = parents.parents !== null && parents.parents.parents.find((parent) => parent._id === parentId.id);
+  const clickedParent =
+    parents.parents !== null &&
+    parents.parents.parents.find((parent) => parent._id === parentId.id);
   //parents.parents.parents.map((parent) => console.log(parent._id + "=" + parentId.id));
   //console.log(clickedParent);
+  const reverseImg = (img) => {
+    return Buffer.from(img).toString("base64");
+  };
+  //getElementPosition
+  const getPosition = (buttonName) => {
+    setImgTop(window.scrollY + 100);
+  };
   const [formData, setFormData] = useState({
-    type: clickedParent !== null  ? clickedParent.type : " ",
-      gender: clickedParent !== null   ? clickedParent.gender : " ",
-      name: clickedParent !== null   ? clickedParent.name : " ",
-      cnic: clickedParent !== null   ? clickedParent.cnic : " ",
-      email: clickedParent !== null   ? clickedParent.email : " ",
-      mobile: clickedParent !== null   ? clickedParent.mobile : " ",
-      phone: clickedParent !== null   ? clickedParent.phone : " ",
+    type: clickedParent !== null ? clickedParent.type : " ",
+    gender: clickedParent !== null ? clickedParent.gender : " ",
+    name: clickedParent !== null ? clickedParent.name : " ",
+    cnic: clickedParent !== null ? clickedParent.cnic : " ",
+    email: clickedParent !== null ? clickedParent.email : " ",
+    mobile: clickedParent !== null ? clickedParent.mobile : " ",
+    phone: clickedParent !== null ? clickedParent.phone : " ",
+    cnicFrontImg:
+      clickedParent !== null ? reverseImg(clickedParent.cnicFrontImg) : " ",
+    cnicFrontImgType:
+      clickedParent !== null ? clickedParent.cnicFrontImgType : " ",
+    cnicBackImg:
+      clickedParent !== null ? reverseImg(clickedParent.cnicBackImg) : " ",
+    cnicBackImgType:
+      clickedParent !== null ? clickedParent.cnicBackImgType : " ",
+    salarySlipImg:
+      clickedParent !== null ? reverseImg(clickedParent.salarySlipImg) : " ",
+    salarySlipImgType:
+      clickedParent !== null ? clickedParent.salarySlipImgType : " ",
+    qualiDocImg:
+      clickedParent !== null ? reverseImg(clickedParent.qualiDocImg) : " ",
+    qualiDocImgType:
+      clickedParent !== null ? clickedParent.qualiDocImgType : " ",
   });
+  //handle images
+  const updateCnicFrontImg = async (e) => {
+    const form = new FormData(e.target);
+    const data = form.get("cnicFront");
+    return data;
+  };
+  const updateCnicBackImg = async (e) => {
+    const form = new FormData(e.target);
+    const data = form.get("cnicBack");
+    return data;
+  };
+  const updateSalarySlip = async (e) => {
+    const form = new FormData(e.target);
+    const data = form.get("salarySlip");
+    return data;
+  };
+  const updateQualiDoc = async (e) => {
+    const form = new FormData(e.target);
+    const data = form.get("qualiDoc");
+    return data;
+  };
+  const displayCnicFront = () => {
+    if (
+      clickedParent.cnicFrontImg != null &&
+      clickedParent.cnicFrontImgType != null
+    ) {
+      return `data: ${
+        clickedParent.cnicFrontImgType
+      };charset=utf-8;base64,${Buffer.from(clickedParent.cnicFrontImg).toString(
+        "base64"
+      )}`;
+    }
+  };
+  const displayCnicBack = () => {
+    if (
+      clickedParent.cnicBackImg != null &&
+      clickedParent.cnicBackImgType != null
+    ) {
+      return `data: ${
+        clickedParent.cnicBackImgType
+      };charset=utf-8;base64,${Buffer.from(clickedParent.cnicBackImg).toString(
+        "base64"
+      )}`;
+    }
+  };
+  const displaySalarySlip = () => {
+    if (
+      clickedParent.salarySlipImg != null &&
+      clickedParent.salarySlipImgType != null
+    ) {
+      return `data: ${
+        clickedParent.salarySlipImgType
+      };charset=utf-8;base64,${Buffer.from(
+        clickedParent.salarySlipImg
+      ).toString("base64")}`;
+    }
+  };
+  const displayQualiDoc = () => {
+    if (
+      clickedParent.qualiDocImg != null &&
+      clickedParent.qualiDocImgType != null
+    ) {
+      return `data: ${
+        clickedParent.qualiDocImgType
+      };charset=utf-8;base64,${Buffer.from(clickedParent.qualiDocImg).toString(
+        "base64"
+      )}`;
+    }
+  };
+  //-----------------------------------------------
   const onChange = (e) =>
     setFormData({ ...formData, [e.target.name]: e.target.value });
   //0000000000000000000000000000000000000000000000000000000000000000000000000000
@@ -44,14 +162,23 @@ function ParentPopUp({ updateParent, getParents, parents, changeVisibility, pare
   const [imagePopCnic, setImagePopCnic] = useState("hidden");
   const [imagePopSalary, setImagePopSalary] = useState("hidden");
   const [imagePopQuali, setImagePopQuali] = useState("hidden");
+  const [imagePopCnicBack, setImagePopCnicBack] = useState("hidden");
   const changeImagePopCnic = () => {
+    getPosition("something");
     if (imagePopCnic === "hidden") {
       setImagePopCnic(" ");
     } else {
       setImagePopCnic("hidden");
     }
   };
+  const changeImagePopCnicBack = () => {
+    getPosition("something");
+    imagePopCnicBack === "hidden"
+      ? setImagePopCnicBack(" ")
+      : setImagePopCnicBack("hidden");
+  };
   const changeImagePopSalary = () => {
+    getPosition("something");
     if (imagePopSalary === "hidden") {
       setImagePopSalary(" ");
     } else {
@@ -59,71 +186,50 @@ function ParentPopUp({ updateParent, getParents, parents, changeVisibility, pare
     }
   };
   const changeImagePopQuali = () => {
+    getPosition("something");
     if (imagePopQuali === "hidden") {
       setImagePopQuali(" ");
     } else {
       setImagePopQuali("hidden");
     }
   };
+
   const onSubmit = async (e) => {
     e.preventDefault();
-    updateParent(formData, parentId.id);
-    if(formData.cnic === ""){
-      setAlert("please fill all the form", "error");
-    } else {
-        
-        
-        
-        const fileName = formData.cnic + ".jpg";
-        
-        
-        
-        //cnicCopy.cnicCopy.name = "test22222.jpg";
-        //cnicCopy.set("name", "newName.jpg");
-
-        
-        try {
-          if(cnicPhoto !== ""){
-            const cnicCopy = new FormData();
-            cnicCopy.append('cnicCopy',cnicPhoto, fileName);
-            uploadCnic(cnicCopy);
-            // const res = await axios.post('/api/uploads/parents/cnicphotos', cnicCopy, {
-            //   headers: {
-            //     'Content-Type': 'multipart/form-data'
-            //   },
-            // });
-          }
-          if(salaryPhoto !== ""){
-            const salarySlip = new FormData();
-            salarySlip.append('salarySlip', salaryPhoto, fileName);
-            uploadSalary(salarySlip);
-            // const res2 = await axios.post('/api/uploads/parents/salaryphotos', salarySlip, {
-            //   headers: {
-            //     'Content-Type': 'multipart/form-data'
-            //   },
-            // });
-          }
-          if(qualiPhoto !== ""){
-            const qualiDoc = new FormData();
-            qualiDoc.append('qualiDoc', qualiPhoto, fileName);
-            uploadQuali(qualiDoc);
-            // const res3 = await axios.post('/api/uploads/parents/qualiDocphotos', qualiDoc, {
-            //   headers: {
-            //     'Content-Type': 'multipart/form-data'
-            //   },
-            // });
-          }
-        } catch (err) {
-          if (err.response.status === 500) {
-            console.log('There was a problem with the server');
-          } else {
-            console.log(err.response.data.msg);
-          }
-        }
-    }
+    const cnicFrontData = await updateCnicFrontImg(e);
+    const cnicBackData = await updateCnicBackImg(e);
+    const salarySlipData = await updateSalarySlip(e);
+    const qualiDocData = await updateQualiDoc(e);
+    const newInfo = {
+      type: formData.type,
+      gender: formData.gender,
+      name: formData.name,
+      cnic: formData.cnic,
+      email: formData.email,
+      mobile: formData.mobile,
+      phone: formData.phone,
+      cnicFront:
+        cnicFrontData.size === 0
+          ? { data: formData.cnicFrontImg, type: formData.cnicFrontImgType }
+          : cnicFrontData,
+      cnicBack:
+        cnicBackData.size === 0
+          ? { data: formData.cnicBackImg, type: formData.cnicBackImgType }
+          : cnicBackData,
+      salarySlip:
+        salarySlipData.size === 0
+          ? { data: formData.salarySlipImg, type: formData.salarySlipImgType }
+          : salarySlipData,
+      qualiDoc:
+        qualiDocData.size === 0
+          ? { data: formData.qualiDocImg, type: formData.qualiDocImgType }
+          : qualiDocData,
+    };
+    updateParent(newInfo, parentId.id);
     getParents();
     changeVisibility();
-  }
+    setAlert("Updating Parent, Please Wait", "success", 20000);
+  };
   //000000000000000000000000000000000000000000000000000000000000000000000000000000000
   // useEffect(() => {
   //   getParents();
@@ -132,9 +238,7 @@ function ParentPopUp({ updateParent, getParents, parents, changeVisibility, pare
   return (
     <Fragment>
       {/* start of new parent pop up */}
-      <div
-        className={`h-full w-full bg-white absolute top-0 left-0`}
-      >
+      <div className={`h-full w-full bg-white absolute top-0 left-0`}>
         <form onSubmit={(e) => onSubmit(e)}>
           <div className="grid h-auto bg-white rounded-lg shadow-xl w-full">
             <div className="flex justify-center">
@@ -196,7 +300,7 @@ function ParentPopUp({ updateParent, getParents, parents, changeVisibility, pare
                   Gender
                 </label>
                 <select
-                name="gender"
+                  name="gender"
                   className="
                         py-2
                         px-3
@@ -209,12 +313,12 @@ function ParentPopUp({ updateParent, getParents, parents, changeVisibility, pare
                         focus:ring-gray-600
                         focus:border-transparent
                       "
-                      value={formData.gender}
-                onChange={(e) => onChange(e)}
+                  value={formData.gender}
+                  onChange={(e) => onChange(e)}
                 >
                   <option defualt>Select</option>
                   <option value="male">Male</option>
-                        <option value="female">Female</option>
+                  <option value="female">Female</option>
                 </select>
               </div>
               <div className="grid grid-cols-1">
@@ -229,7 +333,7 @@ function ParentPopUp({ updateParent, getParents, parents, changeVisibility, pare
                   Name
                 </label>
                 <input
-                name="name"
+                  name="name"
                   className="
                         py-2
                         px-3
@@ -244,7 +348,7 @@ function ParentPopUp({ updateParent, getParents, parents, changeVisibility, pare
                   type="text"
                   required
                   value={formData.name}
-                onChange={(e) => onChange(e)}
+                  onChange={(e) => onChange(e)}
                 />
               </div>
             </div>
@@ -270,7 +374,7 @@ function ParentPopUp({ updateParent, getParents, parents, changeVisibility, pare
                   CNIC
                 </label>
                 <InputMask
-                name="cnic"
+                  name="cnic"
                   className="
                         py-2
                         px-3
@@ -283,11 +387,11 @@ function ParentPopUp({ updateParent, getParents, parents, changeVisibility, pare
                         focus:border-transparent
                       "
                   type="text"
-                  required 
-                  mask='99999-9999999-9'
+                  required
+                  mask="99999-9999999-9"
                   placeholder="99999-9999999-9"
                   value={formData.cnic}
-                onChange={(e) => onChange(e)}
+                  onChange={(e) => onChange(e)}
                 ></InputMask>
               </div>
               <div className="grid grid-cols-1">
@@ -302,7 +406,7 @@ function ParentPopUp({ updateParent, getParents, parents, changeVisibility, pare
                   Email
                 </label>
                 <input
-                name="email"
+                  name="email"
                   className="
                         py-2
                         px-3
@@ -317,7 +421,7 @@ function ParentPopUp({ updateParent, getParents, parents, changeVisibility, pare
                   type="text"
                   required
                   value={formData.email}
-                onChange={(e) => onChange(e)}
+                  onChange={(e) => onChange(e)}
                 />
               </div>
             </div>
@@ -343,8 +447,8 @@ function ParentPopUp({ updateParent, getParents, parents, changeVisibility, pare
                   Mobile
                 </label>
                 <InputMask
-                name="mobile"
-                required
+                  name="mobile"
+                  required
                   className="
                         py-2
                         px-3
@@ -360,7 +464,7 @@ function ParentPopUp({ updateParent, getParents, parents, changeVisibility, pare
                   mask="9999-9999999"
                   placeholder="9999-9999999"
                   value={formData.mobile}
-                onChange={(e) => onChange(e)}
+                  onChange={(e) => onChange(e)}
                 ></InputMask>
               </div>
               <div className="grid grid-cols-1">
@@ -375,8 +479,8 @@ function ParentPopUp({ updateParent, getParents, parents, changeVisibility, pare
                   Phone
                 </label>
                 <InputMask
-                name="phone"
-                required
+                  name="phone"
+                  required
                   className="
                         py-2
                         px-3
@@ -392,91 +496,157 @@ function ParentPopUp({ updateParent, getParents, parents, changeVisibility, pare
                   mask="9999-9999999"
                   placeholder="9999-9999999"
                   value={formData.phone}
-                onChange={(e) => onChange(e)}
+                  onChange={(e) => onChange(e)}
                 ></InputMask>
               </div>
             </div>
-            <div
-              className="
-                    grid grid-cols-1
-                    md:grid-cols-2
-                    gap-5
-                    md:gap-8
-                    mt-5
-                    mx-7
-                  "
-            >
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-5 md:gap-8 mt-5 mx-7">
               <div className="grid grid-cols-1">
                 <label
                   className="
-                        uppercase
-                        md:text-sm
-                        text-xs text-gray-500 text-light
-                        font-semibold
-                        mb-1
-                      "
+                    uppercase
+                    md:text-sm
+                    text-xs text-gray-500 text-light
+                    font-semibold
+                    mb-1
+                  "
                 >
-                  CNIC PHOTO
+                  Cnic Front
                 </label>
                 <div className="flex items-center justify-left w-full">
                   <button
-                    className="w-auto h-8 px-2 mb-3  bg-gray-100 usm:mb-3 border border-gray-500"
+                    className="w-auto h-8 px-2 mb-0  bg-gray-100 usm:mb-3 border border-gray-500"
                     type="button"
                     onClick={() => changeImagePopCnic()}
                   >
                     Check Image
                   </button>
                 </div>
-                <div className="flex items-center justify-left w-full">
-                <input type="file" className="" name="cnicCopy" onChange={(e) => onChangeCnic(e)}/>
+                <div className="flex items-center justify-left w-full -ml-2">
+                  <FilePond
+                    files={cnicFront}
+                    allowMultiple={false}
+                    allowFileEncode={true}
+                    name="cnicFront"
+                    labelIdle='Drag & Drop your files or <span class="filepond--label-action">Browse</span>'
+                    className="w-full h-auto "
+                    allowImagePreview={false}
+                  >
+                    {" "}
+                  </FilePond>
                 </div>
               </div>
               <div className="grid grid-cols-1">
                 <label
                   className="
-                        uppercase
-                        md:text-sm
-                        text-xs text-gray-500 text-light
-                        font-semibold
-                        mb-1
-                      "
+                    uppercase
+                    md:text-sm
+                    text-xs text-gray-500 text-light
+                    font-semibold
+                    mb-1
+                  "
                 >
-                  SALARY SLIP
+                  Cnic Back
                 </label>
                 <div className="flex items-center justify-left w-full">
-                  <button className="w-auto h-8 px-2 mb-3  bg-gray-100 usm:mb-3 border border-gray-500" type="button" onClick={() => changeImagePopSalary()}>
-                    check img
+                  <button
+                    className="w-auto h-8 px-2 mb-0  bg-gray-100 usm:mb-3 border border-gray-500"
+                    type="button"
+                    onClick={() => changeImagePopCnicBack()}
+                  >
+                    Check Image
                   </button>
                 </div>
-                <div className="flex items-center justify-left w-full">
-                <input type="file" className="" name="salarySlip" onChange={(e) => onChangeSalary(e)}/>
+                <div className="flex items-center justify-left w-full -ml-2 ">
+                  <FilePond
+                    files={cnicBack}
+                    allowMultiple={false}
+                    allowFileEncode={true}
+                    name="cnicBack"
+                    labelIdle='Drag & Drop your files or <span class="filepond--label-action">Browse</span>'
+                    className="w-full h-auto "
+                    allowImagePreview={false}
+                  >
+                    {" "}
+                  </FilePond>
                 </div>
               </div>
             </div>
-            <div className="grid grid-cols-1 mt-5 mx-7">
-              <label
-                className="
-                      uppercase
-                      md:text-sm
-                      text-xs text-gray-500 text-light
-                      font-semibold
-                      mb-1
-                    "
-              >
-                QUALIFICATION DOCUMENT
-              </label>
-              <div className="flex items-center justify-left w-full">
-                <button className="w-auto h-8 px-2 mb-3  bg-gray-100 usm:mb-3 border border-gray-500" type="button" onClick={() => changeImagePopQuali()}>
-                  Check img
-                </button>
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-5 md:gap-8 mt-0 mx-7">
+              <div className="grid grid-cols-1">
+                <label
+                  className="
+                    uppercase
+                    md:text-sm
+                    text-xs text-gray-500 text-light
+                    font-semibold
+                    mb-1
+                  "
+                >
+                  Salary Slip
+                </label>
+                <div className="flex items-center justify-left w-full">
+                  <button
+                    className="w-auto h-8 px-2 mb-0  bg-gray-100 usm:mb-3 border border-gray-500"
+                    type="button"
+                    onClick={() => changeImagePopSalary()}
+                  >
+                    Check Image
+                  </button>
+                </div>
+                <div className="flex items-center justify-left w-full -ml-2">
+                  <FilePond
+                    files={salarySlip}
+                    allowMultiple={false}
+                    allowFileEncode={true}
+                    name="salarySlip"
+                    labelIdle='Drag & Drop your files or <span class="filepond--label-action">Browse</span>'
+                    className="w-full h-auto "
+                    allowImagePreview={false}
+                  >
+                    {" "}
+                  </FilePond>
+                </div>
               </div>
-              <div className="flex items-center justify-left w-full">
-              <input type="file" className="" name="qualiDoc" onChange={(e) => onChangeQuali(e)}/>
+              <div className="grid grid-cols-1">
+                <label
+                  className="
+                    uppercase
+                    md:text-sm
+                    text-xs text-gray-500 text-light
+                    font-semibold
+                    mb-1
+                  "
+                >
+                  Qualification Document
+                </label>
+                <div className="flex items-center justify-left w-full">
+                  <button
+                    className="w-auto h-8 px-2 mb-0  bg-gray-100 usm:mb-3 border border-gray-500"
+                    type="button"
+                    onClick={() => changeImagePopQuali()}
+                  >
+                    Check Image
+                  </button>
+                </div>
+                <div className="flex items-center justify-left w-full -ml-2">
+                  <FilePond
+                    files={qualiDoc}
+                    allowMultiple={false}
+                    allowFileEncode={true}
+                    name="qualiDoc"
+                    labelIdle='Drag & Drop your files or <span class="filepond--label-action">Browse</span>'
+                    className="w-full h-auto "
+                    allowImagePreview={false}
+                  >
+                    {" "}
+                  </FilePond>
+                </div>
               </div>
             </div>
             <div className="flex items-center justify-center md:gap-8 gap-4 pt-5 pb-5">
-            <button
-                      className="
+              <button
+                className="
                   w-auto
                   bg-red-400
                   hover:bg-red-200
@@ -487,13 +657,13 @@ function ParentPopUp({ updateParent, getParents, parents, changeVisibility, pare
                   px-4
                   py-2
                 "
-                     type="button" 
-                     onClick={() => changeVisibility()}
-                    >
-                      Cancel
-                    </button>
-                    <button
-                      className="
+                type="button"
+                onClick={() => changeVisibility()}
+              >
+                Cancel
+              </button>
+              <button
+                className="
                   w-auto
                   bg-green-400
                   hover:bg-green-200
@@ -505,40 +675,24 @@ function ParentPopUp({ updateParent, getParents, parents, changeVisibility, pare
                   py-2
                 "
                 type="submit"
-                    >
-                      Add
-                    </button>
+              >
+                Add
+              </button>
             </div>
           </div>
           {/* end of parent information */}
           {/* hangle images */}
           <div
-            className={`w-1/5 h-1/2 bg-white centerSom usm:h-1/3 border ${imagePopSalary}`}
+            style={{ top: imgTop }}
+            className={`w-1/5 h-1/2 bg-white fixed centerHorizontal usm:h-1/3 border ${imagePopCnic}`}
           >
             <div className="w-full h-full relative">
               <img
-                src={`./img/parents/salary/${clickedParent.cnic}.jpg`}
+                src={clickedParent !== null ? displayCnicFront() : " "}
                 className="w-full h-full bg-cover"
               />
               <button
-                className="w-10 h-10 absolute top-0 right-0 text-4xl text-black"
-                onClick={() => changeImagePopSalary()}
-                type="button"
-              >
-                X
-              </button>
-            </div>
-          </div>
-          <div
-            className={`w-2/3 h-1/2 bg-white centerSom usm:h-1/3 border ${imagePopCnic}`}
-          >
-            <div className="w-full h-full relative">
-              <img
-                src={`./img/parents/cnic/${clickedParent.cnic}.jpg`}
-                className="w-full h-full bg-cover"
-              />
-              <button
-                className="w-10 h-10 absolute top-0 right-0 text-4xl text-black"
+                className="w-10 h-10 absolute top-0 right-0 text-4xl text-gray-400"
                 onClick={() => changeImagePopCnic()}
                 type="button"
               >
@@ -547,15 +701,52 @@ function ParentPopUp({ updateParent, getParents, parents, changeVisibility, pare
             </div>
           </div>
           <div
-            className={`w-1/5 h-1/2 bg-white centerSom usm:h-1/3 border ${imagePopQuali}`}
+            style={{ top: imgTop }}
+            className={`w-1/5 h-1/2 bg-white fixed centerHorizontal usm:h-1/3 border ${imagePopCnicBack}`}
           >
             <div className="w-full h-full relative">
               <img
-                src={`./img/parents/quali/${clickedParent.cnic}.jpg`}
+                src={clickedParent !== null ? displayCnicBack() : " "}
                 className="w-full h-full bg-cover"
               />
               <button
-                className="w-10 h-10 absolute top-0 right-0 text-4xl text-black"
+                className="w-10 h-10 absolute top-0 right-0 text-4xl text-gray-400"
+                onClick={() => changeImagePopCnicBack()}
+                type="button"
+              >
+                X
+              </button>
+            </div>
+          </div>
+          <div
+            style={{ top: imgTop }}
+            className={`w-2/3 h-1/2 bg-white fixed centerHorizontal usm:h-1/3 border ${imagePopSalary}`}
+          >
+            <div className="w-full h-full relative">
+              <img
+                src={clickedParent !== null ? displaySalarySlip() : " "}
+                className="w-full h-full bg-cover"
+              />
+              <button
+                className="w-10 h-10 absolute top-0 right-0 text-4xl text-gray-400"
+                onClick={() => changeImagePopSalary()}
+                type="button"
+              >
+                X
+              </button>
+            </div>
+          </div>
+          <div
+            style={{ top: imgTop }}
+            className={`w-1/5 h-1/2 bg-white fixed centerHorizontal usm:h-1/3 border ${imagePopQuali}`}
+          >
+            <div className="w-full h-full relative">
+              <img
+                src={clickedParent !== null ? displayQualiDoc() : " "}
+                className="w-full h-full bg-cover"
+              />
+              <button
+                className="w-10 h-10 absolute top-0 right-0 text-4xl text-gray-400"
                 onClick={() => changeImagePopQuali()}
                 type="button"
               >
@@ -576,8 +767,8 @@ ParentPopUp.propTypes = {
   getParents: PropTypes.func.isRequired,
   changeVisibility: PropTypes.func.isRequired,
   visibility: PropTypes.string.isRequired,
-  parentId: PropTypes.string.isRequired,
   setAlert: PropTypes.func.isRequired,
+  parentId: PropTypes.string.isRequired,
   uploadSalary: PropTypes.func.isRequired,
   uploadQuali: PropTypes.func.isRequired,
   uploadCnic: PropTypes.func.isRequired,
@@ -589,9 +780,10 @@ const mapStateToProps = (state) => ({
 
 export default connect(mapStateToProps, {
   newParent,
+  setAlert,
   updateParent,
   getParents,
   uploadCnic,
   uploadQuali,
-  uploadSalary
+  uploadSalary,
 })(ParentPopUp);

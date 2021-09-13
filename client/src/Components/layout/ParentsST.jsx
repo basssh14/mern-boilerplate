@@ -8,9 +8,32 @@ import HeaderUser from "../individual/HeaderUser";
 import { Link } from "react-router-dom";
 import ParentPopUp from "./ParentPopUp";
 import { setAlert } from "../../actions/alert";
-import {uploadCnic, uploadQuali, uploadSalary} from "../../actions/parents";
+import Spinner from "./Spinner";
+//filepond stuff
+import { FilePond, registerPlugin } from "react-filepond";
+import FilePondPluginFileEncode from "filepond-plugin-file-encode";
+import FilePondPluginImagePreview from "filepond-plugin-image-preview";
+import "filepond/dist/filepond.min.css";
+import "filepond-plugin-image-preview/dist/filepond-plugin-image-preview.css";
+//filepond stuff
+registerPlugin(FilePondPluginFileEncode);
+registerPlugin(FilePondPluginImagePreview);
 
-function ParentsST({ newParent, updateParent, getParents, parents, setAlert, uploadCnic, uploadQuali, uploadSalary }) {
+function ParentsST({
+  newParent,
+  updateParent,
+  getParents,
+  parents,
+  setAlert,
+  uploadCnic,
+  uploadQuali,
+  uploadSalary,
+}) {
+  //handle images
+  const [cnicFront, setCnciFront] = useState();
+  const [cnicBack, setCnicBack] = useState();
+  const [salarySlip, setSalarySlip] = useState();
+  const [qualiDoc, setQualiDoc] = useState();
   //take care of the data
   const [userParents, setUserParents] = useState([]);
   const [startParent, setStartParent] = useState();
@@ -24,21 +47,40 @@ function ParentsST({ newParent, updateParent, getParents, parents, setAlert, upl
     phone: "",
   });
   const [cnicPhoto, setCnicCopy] = useState("");
-  const [ salaryPhoto, setSalaryPhoto] = useState("");
-  const [ qualiPhoto, setQualiPhoto] = useState("");
+  const [salaryPhoto, setSalaryPhoto] = useState("");
+  const [qualiPhoto, setQualiPhoto] = useState("");
   const onChange = (e) =>
     setStartParent({ ...startParent, [e.target.name]: e.target.value });
-    const onChangeFormData = (e) =>
+  const onChangeFormData = (e) =>
     setFormData({ ...formData, [e.target.name]: e.target.value });
-    const onChangeCnic = (e) =>
-    setCnicCopy(e.target.files[0]);
-    const onChangeSalary = (e) =>
-    setSalaryPhoto(e.target.files[0]);
-    const onChangeQuali = (e) =>
-    setQualiPhoto(e.target.files[0]);
+  const onChangeCnic = (e) => setCnicCopy(e.target.files[0]);
+  const onChangeSalary = (e) => setSalaryPhoto(e.target.files[0]);
+  const onChangeQuali = (e) => setQualiPhoto(e.target.files[0]);
   const [parentIdToComp, setParentIdToComp] = useState({
     id: undefined,
   });
+  //handle images
+  const updateCnicFrontImg = async (e) => {
+    const form = new FormData(e.target);
+    const data = form.get("cnicFront");
+    return data;
+  };
+  const updateCnicBackImg = async (e) => {
+    const form = new FormData(e.target);
+    const data = form.get("cnicBack");
+    return data;
+  };
+  const updateSalarySlip = async (e) => {
+    const form = new FormData(e.target);
+    const data = form.get("salarySlip");
+    return data;
+  };
+  const updateQualiDoc = async (e) => {
+    const form = new FormData(e.target);
+    const data = form.get("qualiDoc");
+    return data;
+  };
+  //--------------------
   console.log(parentIdToComp.id);
   //0000000000000000000000000000000000000000000000000000000000000000000000000000
   //take care of the dinamic
@@ -49,7 +91,7 @@ function ParentsST({ newParent, updateParent, getParents, parents, setAlert, upl
     setParentPop(!parentPop);
   };
   const changeNewParentPop = () => {
-    console.log('this function');
+    console.log("this function");
     if (newParentPop === "hidden") {
       setNewParentPop(" ");
     } else {
@@ -64,74 +106,39 @@ function ParentsST({ newParent, updateParent, getParents, parents, setAlert, upl
     }
   };
   const changeParentIdToComp = (e) => {
-    setParentIdToComp({...parentIdToComp, ["id"]: e.target.id});
+    setParentIdToComp({ ...parentIdToComp, ["id"]: e.target.id });
     changeParentPop();
-  }
+  };
   const onSubmitNewParent = async (e) => {
     e.preventDefault();
-    newParent(formData);
-    if(formData.cnic === ""){
-      setAlert("please fill all the form", "error");
-    } else {
-        
-        
-        
-        const fileName = formData.cnic + ".jpg";
-        
-        
-        
-        //cnicCopy.cnicCopy.name = "test22222.jpg";
-        //cnicCopy.set("name", "newName.jpg");
-
-        
-        try {
-          if(cnicPhoto !== ""){
-            const cnicCopy = new FormData();
-            cnicCopy.append('cnicCopy',cnicPhoto, fileName);
-            uploadCnic(cnicCopy);
-            // const res = await axios.post('/api/uploads/parents/cnicphotos', cnicCopy, {
-            //   headers: {
-            //     'Content-Type': 'multipart/form-data'
-            //   },
-            // });
-          }
-          if(salaryPhoto !== ""){
-            const salarySlip = new FormData();
-            salarySlip.append('salarySlip', salaryPhoto, fileName);
-            uploadSalary(salarySlip);
-            // const res2 = await axios.post('/api/uploads/parents/salaryphotos', salarySlip, {
-            //   headers: {
-            //     'Content-Type': 'multipart/form-data'
-            //   },
-            // });
-          }
-          if(qualiPhoto !== ""){
-            const qualiDoc = new FormData();
-            qualiDoc.append('qualiDoc', qualiPhoto, fileName);
-            uploadQuali(qualiDoc);
-            // const res3 = await axios.post('/api/uploads/parents/qualiDocphotos', qualiDoc, {
-            //   headers: {
-            //     'Content-Type': 'multipart/form-data'
-            //   },
-            // });
-          }
-        } catch (err) {
-          if (err.response.status === 500) {
-            console.log('There was a problem with the server');
-          } else {
-            console.log(err.response.data.msg);
-          }
-        }
-    }
-    
-    changeNewParentPop();
+    const cnicFrontData = await updateCnicFrontImg(e);
+    const cnicBackData = await updateCnicBackImg(e);
+    const salarySlipData = await updateSalarySlip(e);
+    const qualiDocData = await updateQualiDoc(e);
+    const newInfo = {
+      type: formData.type,
+      gender: formData.gender,
+      name: formData.name,
+      cnic: formData.cnic,
+      email: formData.email,
+      mobile: formData.mobile,
+      phone: formData.phone,
+      cnicFront: cnicFrontData,
+      cnicBack: cnicBackData,
+      salarySlip: salarySlipData,
+      qualiDoc: qualiDocData,
+    };
+    console.log(newInfo);
+    newParent(newInfo);
     getParents();
-    console.log(formData);
-  }
+    changeNewParentPop();
+    setAlert("Creating Parent, Please Wait", "success", 20000);
+  };
   //000000000000000000000000000000000000000000000000000000000000000000000000000000000
   useEffect(() => {
     getParents();
   }, []);
+
   return (
     <Fragment>
       <div className="w-full h-full relative">
@@ -139,8 +146,12 @@ function ParentsST({ newParent, updateParent, getParents, parents, setAlert, upl
         <main className="w-full h-180/2 padding-12 sm2:p-5 z-0 relative">
           <div className="w-full h-full relative">
             <div className="w-full h-180/2 centerSom bg-white lg1:bg-transparent">
-              <div
-                className="
+              {parents.loading === true ? (
+                <Spinner />
+              ) : (
+                <div className="w-fll h-full relative">
+                  <div
+                    className="
               grid
               gap-6
               pt-5
@@ -151,10 +162,10 @@ function ParentsST({ newParent, updateParent, getParents, parents, setAlert, upl
               xl:grid-cols-4
               usm:px-1
             "
-              >
-                {/* <!-- Card 1 --> */}
-                <div
-                  className="
+                  >
+                    {/* <!-- Card 1 --> */}
+                    <div
+                      className="
                 flex
                 items-center
                 p-4
@@ -169,23 +180,22 @@ function ParentsST({ newParent, updateParent, getParents, parents, setAlert, upl
                 text-center
                 md3:h-36
               "
-                  onClick={() => changeNewParentPop()}
-                >
-                  <div className="w-20 h-20 centerSom">
-                    <img
-                      src="./img/icons8-add-100.png"
-                      alt="add logo"
-                      className="w-full h-full bg-cover"
-                    />
-                   
-                  </div>
-                </div>
-                {/* <!-- Cards --> */}
-                {parents.parents !== null
-                  ? parents.parents.parents.map((parent) => (
-                      <div
-                        id={parent._id}
-                        className="
+                      onClick={() => changeNewParentPop()}
+                    >
+                      <div className="w-20 h-20 centerSom">
+                        <img
+                          src="./img/icons8-add-100.png"
+                          alt="add logo"
+                          className="w-full h-full bg-cover"
+                        />
+                      </div>
+                    </div>
+                    {/* <!-- Cards --> */}
+                    {parents.parents !== null
+                      ? parents.parents.parents.map((parent) => (
+                          <div
+                            id={parent._id}
+                            className="
                   flex
                   items-center
                   p-4
@@ -196,56 +206,54 @@ function ParentsST({ newParent, updateParent, getParents, parents, setAlert, upl
                   dark:bg-gray-800
                   cursor-pointer
                 "
-
-                        onClick={(e) => changeParentIdToComp(e)}
-                      >
-                        <div className="mr-4 bg-blue-500 text-white rounded-full pointer-events-none">
-                          <img
-                            className="rounded-full w-12 h-12"
-                            src={`./img/parents.png`}
-                            alt=""
-                            loading="lazy"
-                          />
-                        </div>
-                        <div className="pointer-events-none">
-                          <p className="mb-2 text-md font-medium text-gray-900 ">
-                            {parent.name}
-                          </p>
-                          <p className="text-sm font-normal text-gray-800">
-                            CNIC: {parent.cnic}
-                          </p>
-                        </div>
-                      </div>
-                    ))
-                  : " "}
-              </div>
-              {/* start of new parent pop up */}
-              <div
-                className={`h-full w-full bg-white absolute top-0 left-0 ${newParentPop}`}
-              >
-                <form onSubmit={(e) => onSubmitNewParent(e)}>
-                <div className="grid h-auto bg-white rounded-lg shadow-xl w-full">
-                  <div className="flex justify-center">
-                    <div className="flex">
-                      <h1 className="text-gray-600 font-bold pt-5 md:text-2xl text-xl">
-                        New Parent
-                      </h1>
-                    </div>
+                            onClick={(e) => changeParentIdToComp(e)}
+                          >
+                            <div className="mr-4 bg-blue-500 text-white rounded-full pointer-events-none">
+                              <img
+                                className="rounded-full w-12 h-12"
+                                src={`./img/parents.png`}
+                                alt=""
+                                loading="lazy"
+                              />
+                            </div>
+                            <div className="pointer-events-none">
+                              <p className="mb-2 text-md font-medium text-gray-900 ">
+                                {parent.name}
+                              </p>
+                              <p className="text-sm font-normal text-gray-800">
+                                CNIC: {parent.cnic}
+                              </p>
+                            </div>
+                          </div>
+                        ))
+                      : " "}
                   </div>
-                  {/* <!-- 1 row --> */}
-                  <div className="grid grid-cols-1 mx-7">
-                    <label
-                      className="
+                  <div
+                    className={`h-full w-full bg-white absolute top-0 left-0 ${newParentPop}`}
+                  >
+                    <form onSubmit={(e) => onSubmitNewParent(e)}>
+                      <div className="grid h-auto bg-white rounded-lg shadow-xl w-full">
+                        <div className="flex justify-center">
+                          <div className="flex">
+                            <h1 className="text-gray-600 font-bold pt-5 md:text-2xl text-xl">
+                              New Parent
+                            </h1>
+                          </div>
+                        </div>
+                        {/* <!-- 1 row --> */}
+                        <div className="grid grid-cols-1 mx-7">
+                          <label
+                            className="
                   uppercase
                   md:text-sm
                   text-xs text-gray-500 text-light
                   font-semibold
                 "
-                    >
-                      Type
-                    </label>
-                    <select
-                      className="
+                          >
+                            Type
+                          </label>
+                          <select
+                            className="
                   py-2
                   px-3
                   rounded-lg
@@ -255,30 +263,30 @@ function ParentsST({ newParent, updateParent, getParents, parents, setAlert, upl
                   bg-gray-100
                   focus:ring-gray-600 focus:border-transparent
                 "
-                name="type"
-                required
-                value={formData.type}
-                onChange={(e) => onChangeFormData(e)}
-                    >
-                      <option defualt>Select</option>
-                      <option value="parent">Parent</option>
-                      <option value="guardian">Guardian</option>
-                    </select>
-                  </div>
-                  <div className="grid grid-cols-1 md:grid-cols-2 gap-5 md:gap-8 mt-5 mx-7">
-                    <div className="grid grid-cols-1">
-                      <label
-                        className="
+                            name="type"
+                            required
+                            value={formData.type}
+                            onChange={(e) => onChangeFormData(e)}
+                          >
+                            <option defualt>Select</option>
+                            <option value="parent">Parent</option>
+                            <option value="guardian">Guardian</option>
+                          </select>
+                        </div>
+                        <div className="grid grid-cols-1 md:grid-cols-2 gap-5 md:gap-8 mt-5 mx-7">
+                          <div className="grid grid-cols-1">
+                            <label
+                              className="
                     uppercase
                     md:text-sm
                     text-xs text-gray-500 text-light
                     font-semibold
                   "
-                      >
-                        Gender
-                      </label>
-                      <select
-                        className="
+                            >
+                              Gender
+                            </label>
+                            <select
+                              className="
                     py-2
                     px-3
                     rounded-lg
@@ -290,29 +298,29 @@ function ParentsST({ newParent, updateParent, getParents, parents, setAlert, upl
                     focus:ring-gray-600
                     focus:border-transparent
                   "
-                  name="gender"
-                  required
-                value={formData.gender}
-                onChange={(e) => onChangeFormData(e)}
-                      >
-                        <option defualt>Select</option>
-                        <option value="male">Male</option>
-                        <option value="female">Female</option>
-                      </select>
-                    </div>
-                    <div className="grid grid-cols-1">
-                      <label
-                        className="
+                              name="gender"
+                              required
+                              value={formData.gender}
+                              onChange={(e) => onChangeFormData(e)}
+                            >
+                              <option defualt>Select</option>
+                              <option value="male">Male</option>
+                              <option value="female">Female</option>
+                            </select>
+                          </div>
+                          <div className="grid grid-cols-1">
+                            <label
+                              className="
                     uppercase
                     md:text-sm
                     text-xs text-gray-500 text-light
                     font-semibold
                   "
-                      >
-                        Name
-                      </label>
-                      <input
-                        className="
+                            >
+                              Name
+                            </label>
+                            <input
+                              className="
                     py-2
                     px-3
                     rounded-lg
@@ -323,29 +331,29 @@ function ParentsST({ newParent, updateParent, getParents, parents, setAlert, upl
                     focus:ring-gray-600
                     focus:border-transparent
                   "
-                        type="text"
-                        required
-                        placeholder="Name"
-                        name="name"
-                value={formData.name}
-                onChange={(e) => onChangeFormData(e)}
-                      />
-                    </div>
-                  </div>
-                  <div className="grid grid-cols-1 md:grid-cols-2 gap-5 md:gap-8 mt-5 mx-7">
-                    <div className="grid grid-cols-1">
-                      <label
-                        className="
+                              type="text"
+                              required
+                              placeholder="Name"
+                              name="name"
+                              value={formData.name}
+                              onChange={(e) => onChangeFormData(e)}
+                            />
+                          </div>
+                        </div>
+                        <div className="grid grid-cols-1 md:grid-cols-2 gap-5 md:gap-8 mt-5 mx-7">
+                          <div className="grid grid-cols-1">
+                            <label
+                              className="
                     uppercase
                     md:text-sm
                     text-xs text-gray-500 text-light
                     font-semibold
                   "
-                      >
-                        CNIC
-                      </label>
-                      <InputMask
-                        className="
+                            >
+                              CNIC
+                            </label>
+                            <InputMask
+                              className="
                     py-2
                     px-3
                     rounded-lg
@@ -356,28 +364,28 @@ function ParentsST({ newParent, updateParent, getParents, parents, setAlert, upl
                     focus:ring-gray-600
                     focus:border-transparent
                   "
-                  required
-                        type="text"
-                        mask='99999-9999999-9'
-                        placeholder="99999-9999999-9"
-                        name="cnic"
-                value={formData.cnic}
-                onChange={(e) => onChangeFormData(e)}
-                      ></InputMask>
-                    </div>
-                    <div className="grid grid-cols-1">
-                      <label
-                        className="
+                              required
+                              type="text"
+                              mask="99999-9999999-9"
+                              placeholder="99999-9999999-9"
+                              name="cnic"
+                              value={formData.cnic}
+                              onChange={(e) => onChangeFormData(e)}
+                            ></InputMask>
+                          </div>
+                          <div className="grid grid-cols-1">
+                            <label
+                              className="
                     uppercase
                     md:text-sm
                     text-xs text-gray-500 text-light
                     font-semibold
                   "
-                      >
-                        Email
-                      </label>
-                      <input
-                        className="
+                            >
+                              Email
+                            </label>
+                            <input
+                              className="
                     py-2
                     px-3
                     rounded-lg
@@ -388,29 +396,29 @@ function ParentsST({ newParent, updateParent, getParents, parents, setAlert, upl
                     focus:ring-gray-600
                     focus:border-transparent
                   "
-                        type="text"
-                        required
-                        placeholder="Email"
-                        name="email"
-                value={formData.email}
-                onChange={(e) => onChangeFormData(e)}
-                      />
-                    </div>
-                  </div>
-                  <div className="grid grid-cols-1 md:grid-cols-2 gap-5 md:gap-8 mt-5 mx-7">
-                    <div className="grid grid-cols-1">
-                      <label
-                        className="
+                              type="text"
+                              required
+                              placeholder="Email"
+                              name="email"
+                              value={formData.email}
+                              onChange={(e) => onChangeFormData(e)}
+                            />
+                          </div>
+                        </div>
+                        <div className="grid grid-cols-1 md:grid-cols-2 gap-5 md:gap-8 mt-5 mx-7">
+                          <div className="grid grid-cols-1">
+                            <label
+                              className="
                     uppercase
                     md:text-sm
                     text-xs text-gray-500 text-light
                     font-semibold
                   "
-                      >
-                        Mobile
-                      </label>
-                      <InputMask
-                        className="
+                            >
+                              Mobile
+                            </label>
+                            <InputMask
+                              className="
                     py-2
                     px-3
                     rounded-lg
@@ -421,27 +429,27 @@ function ParentsST({ newParent, updateParent, getParents, parents, setAlert, upl
                     focus:ring-gray-600
                     focus:border-transparent
                   "
-                    mask="9999-9999999"
-                        type="text"
-                        placeholder="9999-9999999"
-                        name="mobile"
-                value={formData.mobile}
-                onChange={(e) => onChangeFormData(e)}
-                      ></InputMask>
-                    </div>
-                    <div className="grid grid-cols-1">
-                      <label
-                        className="
+                              mask="9999-9999999"
+                              type="text"
+                              placeholder="9999-9999999"
+                              name="mobile"
+                              value={formData.mobile}
+                              onChange={(e) => onChangeFormData(e)}
+                            ></InputMask>
+                          </div>
+                          <div className="grid grid-cols-1">
+                            <label
+                              className="
                     uppercase
                     md:text-sm
                     text-xs text-gray-500 text-light
                     font-semibold
                   "
-                      >
-                        Phone
-                      </label>
-                      <InputMask
-                        className="
+                            >
+                              Phone
+                            </label>
+                            <InputMask
+                              className="
                     py-2
                     px-3
                     rounded-lg
@@ -452,71 +460,126 @@ function ParentsST({ newParent, updateParent, getParents, parents, setAlert, upl
                     focus:ring-gray-600
                     focus:border-transparent
                   "
-                  mask="9999-9999999"
-                        type="text"
-                        placeholder="9999-9999999"
-                        name="phone"
-                value={formData.phone}
-                onChange={(e) => onChangeFormData(e)}
-                      ></InputMask>
-                    </div>
-                  </div>
-                  <div className="grid grid-cols-1 md:grid-cols-2 gap-5 md:gap-8 mt-5 mx-7">
-                    <div className="grid grid-cols-1">
-                      <label
-                        className="
+                              mask="9999-9999999"
+                              type="text"
+                              placeholder="9999-9999999"
+                              name="phone"
+                              value={formData.phone}
+                              onChange={(e) => onChangeFormData(e)}
+                            ></InputMask>
+                          </div>
+                        </div>
+                        <div className="grid grid-cols-1 md:grid-cols-2 gap-5 md:gap-8 mt-5 mx-7">
+                          <div className="grid grid-cols-1">
+                            <label
+                              className="
                     uppercase
                     md:text-sm
                     text-xs text-gray-500 text-light
                     font-semibold
                     mb-1
                   "
-                      >
-                        CNIC COPY
-                      </label>
-                      <div className="flex items-center justify-left w-full">
-                        
-                        <input type="file" className="" name="cnicCopy" onChange={(e) => onChangeCnic(e)}/>
-                       
-                      </div>
-                    </div>
-                    <div className="grid grid-cols-1">
-                      <label
-                        className="
+                            >
+                              Cnic Front
+                            </label>
+                            <div className="flex items-center justify-left w-full -ml-2">
+                              <FilePond
+                                files={cnicFront}
+                                allowMultiple={false}
+                                allowFileEncode={true}
+                                name="cnicFront"
+                                labelIdle='Drag & Drop your files or <span class="filepond--label-action">Browse</span>'
+                                className="w-full h-auto "
+                                allowImagePreview={false}
+                              >
+                                {" "}
+                              </FilePond>
+                            </div>
+                          </div>
+                          <div className="grid grid-cols-1">
+                            <label
+                              className="
                     uppercase
                     md:text-sm
                     text-xs text-gray-500 text-light
                     font-semibold
                     mb-1
                   "
-                      >
-                        SALARY SLIP
-                      </label>
-                      <div className="flex items-center justify-left w-full">
-                       
-                        <input type="file" className="" name="salarySlip" onChange={(e) => onChangeSalary(e)}/>
-                      </div>
-                    </div>
-                  </div>
-                  <div className="grid grid-cols-1 mt-5 mx-7">
-                    <label
-                      className="
-                  uppercase
-                  md:text-sm
-                  text-xs text-gray-500 text-light
-                  font-semibold
-                  mb-1
-                "
-                    >
-                      QUALIFICATION DOCUMENT
-                    </label>
-                    <div className="flex items-center justify-left w-full">
-                      <input type="file" className="" name="qualiDoc" onChange={(e) => onChangeQuali(e)}/>
-                    </div>
-                  </div>
-                  <div className="flex items-center justify-center md:gap-8 gap-4 pt-5 pb-5">
-                    <button
-                      className="
+                            >
+                              Cnic Back
+                            </label>
+                            <div className="flex items-center justify-left w-full -ml-2 ">
+                              <FilePond
+                                files={cnicBack}
+                                allowMultiple={false}
+                                allowFileEncode={true}
+                                name="cnicBack"
+                                labelIdle='Drag & Drop your files or <span class="filepond--label-action">Browse</span>'
+                                className="w-full h-auto "
+                                allowImagePreview={false}
+                              >
+                                {" "}
+                              </FilePond>
+                            </div>
+                          </div>
+                        </div>
+                        <div className="grid grid-cols-1 md:grid-cols-2 gap-5 md:gap-8 mt-0 mx-7">
+                          <div className="grid grid-cols-1">
+                            <label
+                              className="
+                    uppercase
+                    md:text-sm
+                    text-xs text-gray-500 text-light
+                    font-semibold
+                    mb-1
+                  "
+                            >
+                              Salary Slip
+                            </label>
+                            <div className="flex items-center justify-left w-full -ml-2">
+                              <FilePond
+                                files={salarySlip}
+                                allowMultiple={false}
+                                allowFileEncode={true}
+                                name="salarySlip"
+                                labelIdle='Drag & Drop your files or <span class="filepond--label-action">Browse</span>'
+                                className="w-full h-auto "
+                                allowImagePreview={false}
+                              >
+                                {" "}
+                              </FilePond>
+                            </div>
+                          </div>
+                          <div className="grid grid-cols-1">
+                            <label
+                              className="
+                    uppercase
+                    md:text-sm
+                    text-xs text-gray-500 text-light
+                    font-semibold
+                    mb-1
+                  "
+                            >
+                              Qualification Document
+                            </label>
+                            <div className="flex items-center justify-left w-full -ml-2">
+                              <FilePond
+                                files={qualiDoc}
+                                allowMultiple={false}
+                                allowFileEncode={true}
+                                name="qualiDoc"
+                                labelIdle='Drag & Drop your files or <span class="filepond--label-action">Browse</span>'
+                                className="w-full h-auto "
+                                allowImagePreview={false}
+                              >
+                                {" "}
+                              </FilePond>
+                            </div>
+                          </div>
+                        </div>
+                        <div className="flex items-center justify-center md:gap-8 gap-4 pt-5 pb-5">
+                          <button
+                            className="
                   w-auto
                   bg-red-400
                   hover:bg-red-200
@@ -527,13 +590,13 @@ function ParentsST({ newParent, updateParent, getParents, parents, setAlert, upl
                   px-4
                   py-2
                 "
-                     type="button" 
-                     onClick={() => changeNewParentPop()}
-                    >
-                      Cancel
-                    </button>
-                    <button
-                      className="
+                            type="button"
+                            onClick={() => changeNewParentPop()}
+                          >
+                            Cancel
+                          </button>
+                          <button
+                            className="
                   w-auto
                   bg-green-400
                   hover:bg-green-200
@@ -544,19 +607,24 @@ function ParentsST({ newParent, updateParent, getParents, parents, setAlert, upl
                   px-4
                   py-2
                 "
-                type="submit"
-                    >
-                      Add
-                    </button>
+                            type="submit"
+                          >
+                            Add
+                          </button>
+                        </div>
+                      </div>
+                    </form>
                   </div>
-                </div>
-                </form>
-              </div>
-              {parentPop && <ParentPopUp   changeVisibility={changeParentPop} parentId={parentIdToComp}/>}
-              {/* end of new parent pop up */}
-              {/* parent information */}
-              {/* start of new parent pop up */}
-              {/* <div
+                  {parentPop && (
+                    <ParentPopUp
+                      changeVisibility={changeParentPop}
+                      parentId={parentIdToComp}
+                    />
+                  )}
+                  {/* end of new parent pop up */}
+                  {/* parent information */}
+                  {/* start of new parent pop up */}
+                  {/* <div
                 className={`h-full w-full bg-white absolute top-0 left-0 ${parentPop}`}
               >
                 <form onClick={() => onsubmit()}>
@@ -926,8 +994,8 @@ function ParentsST({ newParent, updateParent, getParents, parents, setAlert, upl
                   </div> 
                   
                 </form>*/}
-                
-              
+                </div>
+              )}
             </div>
           </div>
         </main>
@@ -955,7 +1023,4 @@ export default connect(mapStateToProps, {
   newParent,
   updateParent,
   getParents,
-  uploadCnic,
-  uploadQuali,
-  uploadSalary
 })(ParentsST);

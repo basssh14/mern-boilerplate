@@ -1,20 +1,16 @@
 const mongoose = require("mongoose");
 
-const parentsSchema = new mongoose.Schema({
+const applicantsSchema = new mongoose.Schema({
     user: {
         type: mongoose.Schema.Types.ObjectId,
         ref: "users",
     },
-    parents: [{
-        type: {
+    applicants: [{
+        name: {
             type: String,
             required: true,
         },
         gender: {
-            type: String,
-            require: true,
-        },
-        name: {
             type: String,
             require: true,
         },
@@ -23,9 +19,9 @@ const parentsSchema = new mongoose.Schema({
             require: true,
             unique: true,
         },
-        email: {
+        dateOfBirth: {
             type: String,
-            required: true,
+            require: true,
         },
         mobile: {
             type: String,
@@ -33,6 +29,11 @@ const parentsSchema = new mongoose.Schema({
         },
         phone: {
             type: String,
+            required: true,
+        },
+        email: {
+            type: String,
+            required: true,
         },
         cnicFrontImg: {
             type: Buffer,
@@ -46,16 +47,10 @@ const parentsSchema = new mongoose.Schema({
         cnicBackImgType: {
             type: String,
         },
-        salarySlipImg: {
+        studentImg: {
             type: Buffer,
         },
-        salarySlipImgType: {
-            type: String,
-        },
-        qualiDocImg: {
-            type: Buffer,
-        },
-        qualiDocImgType: {
+        studentImgType: {
             type: String,
         },
         date: {
@@ -63,6 +58,9 @@ const parentsSchema = new mongoose.Schema({
             default: Date.now,
         },
     }, ],
+}, {
+    toObject: { virtuals: true },
+    toJSON: { virtuals: true },
 });
 
-module.exports = parents = mongoose.model("parents", parentsSchema);
+module.exports = applicants = mongoose.model("applicants", applicantsSchema);

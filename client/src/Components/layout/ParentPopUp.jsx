@@ -34,6 +34,8 @@ function ParentPopUp({
   const [cnicBack, setCnicBack] = useState();
   const [salarySlip, setSalarySlip] = useState();
   const [qualiDoc, setQualiDoc] = useState();
+  const [utilityOne, setUtilityOne] = useState();
+  const [utilitySec, setUtilitySec] = useState();
   //display image center of screen
   const [imgTop, setImgTop] = useState(0);
   //take care of the data
@@ -82,6 +84,14 @@ function ParentPopUp({
       clickedParent !== null ? reverseImg(clickedParent.qualiDocImg) : " ",
     qualiDocImgType:
       clickedParent !== null ? clickedParent.qualiDocImgType : " ",
+    utilityOneImg:
+      clickedParent !== null ? reverseImg(clickedParent.utilityOneImg) : " ",
+    utilityOneImgType:
+      clickedParent !== null ? clickedParent.utilityOneImgType : " ",
+    utilitySecImg:
+      clickedParent !== null ? reverseImg(clickedParent.utilitySecImg) : " ",
+    utilitySecImgType:
+      clickedParent !== null ? clickedParent.utilitySecImgType : " ",
   });
   //handle images
   const updateCnicFrontImg = async (e) => {
@@ -102,6 +112,16 @@ function ParentPopUp({
   const updateQualiDoc = async (e) => {
     const form = new FormData(e.target);
     const data = form.get("qualiDoc");
+    return data;
+  };
+  const updateUtilityOne = async (e) => {
+    const form = new FormData(e.target);
+    const data = form.get("utilityOne");
+    return data;
+  };
+  const updateUtilitySec = async (e) => {
+    const form = new FormData(e.target);
+    const data = form.get("utilitySec");
     return data;
   };
   const displayCnicFront = () => {
@@ -152,6 +172,30 @@ function ParentPopUp({
       )}`;
     }
   };
+  const displayUtilityOne = () => {
+    if (
+      clickedParent.utilityOneImg != null &&
+      clickedParent.utilityOneImgType != null
+    ) {
+      return `data: ${
+        clickedParent.utilityOneImgType
+      };charset=utf-8;base64,${Buffer.from(
+        clickedParent.utilityOneImg
+      ).toString("base64")}`;
+    }
+  };
+  const displayUtilitySec = () => {
+    if (
+      clickedParent.utilitySecImg != null &&
+      clickedParent.utilitySecImgType != null
+    ) {
+      return `data: ${
+        clickedParent.utilitySecImgType
+      };charset=utf-8;base64,${Buffer.from(
+        clickedParent.utilitySecImg
+      ).toString("base64")}`;
+    }
+  };
   //-----------------------------------------------
   const onChange = (e) =>
     setFormData({ ...formData, [e.target.name]: e.target.value });
@@ -163,6 +207,8 @@ function ParentPopUp({
   const [imagePopSalary, setImagePopSalary] = useState("hidden");
   const [imagePopQuali, setImagePopQuali] = useState("hidden");
   const [imagePopCnicBack, setImagePopCnicBack] = useState("hidden");
+  const [imageUtilityOne, setImageUtilityOne] = useState("hidden");
+  const [imageUtilitySec, setImageUtilitySec] = useState("hidden");
   const changeImagePopCnic = () => {
     getPosition("something");
     if (imagePopCnic === "hidden") {
@@ -193,6 +239,22 @@ function ParentPopUp({
       setImagePopQuali("hidden");
     }
   };
+  const changeImageUtilityOne = () => {
+    getPosition("something");
+    if (imageUtilityOne === "hidden") {
+      setImageUtilityOne(" ");
+    } else {
+      setImageUtilityOne("hidden");
+    }
+  };
+  const changeImageUtilitySec = () => {
+    getPosition("something");
+    if (imageUtilitySec === "hidden") {
+      setImageUtilitySec(" ");
+    } else {
+      setImageUtilitySec("hidden");
+    }
+  };
 
   const onSubmit = async (e) => {
     e.preventDefault();
@@ -200,6 +262,8 @@ function ParentPopUp({
     const cnicBackData = await updateCnicBackImg(e);
     const salarySlipData = await updateSalarySlip(e);
     const qualiDocData = await updateQualiDoc(e);
+    const utilityOneData = await updateUtilityOne(e);
+    const utilitySecData = await updateUtilitySec(e);
     const newInfo = {
       type: formData.type,
       gender: formData.gender,
@@ -224,6 +288,14 @@ function ParentPopUp({
         qualiDocData.size === 0
           ? { data: formData.qualiDocImg, type: formData.qualiDocImgType }
           : qualiDocData,
+      utilityOne:
+        utilityOneData.size === 0
+          ? { data: formData.utilityOneImg, type: formData.utilityOneImgType }
+          : utilityOneData,
+      utilitySec:
+        utilitySecData.size === 0
+          ? { data: formData.utilitySecImg, type: formData.utilitySecImgType }
+          : utilitySecData,
     };
     updateParent(newInfo, parentId.id);
     getParents();
@@ -644,6 +716,78 @@ function ParentPopUp({
                 </div>
               </div>
             </div>
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-5 md:gap-8 mt-0 mx-7">
+              <div className="grid grid-cols-1">
+                <label
+                  className="
+                    uppercase
+                    md:text-sm
+                    text-xs text-gray-500 text-light
+                    font-semibold
+                    mb-1
+                  "
+                >
+                  Utility Bill 1
+                </label>
+                <div className="flex items-center justify-left w-full">
+                  <button
+                    className="w-auto h-8 px-2 mb-0  bg-gray-100 usm:mb-3 border border-gray-500"
+                    type="button"
+                    onClick={() => changeImageUtilityOne()}
+                  >
+                    Check Image
+                  </button>
+                </div>
+                <div className="flex items-center justify-left w-full -ml-2">
+                  <FilePond
+                    files={utilityOne}
+                    allowMultiple={false}
+                    allowFileEncode={true}
+                    name="utilityOne"
+                    labelIdle='Drag & Drop your files or <span class="filepond--label-action">Browse</span>'
+                    className="w-full h-auto "
+                    allowImagePreview={false}
+                  >
+                    {" "}
+                  </FilePond>
+                </div>
+              </div>
+              <div className="grid grid-cols-1">
+                <label
+                  className="
+                    uppercase
+                    md:text-sm
+                    text-xs text-gray-500 text-light
+                    font-semibold
+                    mb-1
+                  "
+                >
+                  Utility Bill 2
+                </label>
+                <div className="flex items-center justify-left w-full">
+                  <button
+                    className="w-auto h-8 px-2 mb-0  bg-gray-100 usm:mb-3 border border-gray-500"
+                    type="button"
+                    onClick={() => changeImageUtilitySec()}
+                  >
+                    Check Image
+                  </button>
+                </div>
+                <div className="flex items-center justify-left w-full -ml-2">
+                  <FilePond
+                    files={utilitySec}
+                    allowMultiple={false}
+                    allowFileEncode={true}
+                    name="utilitySec"
+                    labelIdle='Drag & Drop your files or <span class="filepond--label-action">Browse</span>'
+                    className="w-full h-auto "
+                    allowImagePreview={false}
+                  >
+                    {" "}
+                  </FilePond>
+                </div>
+              </div>
+            </div>
             <div className="flex items-center justify-center md:gap-8 gap-4 pt-5 pb-5">
               <button
                 className="
@@ -681,7 +825,7 @@ function ParentPopUp({
             </div>
           </div>
           {/* end of parent information */}
-          {/* hangle images */}
+          {/* handle images */}
           <div
             style={{ top: imgTop }}
             className={`w-1/5 h-1/2 bg-white fixed centerHorizontal usm:h-1/3 border ${imagePopCnic}`}
@@ -748,6 +892,42 @@ function ParentPopUp({
               <button
                 className="w-10 h-10 absolute top-0 right-0 text-4xl text-gray-400"
                 onClick={() => changeImagePopQuali()}
+                type="button"
+              >
+                X
+              </button>
+            </div>
+          </div>
+          <div
+            style={{ top: imgTop }}
+            className={`w-1/5 h-1/2 bg-white fixed centerHorizontal usm:h-1/3 border ${imageUtilityOne}`}
+          >
+            <div className="w-full h-full relative">
+              <img
+                src={clickedParent !== null ? displayUtilityOne() : " "}
+                className="w-full h-full bg-cover"
+              />
+              <button
+                className="w-10 h-10 absolute top-0 right-0 text-4xl text-gray-400"
+                onClick={() => changeImageUtilityOne()}
+                type="button"
+              >
+                X
+              </button>
+            </div>
+          </div>
+          <div
+            style={{ top: imgTop }}
+            className={`w-1/5 h-1/2 bg-white fixed centerHorizontal usm:h-1/3 border ${imageUtilitySec}`}
+          >
+            <div className="w-full h-full relative">
+              <img
+                src={clickedParent !== null ? displayUtilitySec() : " "}
+                className="w-full h-full bg-cover"
+              />
+              <button
+                className="w-10 h-10 absolute top-0 right-0 text-4xl text-gray-400"
+                onClick={() => changeImageUtilitySec()}
                 type="button"
               >
                 X

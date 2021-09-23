@@ -42,12 +42,20 @@ function ScholarshipPopUp({
   const [adminReceipt, setAdminReceipt] = useState();
   const [cardId, setCardId] = useState();
   const [reportImg, setReportImg] = useState();
+  const [reportImgData, setReportImgData] = useState();
   //---------------------------------
   //display image center of screen
   const [imgTop, setImgTop] = useState(0);
   //hide/unhide images boxes
   const [adminReceiptBox, setAdminReceiptBox] = useState("hidden");
   const [cardIdBox, setCardIdBox] = useState("hidden");
+  const [reportImgBox, setReportImgBox] = useState("hidden");
+
+  //hide/unhide reports
+  const [newRepo, setNewRepo] = useState("hidden");
+  const changeNewRepo = () => {
+    newRepo === "hidden" ? setNewRepo(" ") : setNewRepo("hidden");
+  };
   //reverse the image
   const reverseImg = (img) => {
     return Buffer.from(img).toString("base64");
@@ -162,6 +170,20 @@ function ScholarshipPopUp({
       ).toString("base64")}`;
     }
   };
+  const displayReportImg = (number) => {
+    if (
+      clickedScholarship.reports[number].examImg != null &&
+      clickedScholarship.reports[number].examImgType != null
+    ) {
+      setReportImgData(
+        `data: ${
+          clickedScholarship.reports[number].examImgType
+        };charset=utf-8;base64,${Buffer.from(
+          clickedScholarship.reports[number].examImg
+        ).toString("base64")}`
+      );
+    }
+  };
   const displayAdminReceipt = () => {
     if (
       clickedScholarship.admissionReceiptImg != null &&
@@ -173,6 +195,13 @@ function ScholarshipPopUp({
         clickedScholarship.admissionReceiptImg
       ).toString("base64")}`;
     }
+  };
+  //----------------------------------------------------
+  const changeReportImgBox = (number) => {
+    displayReportImg(number);
+    reportImgBox === "hidden"
+      ? setReportImgBox(" ")
+      : setReportImgBox("hidden");
   };
   //----------------------------------------------------
   const onChangeFormData = (e) =>
@@ -251,205 +280,59 @@ function ScholarshipPopUp({
         </div>
         <form onSubmit={(e) => onSubmitReport(e)}>
           {/* <!-- academic records --> */}
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-5 md:gap-8 mt-5 mx-7">
-            <div className="grid grid-cols-1">
-              <label
+          <hr className="mt-5 border" />
+          <table className="w-full h-auto relative mt-5">
+            <thead className="w-full">
+              <tr
                 className="
-                    uppercase
-                    md:text-sm
-                    text-xs text-gray-500 text-light
-                    font-semibold
-                  "
+                      text-md
+                      h-auto
+                      font-semibold
+                      tracking-wide
+                      text-left text-gray-900
+                      bg-gray-100
+                      uppercase
+                      border-b border-gray-600
+                    "
               >
-                Which level/Grade/Semester you recently passed
-              </label>
-              <select
-                className="
-                    py-2
-                    px-3
-                    rounded-lg
-                    border border-gray-300
-                    mt-1
-                    bg-gray-100
-                    focus:outline-none
-                    focus:ring-1
-                    focus:ring-gray-600
-                    focus:border-transparent
-                  "
-                name="level"
-                required
-                value={reportData.level}
-                onChange={(e) => onChangeReportData(e)}
-              >
-                <option defualt>Select</option>
-                <option value="Pre-School">Pre-School</option>
-                <option value="School">School</option>
-                <option value="High-School">High School</option>
-                <option value="College">College</option>
-                <option value="University">University</option>
-              </select>
-            </div>
-            <div className="grid grid-cols-1">
-              <label
-                className="
-                        uppercase
-                        md:text-sm
-                        text-xs text-gray-500 text-light
-                        font-semibold
-                      "
-              >
-                % of Marks,GPA,GRADE
-              </label>
-              <input
-                className="
-                        py-2
-                        px-3
-                        rounded-lg
-                        border border-gray-300
-                        mt-1
-                        focus:outline-none
-                        focus:ring-1
-                        focus:ring-gray-600
-                        focus:border-transparent
-                      "
-                type="text"
-                name="grades"
-                required
-                value={reportData.grades}
-                onChange={(e) => onChangeReportData(e)}
-              />
-            </div>
-          </div>
-          <div
-            className="
-                    grid grid-cols-1
-                    md:grid-cols-2
-                    gap-5
-                    md:gap-8
-                    mt-5
-                    mx-7
-                  "
-          >
-            <div className="grid grid-cols-1">
-              <label
-                className="
-                        uppercase
-                        md:text-sm
-                        text-xs text-gray-500 text-light
-                        font-semibold
-                      "
-              >
-                Date of exam
-              </label>
-              <input
-                className=" py-2 px-3 rounded-lg border border-gray-300
-                    mt-1 focus:outline-none focus:ring-1 focus:ring-gray-600
-                    focus:border-transparent "
-                type="date"
-                name="dateOfExam"
-                required
-                value={reportData.dateOfExam}
-                onChange={(e) => onChangeReportData(e)}
-              />
-            </div>
-            <div className="grid grid-cols-1">
-              <label
-                className="
-                        uppercase
-                        md:text-sm
-                        text-xs text-gray-500 text-light
-                        font-semibold
-                      "
-              >
-                Date of result
-              </label>
-              <input
-                className="
-                        py-2
-                        px-3
-                        rounded-lg
-                        border border-gray-300
-                        mt-1
-                        focus:outline-none
-                        focus:ring-1
-                        focus:ring-gray-600
-                        focus:border-transparent
-                      "
-                type="date"
-                name="dateOfResult"
-                required
-                value={reportData.dateOfResult}
-                onChange={(e) => onChangeReportData(e)}
-              />
-            </div>
-          </div>
-          <div
-            className="
-                    grid grid-cols-1
-                    md:grid-cols-2
-                    gap-5
-                    md:gap-8
-                    mt-5
-                    mx-7
-                  "
-          >
-            <div className="grid grid-cols-1">
-              <label
-                className="
-                        uppercase
-                        md:text-sm
-                        text-xs text-gray-500 text-light
-                        font-semibold
-                      "
-              >
-                Results recived on:
-              </label>
-              <input
-                className="
-                        py-2
-                        px-3
-                        rounded-lg
-                        border border-gray-300
-                        mt-1
-                        focus:outline-none
-                        focus:ring-1
-                        focus:ring-gray-600
-                        focus:border-transparent
-                      "
-                type="text"
-                name="resultReceivedOn"
-                required
-                value={reportData.resultReceivedOn}
-                onChange={(e) => onChangeReportData(e)}
-              />
-            </div>
-            <div className="grid grid-cols-1">
-              <label
-                className="
-                        uppercase
-                        md:text-sm
-                        text-xs text-gray-500 text-light
-                        font-semibold
-                        mb-1
-                      "
-              >
-                Exam result sheet
-              </label>
-              <div className="flex items-center justify-left w-full">
-                <FilePond
-                  files={reportImg}
-                  allowMultiple={false}
-                  allowFileEncode={true}
-                  name="reportImg"
-                  labelIdle='Drag & Drop your files or <span class="filepond--label-action">Browse</span>'
-                  className="w-full h-auto "
-                  allowImagePreview={false}
-                >
-                  {" "}
-                </FilePond>
-              </div>
-            </div>
-          </div>
+                <th className="px-4 py-3">Report</th>
+                <th className="px-4 py-3">GPA</th>
+                <th className="px-4 py-3">Exam Result</th>
+                <th className="px-4 py-3">Report File</th>
+              </tr>
+            </thead>
+            <tbody className="bg-white">
+              {clickedScholarship !== null
+                ? clickedScholarship.reports.map((report, number) => (
+                    <tr className="text-gray-700">
+                      <td className="px-4 py-3 border">
+                        <div className="flex items-center text-sm">
+                          <div>
+                            <p className="font-semibold text-black">
+                              Report {number + 1}
+                            </p>
+                          </div>
+                        </div>
+                      </td>
+                      <td className="px-4 py-3 text-ms font-semibold border">
+                        {report.grades}
+                      </td>
+                      <td className="px-4 py-3 border text-md font-semibold">
+                        {report.dateOfExam}
+                      </td>
+                      <td
+                        className="px-4 py-3 text-sm border cursor-pointer"
+                        onClick={() => {
+                          changeReportImgBox(number);
+                        }}
+                      >
+                        File
+                      </td>
+                    </tr>
+                  ))
+                : ""}
+            </tbody>
+          </table>
           <div
             className="
                     flex
@@ -474,11 +357,253 @@ function ScholarshipPopUp({
                       px-4
                       py-2
                     "
-              type="submit"
+              type="button"
+              onClick={() => {
+                changeNewRepo();
+              }}
             >
               UPDATE REPORT
             </button>
           </div>
+          <div className={`${newRepo}`}>
+            <div
+              className={`grid grid-cols-1 md:grid-cols-2 gap-5 md:gap-8 mt-5 mx-7 `}
+            >
+              <div className="grid grid-cols-1">
+                <label
+                  className="
+                    uppercase
+                    md:text-sm
+                    text-xs text-gray-500 text-light
+                    font-semibold
+                  "
+                >
+                  Which level/Grade/Semester you recently passed
+                </label>
+                <select
+                  className="
+                    py-2
+                    px-3
+                    rounded-lg
+                    border border-gray-300
+                    mt-1
+                    bg-gray-100
+                    focus:outline-none
+                    focus:ring-1
+                    focus:ring-gray-600
+                    focus:border-transparent
+                  "
+                  name="level"
+                  required
+                  value={reportData.level}
+                  onChange={(e) => onChangeReportData(e)}
+                >
+                  <option defualt>Select</option>
+                  <option value="Pre-School">Pre-School</option>
+                  <option value="School">School</option>
+                  <option value="High-School">High School</option>
+                  <option value="College">College</option>
+                  <option value="University">University</option>
+                </select>
+              </div>
+              <div className="grid grid-cols-1">
+                <label
+                  className="
+                        uppercase
+                        md:text-sm
+                        text-xs text-gray-500 text-light
+                        font-semibold
+                      "
+                >
+                  % of Marks,GPA,GRADE
+                </label>
+                <input
+                  className="
+                        py-2
+                        px-3
+                        rounded-lg
+                        border border-gray-300
+                        mt-1
+                        focus:outline-none
+                        focus:ring-1
+                        focus:ring-gray-600
+                        focus:border-transparent
+                      "
+                  type="text"
+                  name="grades"
+                  required
+                  value={reportData.grades}
+                  onChange={(e) => onChangeReportData(e)}
+                />
+              </div>
+            </div>
+            <div
+              className="
+                    grid grid-cols-1
+                    md:grid-cols-2
+                    gap-5
+                    md:gap-8
+                    mt-5
+                    mx-7
+                  "
+            >
+              <div className="grid grid-cols-1">
+                <label
+                  className="
+                        uppercase
+                        md:text-sm
+                        text-xs text-gray-500 text-light
+                        font-semibold
+                      "
+                >
+                  Date of exam
+                </label>
+                <input
+                  className=" py-2 px-3 rounded-lg border border-gray-300
+                    mt-1 focus:outline-none focus:ring-1 focus:ring-gray-600
+                    focus:border-transparent "
+                  type="date"
+                  name="dateOfExam"
+                  required
+                  value={reportData.dateOfExam}
+                  onChange={(e) => onChangeReportData(e)}
+                />
+              </div>
+              <div className="grid grid-cols-1">
+                <label
+                  className="
+                        uppercase
+                        md:text-sm
+                        text-xs text-gray-500 text-light
+                        font-semibold
+                      "
+                >
+                  Date of result
+                </label>
+                <input
+                  className="
+                        py-2
+                        px-3
+                        rounded-lg
+                        border border-gray-300
+                        mt-1
+                        focus:outline-none
+                        focus:ring-1
+                        focus:ring-gray-600
+                        focus:border-transparent
+                      "
+                  type="date"
+                  name="dateOfResult"
+                  required
+                  value={reportData.dateOfResult}
+                  onChange={(e) => onChangeReportData(e)}
+                />
+              </div>
+            </div>
+            <div
+              className="
+                    grid grid-cols-1
+                    md:grid-cols-2
+                    gap-5
+                    md:gap-8
+                    mt-5
+                    mx-7
+                  "
+            >
+              <div className="grid grid-cols-1">
+                <label
+                  className="
+                        uppercase
+                        md:text-sm
+                        text-xs text-gray-500 text-light
+                        font-semibold
+                      "
+                >
+                  Results recived on:
+                </label>
+                <input
+                  className="
+                        py-2
+                        px-3
+                        rounded-lg
+                        border border-gray-300
+                        mt-1
+                        focus:outline-none
+                        focus:ring-1
+                        focus:ring-gray-600
+                        focus:border-transparent
+                      "
+                  type="text"
+                  name="resultReceivedOn"
+                  required
+                  value={reportData.resultReceivedOn}
+                  onChange={(e) => onChangeReportData(e)}
+                />
+              </div>
+              <div className="grid grid-cols-1">
+                <label
+                  className="
+                        uppercase
+                        md:text-sm
+                        text-xs text-gray-500 text-light
+                        font-semibold
+                        mb-1
+                      "
+                >
+                  Exam result sheet
+                </label>
+                <div className="flex items-center justify-left w-full">
+                  <FilePond
+                    files={reportImg}
+                    allowMultiple={false}
+                    allowFileEncode={true}
+                    name="reportImg"
+                    labelIdle='Drag & Drop your files or <span class="filepond--label-action">Browse</span>'
+                    className="w-full h-auto "
+                    allowImagePreview={false}
+                  >
+                    {" "}
+                  </FilePond>
+                </div>
+              </div>
+            </div>
+            <div className="flex items-center justify-center md:gap-8 gap-4 pt-5 pb-5">
+              <button
+                className="
+                  w-auto
+                  bg-red-400
+                  hover:bg-red-200
+                  rounded-lg
+                  shadow-xl
+                  font-medium
+                  text-white
+                  px-4
+                  py-2
+                "
+                type="button"
+                onClick={() => changeNewRepo()}
+              >
+                Cancel
+              </button>
+              <button
+                className="
+                  w-auto
+                  bg-green-400
+                  hover:bg-green-200
+                  rounded-lg
+                  shadow-xl
+                  font-medium
+                  text-white
+                  px-4
+                  py-2
+                "
+                type="submit"
+              >
+                UPLOAD
+              </button>
+            </div>
+          </div>
+
           <hr className="mt-5 border" />
         </form>
         <form onSubmit={(e) => onSubmitForm(e)}>
@@ -563,7 +688,7 @@ function ScholarshipPopUp({
                   font-semibold
                 "
             >
-              Applicant
+              Select Applicant From List
             </label>
             <select
               className="
@@ -618,7 +743,7 @@ function ScholarshipPopUp({
                 "
                 type="button"
               >
-                Create Applicant
+                Create New Applicant
               </button>
             </Link>
           </div>
@@ -917,7 +1042,7 @@ function ScholarshipPopUp({
                     font-semibold
                   "
               >
-                Guardian/Parent
+                Select Guardian/Parent From List
               </label>
               <select
                 className="
@@ -1011,7 +1136,7 @@ function ScholarshipPopUp({
                 "
                 type="button"
               >
-                Add Parent/Guardian
+                Create New Parent/Guardian
               </button>
             </Link>
           </div>
@@ -1672,7 +1797,7 @@ function ScholarshipPopUp({
                   font-semibold
                 "
             >
-              Bank Account
+              Select Bank Account from list
             </label>
             <select
               className="
@@ -1726,7 +1851,7 @@ function ScholarshipPopUp({
                   py-2
                 "
               >
-                Create Bank Account
+                Create New Bank Account
               </button>
             </Link>
           </div>
@@ -1791,6 +1916,25 @@ function ScholarshipPopUp({
         </div>
 
         <div
+          className={`w-2/3 h-1/2 fixed bg-white centerHorizontal usm:h-1/3 border ${reportImgBox}`}
+          style={{ top: imgTop }}
+        >
+          <div className="w-full h-full relative">
+            <img
+              src={clickedScholarship !== null ? reportImgData : " "}
+              className="w-full h-full bg-cover"
+              alt="cnic Back "
+            />
+            <button
+              className="w-10 h-10 absolute top-0 right-0 text-4xl text-gray-400"
+              onClick={() => changeReportImgBox(0)}
+              type="button"
+            >
+              X
+            </button>
+          </div>
+        </div>
+        <div
           className={`w-2/3 h-1/2 bg-white fixed centerHorizontal usm:h-1/3 border ${adminReceiptBox}`}
           style={{ top: imgTop }}
         >
@@ -1809,6 +1953,7 @@ function ScholarshipPopUp({
             </button>
           </div>
         </div>
+
         {/* End of images pop ups */}
       </div>
     </div>

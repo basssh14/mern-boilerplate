@@ -55,7 +55,6 @@ router.post(
             check("accNumber", "Please enter a valid account number")
             .not()
             .isEmpty()
-            .isLength({ max: 19, min: 19 })
             .trim()
             .escape(),
             check("accIban", "Please enter a valid account iban")
@@ -149,7 +148,6 @@ router.post(
             check("accNumber", "Please enter a valid account number")
             .not()
             .isEmpty()
-            .isLength({ max: 19, min: 19 })
             .trim()
             .escape(),
             check("accIban", "Please enter a valid account iban")

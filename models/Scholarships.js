@@ -61,13 +61,13 @@ const scholarshipsSchema = new mongoose.Schema({
             type: Buffer,
         },
         idCardImgType: {
-            type: Buffer,
+            type: String,
         },
         admissionReceiptImg: {
             type: Buffer,
         },
         admissionReceiptImgType: {
-            type: Buffer,
+            type: String,
         },
         requiredFees: {
             type: String,

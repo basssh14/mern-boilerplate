@@ -69,6 +69,8 @@ router.post(
             check("qualiDoc", "Please upload qualification document image")
             .not()
             .isEmpty(),
+            check("utilityOne", "Please upload utility image").not().isEmpty(),
+            check("utilitySec", "Please upload utility image").not().isEmpty(),
         ],
     ],
     async(req, res) => {
@@ -90,6 +92,8 @@ router.post(
             cnicBack,
             salarySlip,
             qualiDoc,
+            utilityOne,
+            utilitySec,
         } = req.body;
         const userId = req.user.id;
         const newParent = {
@@ -108,6 +112,10 @@ router.post(
             salarySlipImgType: "",
             qualiDocImg: "",
             qualiDocImgType: "",
+            utilityOneImg: "",
+            utilityOneImgType: "",
+            utilitySecImgType: "",
+            utilitySecImg: "",
         };
         if (cnicFront !== null) {
             const newImg = JSON.parse(cnicFront);
@@ -135,6 +143,20 @@ router.post(
             if (newImg !== null) {
                 newParent.qualiDocImg = new Buffer.from(newImg.data, "base64");
                 newParent.qualiDocImgType = newImg.type;
+            }
+        }
+        if (utilityOne !== null) {
+            const newImg = JSON.parse(utilityOne);
+            if (newImg !== null) {
+                newParent.utilityOneImg = new Buffer.from(newImg.data, "base64");
+                newParent.utilityOneImgType = newImg.type;
+            }
+        }
+        if (utilitySec !== null) {
+            const newImg = JSON.parse(utilitySec);
+            if (newImg !== null) {
+                newParent.utilitySecImg = new Buffer.from(newImg.data, "base64");
+                newParent.utilitySecImgType = newImg.type;
             }
         }
         let parentsUser = await Parents.findOne({ user: userId });
@@ -207,6 +229,8 @@ router.post(
             check("qualiDoc", "Please upload qualification document image")
             .not()
             .isEmpty(),
+            check("utilityOne", "Please upload utility image").not().isEmpty(),
+            check("utilitySec", "Please upload utility image").not().isEmpty(),
         ],
     ],
     async(req, res) => {
@@ -226,6 +250,8 @@ router.post(
             cnicBack,
             salarySlip,
             qualiDoc,
+            utilityOne,
+            utilitySec,
         } = req.body;
         const userId = req.user.id;
         const newParent = {
@@ -244,6 +270,10 @@ router.post(
             salarySlipImgType: "",
             qualiDocImg: "",
             qualiDocImgType: "",
+            utilityOneImg: "",
+            utilityOneImgType: "",
+            utilitySecImg: "",
+            utilitySecImgType: "",
         };
         if (cnicFront !== null) {
             const newImg =
@@ -275,6 +305,22 @@ router.post(
             if (newImg !== null) {
                 newParent.qualiDocImg = new Buffer.from(newImg.data, "base64");
                 newParent.qualiDocImgType = newImg.type;
+            }
+        }
+        if (utilityOne !== null) {
+            const newImg =
+                typeof utilityOne === "string" ? JSON.parse(utilityOne) : utilityOne;
+            if (newImg !== null) {
+                newParent.utilityOneImg = new Buffer.from(newImg.data, "base64");
+                newParent.utilityOneImgType = newImg.type;
+            }
+        }
+        if (utilitySec !== null) {
+            const newImg =
+                typeof utilitySec === "string" ? JSON.parse(utilitySec) : utilitySec;
+            if (newImg !== null) {
+                newParent.utilitySecImg = new Buffer.from(newImg.data, "base64");
+                newParent.utilitySecImgType = newImg.type;
             }
         }
         try {

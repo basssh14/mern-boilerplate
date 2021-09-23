@@ -58,6 +58,18 @@ const parentsSchema = new mongoose.Schema({
         qualiDocImgType: {
             type: String,
         },
+        utilityOneImg: {
+            type: Buffer,
+        },
+        utilityOneImgType: {
+            type: String,
+        },
+        utilitySecImgType: {
+            type: String,
+        },
+        utilitySecImg: {
+            type: Buffer,
+        },
         date: {
             type: Date,
             default: Date.now,

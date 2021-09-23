@@ -167,6 +167,54 @@ function BankPopUp({
                   <option value="Soneri Mustaqeem Islamic Bank.">
                     Soneri Mustaqeem Islamic Bank.
                   </option>
+                  <option value="Al Baraka Bank Pakistan Limited">
+                    Al Baraka Bank Pakistan Limited
+                  </option>
+                  <option value="Allied Bank Limited">
+                    Allied Bank Limited
+                  </option>
+                  <option value="Askari Bank">Askari Bank</option>
+                  <option value="Bank Alfalah Limited">
+                    Bank Alfalah Limited
+                  </option>
+                  <option value="Bank Al-Habib Limited">
+                    Bank Al-Habib Limited
+                  </option>
+                  <option value="BankIslami Pakistan Limited">
+                    BankIslami Pakistan Limited
+                  </option>
+                  <option value="Citi Bank">Citi Bank</option>
+                  <option value="Deutsche Bank A.G">Deutsche Bank A.G</option>
+                  <option value="Dubai Islamic Bank Pakistan Limited">
+                    Dubai Islamic Bank Pakistan Limited
+                  </option>
+                  <option value="Faysal Bank Limited">
+                    Faysal Bank Limited
+                  </option>
+                  <option value="First Women Bank Limited">
+                    First Women Bank Limited
+                  </option>
+                  <option value="Habib Bank Limited">Habib Bank Limited</option>
+                  <option value="Standard Chartered Bank (Pakistan) Limited">
+                    Standard Chartered Bank Pakistan Limited
+                  </option>
+                  <option value="Habib Metropolitan Bank Limited">
+                    Habib Metropolitan Bank Limited
+                  </option>
+                  <option value="Industrial and Commercial Bank of China">
+                    Industrial and Commercial Bank of China
+                  </option>
+                  <option value="Industrial Development Bank of Pakistan">
+                    Industrial Development Bank of Pakistan
+                  </option>
+                  <option value="JS Bank Limited">JS Bank Limited</option>
+                  <option value="MCB Bank Limited">MCB Bank Limited</option>
+                  <option value="MCB Islamic Bank Limited">
+                    MCB Islamic Bank Limited
+                  </option>
+                  <option value="National Bank of Pakistan">
+                    National Bank of Pakistan
+                  </option>
                 </select>
               </div>
               <div className="grid grid-cols-1">
@@ -243,7 +291,7 @@ function BankPopUp({
               >
                 Account Number
               </label>
-              <InputMask
+              <input
                 className="
                       py-2
                       px-3
@@ -256,13 +304,12 @@ function BankPopUp({
                       focus:border-transparent
                     "
                 type="text"
-                mask="9999-9999-9999-9999"
                 placeholder="9999-9999-9999-9999"
                 name="accNumber"
                 required
                 value={formData.accNumber}
                 onChange={(e) => onChangeFormData(e)}
-              ></InputMask>
+              ></input>
             </div>
             <div className="grid grid-cols-1 mt-5 mx-7">
               <label
@@ -288,7 +335,7 @@ function BankPopUp({
                       focus:border-transparent
                     "
                 type="text"
-                mask="9999-9999-9999-9999-9999-9999"
+                mask="aa99-aaaa-9999-9999-9999-9999"
                 placeholder="9999-9999-9999-9999-9999-9999"
                 name="accIban"
                 required

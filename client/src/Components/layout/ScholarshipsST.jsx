@@ -314,7 +314,7 @@ function ScholarshipsST({
                   font-semibold
                 "
                           >
-                            Applicant
+                            Select Applicant From List
                           </label>
                           <select
                             className="
@@ -373,7 +373,7 @@ function ScholarshipsST({
                 "
                               type="button"
                             >
-                              Create Applicant
+                              Create New Applicant
                             </button>
                           </Link>
                         </div>
@@ -389,7 +389,7 @@ function ScholarshipsST({
                     font-semibold
                   "
                             >
-                              Guardian/Parent
+                              Select Guardian/Parent From List
                             </label>
                             <select
                               className="
@@ -429,7 +429,7 @@ function ScholarshipsST({
                     font-semibold
                   "
                             >
-                              Guardian/Parent
+                              Select Guardian/Parent From List
                             </label>
                             <select
                               className="
@@ -489,7 +489,7 @@ function ScholarshipsST({
                 "
                               type="button"
                             >
-                              Add Parent/Guardian
+                              Create New Parent/Guardian
                             </button>
                           </Link>
                         </div>
@@ -504,7 +504,7 @@ function ScholarshipsST({
                   font-semibold
                 "
                           >
-                            Bank Account
+                            Select Bank Account From List
                           </label>
                           <select
                             className="
@@ -561,7 +561,7 @@ function ScholarshipsST({
                   py-2
                 "
                             >
-                              Create Bank Account
+                              Create New Bank Account
                             </button>
                           </Link>
                         </div>

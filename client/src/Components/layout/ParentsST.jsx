@@ -36,6 +36,7 @@ function ParentsST({
   const [qualiDoc, setQualiDoc] = useState();
   const [utilityOne, setUtilityOne] = useState();
   const [utilitySec, setUtilitySec] = useState();
+  const [formB, setFormB] = useState();
   //take care of the data
   const [userParents, setUserParents] = useState([]);
   const [startParent, setStartParent] = useState();
@@ -92,6 +93,11 @@ function ParentsST({
     const data = form.get("utilitySec");
     return data;
   };
+  const updateFormB = async (e) => {
+    const form = new FormData(e.target);
+    const data = form.get("formB");
+    return data;
+  };
   //--------------------
   console.log(parentIdToComp.id);
   //0000000000000000000000000000000000000000000000000000000000000000000000000000
@@ -129,6 +135,7 @@ function ParentsST({
     const qualiDocData = await updateQualiDoc(e);
     const utilityOneData = await updateUtilityOne(e);
     const utilitySecData = await updateUtilitySec(e);
+    const formBData = await updateFormB(e);
     const newInfo = {
       type: formData.type,
       gender: formData.gender,
@@ -143,6 +150,7 @@ function ParentsST({
       qualiDoc: qualiDocData,
       utilityOne: utilityOneData,
       utilitySec: utilitySecData,
+      formB: formBData,
     };
     newParent(newInfo);
     getParents();
@@ -645,6 +653,35 @@ function ParentsST({
                               </FilePond>
                             </div>
                           </div>
+                        </div>
+                        <div className="grid grid-cols-1 md:grid-cols-2 gap-5 md:gap-8 mt-0 mx-7">
+                          <div className="grid grid-cols-1">
+                            <label
+                              className="
+                    uppercase
+                    md:text-sm
+                    text-xs text-gray-500 text-light
+                    font-semibold
+                    mb-1
+                  "
+                            >
+                              Form-B/FRC
+                            </label>
+                            <div className="flex items-center justify-left w-full -ml-2">
+                              <FilePond
+                                files={formB}
+                                allowMultiple={false}
+                                allowFileEncode={true}
+                                name="formB"
+                                labelIdle='Drag & Drop your files or <span class="filepond--label-action">Browse</span>'
+                                className="w-full h-auto "
+                                allowImagePreview={false}
+                              >
+                                {" "}
+                              </FilePond>
+                            </div>
+                          </div>
+                          
                         </div>
                         <div className="flex items-center justify-center md:gap-8 gap-4 pt-5 pb-5">
                           <button

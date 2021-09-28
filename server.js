@@ -17,8 +17,8 @@ app.use(
 
 //add other middleware
 app.use(cors());
-app.use(bodyParser.json({ limit: "5mb" }));
-app.use(bodyParser.urlencoded({ limit: "5mb", extended: true }));
+app.use(bodyParser.json({ limit: "50mb" }));
+app.use(bodyParser.urlencoded({ limit: "50mb", extended: true }));
 app.use(morgan("dev"));
 app.use(express.static(__dirname + "/public"));
 //passport stuff
@@ -50,6 +50,8 @@ app.use("/api/bankAccount", require("./routes/api/bankAccount"));
 app.use("/api/uploads", require("./routes/api/uploads"));
 app.use("/api/applicants", require("./routes/api/applicants"));
 app.use("/api/scholarships", require("./routes/api/scholarships"));
+//admin stuff
+app.use("/api/applicantsAdmin", require("./routes/api/applicantsAdmin"));
 
 //heroku stuff
 //Serve static assets into production

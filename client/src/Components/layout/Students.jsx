@@ -1,10 +1,14 @@
-import React, { Fragment, useState } from "react";
+import React, { Fragment, useState, useEffect } from "react";
+import PropTypes from "prop-types";
 //import PropTypes from "prop-types";
 //import Spinner from "./Spinner";
 import Header from "../individual/Header";
 import "@material-tailwind/react/Dropdown";
+import { connect } from "react-redux";
+import { getStudents } from "../../actions/students";
+import Spinner from "./Spinner";
 
-function Students() {
+function Students({ getStudents, students }) {
   const [paymentsPop, setPaymentsPop] = useState("hidden");
   const [reportsPop, setReportsPop] = useState("hidden");
   const [studentInfoPop, setStudentInfoPop] = useState("hidden");
@@ -13,6 +17,11 @@ function Students() {
   const [prPhoto, setPrPhoto] = useState("hidden");
   const [idPhoto, setIdPhoto] = useState("hidden");
   const [bkPhoto, setBkPhoto] = useState("hidden");
+  const [imgTop, setImgTop] = useState(0);
+  //getElementPosition
+  const getPosition = (buttonName) => {
+    setImgTop(window.scrollY + 100);
+  };
   const changeCnPhoto = () => {
     cnPhoto === "hidden" ? setCnPhoto(" ") : setCnPhoto("hidden");
   };
@@ -29,6 +38,7 @@ function Students() {
     bkPhoto === "hidden" ? setBkPhoto(" ") : setBkPhoto("hidden");
   };
   const changePaymentsPop = () => {
+    getPosition("something");
     if (paymentsPop === "hidden") {
       setReportsPop("hidden");
       setPaymentsPop(" ");
@@ -38,6 +48,7 @@ function Students() {
     //paymentsPop === "hidden" ? setPaymentsPop(" ") : setPaymentsPop("hidden");
   };
   const changeReportsPop = () => {
+    getPosition("something");
     if (reportsPop === "hidden") {
       setPaymentsPop("hidden");
       setReportsPop(" ");
@@ -47,12 +58,16 @@ function Students() {
     //paymentsPop === "hidden" ? setPaymentsPop(" ") : setPaymentsPop("hidden");
   };
   const changeStudentInfoPop = () => {
+    getPosition("something");
     if (studentInfoPop === "hidden") {
       setStudentInfoPop(" ");
     } else {
       setStudentInfoPop("hidden");
     }
   };
+  useEffect(() => {
+    getStudents();
+  }, []);
   return (
     <Fragment>
       <div className="w-full h-full relative">
@@ -174,48 +189,55 @@ function Students() {
                       </tr>
                     </thead>
                     <tbody className="w-full bg-white">
-                      <tr className="text-gray-700">
-                        <td className="px-4 py-3 border">
-                          <div className="flex items-center text-sm">
-                            <div className="relative w-8 h-8 mr-3 rounded-full md:block">
-                              <img
-                                className="object-cover w-full h-full rounded-full"
-                                src="https://images.pexels.com/photos/5212324/pexels-photo-5212324.jpeg?auto=compress&cs=tinysrgb&dpr=3&h=750&w=1260"
-                                alt=""
-                                loading="lazy"
-                              />
-                              <div
-                                className="absolute inset-0 rounded-full shadow-inner"
-                                aria-hidden="true"
-                              ></div>
-                            </div>
-                            <div>
-                              <p
-                                className="font-semibold text-black"
-                                onClick={() => changeStudentInfoPop()}
-                              >
-                                Sufyan Khan
-                              </p>
-                            </div>
-                          </div>
-                        </td>
-                        <td
-                          className="px-4 py-3 text-ms font-semibold border"
-                          onClick={() => changeReportsPop()}
-                        >
-                          Student Reports
-                        </td>
-                        <td
-                          className="px-4 py-3 border text-md font-semibold"
-                          onClick={() => changePaymentsPop()}
-                        >
-                          Student Payments
-                        </td>
-                        <td className="px-4 py-3 text-sm border">
-                          From: 6/4/2000 to: 6/4/2004
-                        </td>
-                      </tr>
-                      <tr className="h-auto bg-white hidden">
+                      {students.students !== null ? (
+                        students.students.map((stu) => (
+                          <tr className="text-gray-700">
+                            <td className="px-4 py-3 border">
+                              <div className="flex items-center text-sm">
+                                <div className="relative w-8 h-8 mr-3 rounded-full md:block">
+                                  <img
+                                    className="object-cover w-full h-full rounded-full"
+                                    src="https://images.pexels.com/photos/5212324/pexels-photo-5212324.jpeg?auto=compress&cs=tinysrgb&dpr=3&h=750&w=1260"
+                                    alt=""
+                                    loading="lazy"
+                                  />
+                                  <div
+                                    className="absolute inset-0 rounded-full shadow-inner"
+                                    aria-hidden="true"
+                                  ></div>
+                                </div>
+                                <div>
+                                  <p
+                                    className="font-semibold text-black"
+                                    onClick={() => changeStudentInfoPop()}
+                                  >
+                                    {stu.name}
+                                  </p>
+                                </div>
+                              </div>
+                            </td>
+                            <td
+                              className="px-4 py-3 text-ms font-semibold border"
+                              onClick={() => changeReportsPop()}
+                            >
+                              Student Reports
+                            </td>
+                            <td
+                              className="px-4 py-3 border text-md font-semibold"
+                              onClick={() => changePaymentsPop()}
+                            >
+                              Student Payments
+                            </td>
+                            <td className="px-4 py-3 text-sm border">
+                              From: 6/4/2000 to: 6/4/2004
+                            </td>
+                          </tr>
+                        ))
+                      ) : (
+                        <Spinner />
+                      )}
+
+                      {/* <tr className="h-auto bg-white hidden">
                         <td
                           colSpan="4"
                           className="col-span-4 bg-green-200 "
@@ -392,7 +414,7 @@ function Students() {
                           </table>
                         </td>
                       </tr>
-                      {/* Students Reports */}
+                       Students Reports
                       <tr className={`h-auto bg-white ${reportsPop}`}>
                         <td colSpan="4" className="col-span-4">
                           <table className="w-full h-180/2">
@@ -502,260 +524,306 @@ function Students() {
                             </tbody>
                           </table>
                         </td>
-                      </tr>
+                      </tr> */}
                       {/* End of students  Reports */}
-                      <tr className="text-gray-700">
-                        <td className="px-4 py-3 border">
-                          <div className="flex items-center text-sm">
-                            <div className="relative w-8 h-8 mr-3 rounded-full">
-                              <img
-                                className="object-cover w-full h-full rounded-full"
-                                src="https://images.pexels.com/photos/5212324/pexels-photo-5212324.jpeg?auto=compress&cs=tinysrgb&dpr=3&h=750&w=1260"
-                                alt=""
-                                loading="lazy"
-                              />
-                              <div
-                                className="absolute inset-0 rounded-full shadow-inner"
-                                aria-hidden="true"
-                              ></div>
-                            </div>
-                            <div>
-                              <p className="font-semibold text-black">
-                                Amin Mehmood
-                              </p>
-                            </div>
-                          </div>
-                        </td>
-                        <td className="px-4 py-3 text-md font-semibold border">
-                          Student Reports
-                        </td>
-                        <td className="px-4 py-3 border text-md font-semibold">
-                          Student Payments
-                        </td>
-                        <td className="px-4 py-3 text-sm border">
-                          From: 6/4/2000 to: 6/4/2004
-                        </td>
-                      </tr>
-                      <tr className="text-gray-700">
-                        <td className="px-4 py-3 border">
-                          <div className="flex items-center text-sm">
-                            <div className="relative w-8 h-8 mr-3 rounded-full">
-                              <img
-                                className="object-cover w-full h-full rounded-full"
-                                src="https://images.pexels.com/photos/5212324/pexels-photo-5212324.jpeg?auto=compress&cs=tinysrgb&dpr=3&h=750&w=1260"
-                                alt=""
-                                loading="lazy"
-                              />
-                              <div
-                                className="absolute inset-0 rounded-full shadow-inner"
-                                aria-hidden="true"
-                              ></div>
-                            </div>
-                            <div>
-                              <p className="font-semibold">Ibrahim Akbar</p>
-                            </div>
-                          </div>
-                        </td>
-                        <td className="px-4 py-3 text-md font-semibold border">
-                          Student Reports
-                        </td>
-                        <td className="px-4 py-3 border text-md font-semibold">
-                          Student Payments
-                        </td>
-                        <td className="px-4 py-3 text-sm border">
-                          From: 6/4/2000 to: 6/4/2004
-                        </td>
-                      </tr>
-                      <tr className="text-gray-700">
-                        <td className="px-4 py-3 border">
-                          <div className="flex items-center text-sm">
-                            <div className="relative w-8 h-8 mr-3 rounded-full">
-                              <img
-                                className="object-cover w-full h-full rounded-full"
-                                src="https://images.pexels.com/photos/5212324/pexels-photo-5212324.jpeg?auto=compress&cs=tinysrgb&dpr=3&h=750&w=1260"
-                                alt=""
-                                loading="lazy"
-                              />
-                              <div
-                                className="absolute inset-0 rounded-full shadow-inner"
-                                aria-hidden="true"
-                              ></div>
-                            </div>
-                            <div>
-                              <p className="font-semibold">Ali Ur rehman</p>
-                            </div>
-                          </div>
-                        </td>
-                        <td className="px-4 py-3 border text-md font-semibold">
-                          Student Reports
-                        </td>
-                        <td className="px-4 py-3 border text-md font-semibold">
-                          Student Payments
-                        </td>
-                        <td className="px-4 py-3 text-sm border">
-                          From: 6/4/2000 to: 6/4/2004
-                        </td>
-                      </tr>
-                      <tr className="text-gray-700">
-                        <td className="px-4 py-3 border">
-                          <div className="flex items-center text-sm">
-                            <div className="relative w-8 h-8 mr-3 rounded-full">
-                              <img
-                                className="object-cover w-full h-full rounded-full"
-                                src="https://images.pexels.com/photos/5212324/pexels-photo-5212324.jpeg?auto=compress&cs=tinysrgb&dpr=3&h=750&w=1260"
-                                alt=""
-                                loading="lazy"
-                              />
-                              <div
-                                className="absolute inset-0 rounded-full shadow-inner"
-                                aria-hidden="true"
-                              ></div>
-                            </div>
-                            <div>
-                              <p className="font-semibold">Khalid Arshad</p>
-                            </div>
-                          </div>
-                        </td>
-                        <td className="px-4 py-3 border text-md font-semibold">
-                          Student Reports
-                        </td>
-                        <td className="px-4 py-3 border text-md font-semibold">
-                          Student Payments
-                        </td>
-                        <td className="px-4 py-3 text-sm border">
-                          From: 6/4/2000 to: 6/4/2004
-                        </td>
-                      </tr>
-                      <tr className="text-gray-700">
-                        <td className="px-4 py-3 border">
-                          <div className="flex items-center text-sm">
-                            <div className="relative w-8 h-8 mr-3 rounded-full">
-                              <img
-                                className="object-cover w-full h-full rounded-full"
-                                src="https://images.pexels.com/photos/5212324/pexels-photo-5212324.jpeg?auto=compress&cs=tinysrgb&dpr=3&h=750&w=1260"
-                                alt=""
-                                loading="lazy"
-                              />
-                              <div
-                                className="absolute inset-0 rounded-full shadow-inner"
-                                aria-hidden="true"
-                              ></div>
-                            </div>
-                            <div>
-                              <p className="font-semibold">Nasser Mustafa</p>
-                            </div>
-                          </div>
-                        </td>
-                        <td className="px-4 py-3 border text-md font-semibold">
-                          Student Reports
-                        </td>
-                        <td className="px-4 py-3 border text-md font-semibold">
-                          Student Payments
-                        </td>
-                        <td className="px-4 py-3 text-sm border">
-                          From: 6/4/2000 to: 6/4/2004
-                        </td>
-                      </tr>
-                      <tr className="text-gray-700">
-                        <td className="px-4 py-3 border">
-                          <div className="flex items-center text-sm">
-                            <div className="relative w-8 h-8 mr-3 rounded-full">
-                              <img
-                                className="object-cover w-full h-full rounded-full"
-                                src="https://images.pexels.com/photos/5212324/pexels-photo-5212324.jpeg?auto=compress&cs=tinysrgb&dpr=3&h=750&w=1260"
-                                alt=""
-                                loading="lazy"
-                              />
-                              <div
-                                className="absolute inset-0 rounded-full shadow-inner"
-                                aria-hidden="true"
-                              ></div>
-                            </div>
-                            <div>
-                              <p className="font-semibold">Mohammed Yousaf</p>
-                            </div>
-                          </div>
-                        </td>
-                        <td className="px-4 py-3 border text-md font-semibold">
-                          Student Reports
-                        </td>
-                        <td className="px-4 py-3 border text-md font-semibold">
-                          Student Payments
-                        </td>
-                        <td className="px-4 py-3 text-sm border">
-                          From: 6/4/2000 to: 6/4/2004
-                        </td>
-                      </tr>
-                      <tr className="text-gray-700">
-                        <td className="px-4 py-3 border">
-                          <div className="flex items-center text-sm">
-                            <div className="relative w-8 h-8 mr-3 rounded-full">
-                              <img
-                                className="object-cover w-full h-full rounded-full"
-                                src="https://images.pexels.com/photos/5212324/pexels-photo-5212324.jpeg?auto=compress&cs=tinysrgb&dpr=3&h=750&w=1260"
-                                alt=""
-                                loading="lazy"
-                              />
-                              <div
-                                className="absolute inset-0 rounded-full shadow-inner"
-                                aria-hidden="true"
-                              ></div>
-                            </div>
-                            <div>
-                              <p className="font-semibold">Saad Server</p>
-                            </div>
-                          </div>
-                        </td>
-                        <td className="px-4 py-3 border text-md font-semibold">
-                          Student Reports
-                        </td>
-                        <td className="px-4 py-3 border text-md font-semibold">
-                          Student Payments
-                        </td>
-
-                        <td className="px-4 py-3 text-sm border">
-                          From: 6/4/2000 to: 6/4/2004
-                        </td>
-                      </tr>
-                      <tr className="text-gray-700">
-                        <td className="px-4 py-3 border">
-                          <div className="flex items-center text-sm">
-                            <div className="relative w-8 h-8 mr-3 rounded-full">
-                              <img
-                                className="object-cover w-full h-full rounded-full"
-                                src="https://images.pexels.com/photos/5212324/pexels-photo-5212324.jpeg?auto=compress&cs=tinysrgb&dpr=3&h=750&w=1260"
-                                alt=""
-                                loading="lazy"
-                              />
-                              <div
-                                className="absolute inset-0 rounded-full shadow-inner"
-                                aria-hidden="true"
-                              ></div>
-                            </div>
-                            <div>
-                              <p className="font-semibold">Sami Shahzad</p>
-                            </div>
-                          </div>
-                        </td>
-                        <td className="px-4 py-3 border text-md font-semibold">
-                          Student Reports
-                        </td>
-                        <td className="px-4 py-3 border text-md font-semibold">
-                          Student Payments
-                        </td>
-                        <td className="px-4 py-3 text-sm border">
-                          From: 6/4/2000 to: 6/4/2004
-                        </td>
-                      </tr>
                     </tbody>
                   </table>
                 </div>
+                {/* reports student */}
+                <div
+                  style={{ top: imgTop }}
+                  className={`w-2/3 h-1/2 bg-white fixed centerHorizontal usm:h-1/3 border ${reportsPop}`}
+                >
+                  <div className="w-full h-full relative">
+                    <table className="w-full h-180/2">
+                      <thead className="w-full">
+                        <tr
+                          className="
+                              text-md
+                              font-semibold
+                              tracking-wide
+                              text-left text-gray-900
+                              bg-gray-100
+                              uppercase
+                              border-b border-gray-600
+                              w-full
+                            "
+                        >
+                          <th className="px-4 py-3 w-full">Number</th>
+                          <th className="px-4 py-3 w-full">Report</th>
+                          <th className="px-4 py-3 w-full">Date</th>
+                        </tr>
+                      </thead>
+                      <tbody className="bg-white w-full">
+                        <tr className="text-gray-700 w-full">
+                          <td className="px-4 py-3 border">
+                            <div className="flex items-center text-sm">
+                              <div>
+                                <p className="font-semibold text-black">1</p>
+                              </div>
+                            </div>
+                          </td>
+                          <td className="px-4 py-3 text-ms font-semibold border">
+                            Report 1
+                          </td>
+                          <td className="px-4 py-3 text-sm border">
+                            24/01/2021
+                          </td>
+                        </tr>
+                        <tr className="text-gray-700">
+                          <td className="px-4 py-3 border">
+                            <div className="flex items-center text-sm">
+                              <div>
+                                <p className="font-semibold text-black">2</p>
+                              </div>
+                            </div>
+                          </td>
+                          <td className="px-4 py-3 text-ms font-semibold border">
+                            Report 2
+                          </td>
+                          <td className="px-4 py-3 text-sm border">
+                            24/01/2021
+                          </td>
+                        </tr>
+                        <tr className="text-gray-700">
+                          <td className="px-4 py-3 border">
+                            <div className="flex items-center text-sm">
+                              <div>
+                                <p className="font-semibold text-black">3</p>
+                              </div>
+                            </div>
+                          </td>
+                          <td className="px-4 py-3 text-ms font-semibold border">
+                            Report 3
+                          </td>
+                          <td className="px-4 py-3 text-sm border">
+                            24/01/2021
+                          </td>
+                        </tr>
+                        <tr className="text-gray-700">
+                          <td className="px-4 py-3 border">
+                            <div className="flex items-center text-sm">
+                              <div>
+                                <p className="font-semibold text-black">4</p>
+                              </div>
+                            </div>
+                          </td>
+                          <td className="px-4 py-3 text-ms font-semibold border">
+                            Report 4
+                          </td>
+                          <td className="px-4 py-3 text-sm border">
+                            24/01/2021
+                          </td>
+                        </tr>
+                        <tr className="text-gray-700">
+                          <td className="px-4 py-3 border">
+                            <div className="flex items-center text-sm">
+                              <div>
+                                <p className="font-semibold text-black">5</p>
+                              </div>
+                            </div>
+                          </td>
+                          <td className="px-4 py-3 text-ms font-semibold border">
+                            Report 5
+                          </td>
+                          <td className="px-4 py-3 text-sm border">
+                            24/01/2021
+                          </td>
+                        </tr>
+                      </tbody>
+                    </table>
+                    <button
+                      className="w-10 h-10 absolute top-0 right-0 text-3xl text-black"
+                      onClick={() => changeReportsPop()}
+                      type="button"
+                    >
+                      X
+                    </button>
+                  </div>
+                </div>
+                {/* students payments */}
+                <div
+                  style={{ top: imgTop }}
+                  className={`w-2/3 h-1/2 bg-white fixed centerHorizontal usm:h-1/3 border ${paymentsPop}`}
+                >
+                  <div className="w-full h-full relative">
+                    <table className="w-full h-180/2">
+                      <thead>
+                        <tr
+                          className="
+                              text-md
+                              font-semibold
+                              tracking-wide
+                              text-left text-gray-900
+                              bg-gray-100
+                              uppercase
+                              border-b border-gray-600
+                            "
+                        >
+                          <th className="px-4 py-3">Number</th>
+                          <th className="px-4 py-3">Payment</th>
+                          <th className="px-4 py-3">Payment status</th>
+                          <th className="px-4 py-3">Payment Date</th>
+                        </tr>
+                      </thead>
+                      <tbody className="bg-white">
+                        <tr className="text-gray-700">
+                          <td className="px-4 py-3 border">
+                            <div className="flex items-center text-sm">
+                              <div>
+                                <p className="font-semibold text-black">1</p>
+                              </div>
+                            </div>
+                          </td>
+                          <td className="px-4 py-3 text-ms font-semibold border">
+                            Payment 1
+                          </td>
+                          <td
+                            className="
+                                px-4
+                                py-3
+                                border
+                                text-md
+                                font-semibold
+                                bg-green-400
+                              "
+                          >
+                            Made
+                          </td>
+                          <td className="px-4 py-3 text-sm border">
+                            24/01/2021
+                          </td>
+                        </tr>
+                        <tr className="text-gray-700">
+                          <td className="px-4 py-3 border">
+                            <div className="flex items-center text-sm">
+                              <div>
+                                <p className="font-semibold text-black">1</p>
+                              </div>
+                            </div>
+                          </td>
+                          <td className="px-4 py-3 text-ms font-semibold border">
+                            Payment 2
+                          </td>
+                          <td
+                            className="
+                                px-4
+                                py-3
+                                border
+                                text-md
+                                font-semibold
+                                bg-green-400
+                              "
+                          >
+                            Made
+                          </td>
+                          <td className="px-4 py-3 text-sm border">
+                            24/01/2021
+                          </td>
+                        </tr>
+                        <tr className="text-gray-700">
+                          <td className="px-4 py-3 border">
+                            <div className="flex items-center text-sm">
+                              <div>
+                                <p className="font-semibold text-black">1</p>
+                              </div>
+                            </div>
+                          </td>
+                          <td className="px-4 py-3 text-ms font-semibold border">
+                            Payment 3
+                          </td>
+                          <td
+                            className="
+                                px-4
+                                py-3
+                                border
+                                text-md
+                                font-semibold
+                                bg-green-400
+                              "
+                          >
+                            Made
+                          </td>
+                          <td className="px-4 py-3 text-sm border">
+                            24/01/2021
+                          </td>
+                        </tr>
+                        <tr className="text-gray-700">
+                          <td className="px-4 py-3 border">
+                            <div className="flex items-center text-sm">
+                              <div>
+                                <p className="font-semibold text-black">1</p>
+                              </div>
+                            </div>
+                          </td>
+                          <td className="px-4 py-3 text-ms font-semibold border">
+                            Payment 4
+                          </td>
+                          <td
+                            className="
+                                px-4
+                                py-3
+                                border
+                                text-md
+                                font-semibold
+                                bg-gray-400
+                              "
+                          >
+                            Pending
+                          </td>
+                          <td className="px-4 py-3 text-sm border">
+                            24/01/2021
+                          </td>
+                        </tr>
+                        <tr className="text-gray-700">
+                          <td className="px-4 py-3 border">
+                            <div className="flex items-center text-sm">
+                              <div>
+                                <p className="font-semibold text-black">1</p>
+                              </div>
+                            </div>
+                          </td>
+                          <td className="px-4 py-3 text-ms font-semibold border">
+                            Payment 5
+                          </td>
+                          <td
+                            className="
+                                px-4
+                                py-3
+                                border
+                                text-md
+                                font-semibold
+                                bg-gray-400
+                              "
+                          >
+                            pending
+                          </td>
+                          <td className="px-4 py-3 text-sm border">
+                            24/01/2021
+                          </td>
+                        </tr>
+                      </tbody>
+                    </table>
+                    <button
+                      className="w-10 h-10 absolute top-0 right-0 text-4xl text-gray-400"
+                      onClick={() => changePaymentsPop()}
+                      type="button"
+                    >
+                      X
+                    </button>
+                  </div>
+                </div>
                 {/* start of student info pop up */}
                 <div
-                  className={`h-full w-full bg-white absolute top-0 left-0 ${studentInfoPop}`}
+                  style={{ top: imgTop }}
+                  className={`w-full h-1/2 bg-white fixed centerHorizontal usm:h-1/3 border ${studentInfoPop}`}
                 >
-                  <div
-                    className="
+                  <div className="w-full h-full relative">
+                    <div
+                      className={`h-full w-full bg-white absolute top-0 left-0 `}
+                    >
+                      <div
+                        className="
                 w-full
                 h-full
                 centerSom
@@ -763,18 +831,18 @@ function Students() {
                 lg1:bg-transparent
                 usm:w-full
               "
-                  >
-                    <div className="grid h-auto bg-white rounded-lg shadow-xl w-full">
-                      <div className="flex justify-center">
-                        <div className="flex">
-                          <h1 className="text-gray-600 font-bold pt-5 md:text-2xl text-xl">
-                            Sufyan Khan
-                          </h1>
-                        </div>
-                      </div>
-                      {/* <!-- 1 row --> */}
-                      <div
-                        className="
+                      >
+                        <div className="grid h-auto bg-white rounded-lg shadow-xl w-full">
+                          <div className="flex justify-center">
+                            <div className="flex">
+                              <h1 className="text-gray-600 font-bold pt-5 md:text-2xl text-xl">
+                                Sufyan Khan
+                              </h1>
+                            </div>
+                          </div>
+                          {/* <!-- 1 row --> */}
+                          <div
+                            className="
                     grid grid-cols-1
                     md:grid-cols-3
                     gap-5
@@ -782,20 +850,20 @@ function Students() {
                     mt-5
                     mx-7
                   "
-                      >
-                        <div className="grid grid-cols-1">
-                          <label
-                            className="
+                          >
+                            <div className="grid grid-cols-1">
+                              <label
+                                className="
                         uppercase
                         md:text-sm
                         text-xs text-gray-500 text-light
                         font-semibold
                       "
-                          >
-                            Name
-                          </label>
-                          <input
-                            className="
+                              >
+                                Name
+                              </label>
+                              <input
+                                className="
                         py-2
                         px-3
                         rounded-lg
@@ -806,24 +874,24 @@ function Students() {
                         focus:ring-gray-600
                         focus:border-transparent
                       "
-                            type="text"
-                            value="Sufyan Khan"
-                            placeholder="Sufyan Khan"
-                          />
-                        </div>
-                        <div className="grid grid-cols-1">
-                          <label
-                            className="
+                                type="text"
+                                value="Sufyan Khan"
+                                placeholder="Sufyan Khan"
+                              />
+                            </div>
+                            <div className="grid grid-cols-1">
+                              <label
+                                className="
                         uppercase
                         md:text-sm
                         text-xs text-gray-500 text-light
                         font-semibold
                       "
-                          >
-                            CNIC
-                          </label>
-                          <input
-                            className="
+                              >
+                                CNIC
+                              </label>
+                              <input
+                                className="
                         py-2
                         px-3
                         rounded-lg
@@ -834,23 +902,23 @@ function Students() {
                         focus:ring-gray-600
                         focus:border-transparent
                       "
-                            type="text"
-                            value="152478459636"
-                          />
-                        </div>
-                        <div className="grid grid-cols-1">
-                          <label
-                            className="
+                                type="text"
+                                value="152478459636"
+                              />
+                            </div>
+                            <div className="grid grid-cols-1">
+                              <label
+                                className="
                         uppercase
                         md:text-sm
                         text-xs text-gray-500 text-light
                         font-semibold
                       "
-                          >
-                            Gender
-                          </label>
-                          <select
-                            className="
+                              >
+                                Gender
+                              </label>
+                              <select
+                                className="
                         py-2
                         px-3
                         rounded-lg
@@ -862,14 +930,14 @@ function Students() {
                         focus:ring-gray-600
                         focus:border-transparent
                       "
-                          >
-                            <option>Male</option>
-                          </select>
-                        </div>
-                      </div>
-                      {/* <!-- 2 row --> */}
-                      <div
-                        className="
+                              >
+                                <option>Male</option>
+                              </select>
+                            </div>
+                          </div>
+                          {/* <!-- 2 row --> */}
+                          <div
+                            className="
                     grid grid-cols-1
                     md:grid-cols-3
                     gap-5
@@ -877,20 +945,20 @@ function Students() {
                     mt-5
                     mx-7
                   "
-                      >
-                        <div className="grid grid-cols-1">
-                          <label
-                            className="
+                          >
+                            <div className="grid grid-cols-1">
+                              <label
+                                className="
                         uppercase
                         md:text-sm
                         text-xs text-gray-500 text-light
                         font-semibold
                       "
-                          >
-                            Age
-                          </label>
-                          <input
-                            className="
+                              >
+                                Age
+                              </label>
+                              <input
+                                className="
                         py-2
                         px-3
                         rounded-lg
@@ -901,23 +969,23 @@ function Students() {
                         focus:ring-gray-600
                         focus:border-transparent
                       "
-                            type="text"
-                            value="12"
-                          />
-                        </div>
-                        <div className="grid grid-cols-1">
-                          <label
-                            className="
+                                type="text"
+                                value="12"
+                              />
+                            </div>
+                            <div className="grid grid-cols-1">
+                              <label
+                                className="
                         uppercase
                         md:text-sm
                         text-xs text-gray-500 text-light
                         font-semibold
                       "
-                          >
-                            Mobile
-                          </label>
-                          <input
-                            className="
+                              >
+                                Mobile
+                              </label>
+                              <input
+                                className="
                         py-2
                         px-3
                         rounded-lg
@@ -928,23 +996,23 @@ function Students() {
                         focus:ring-gray-600
                         focus:border-transparent
                       "
-                            type="text"
-                            value="+56-569-5987-8965"
-                          />
-                        </div>
-                        <div className="grid grid-cols-1">
-                          <label
-                            className="
+                                type="text"
+                                value="+56-569-5987-8965"
+                              />
+                            </div>
+                            <div className="grid grid-cols-1">
+                              <label
+                                className="
                         uppercase
                         md:text-sm
                         text-xs text-gray-500 text-light
                         font-semibold
                       "
-                          >
-                            Phone
-                          </label>
-                          <input
-                            className="
+                              >
+                                Phone
+                              </label>
+                              <input
+                                className="
                         py-2
                         px-3
                         rounded-lg
@@ -955,16 +1023,16 @@ function Students() {
                         focus:ring-gray-600
                         focus:border-transparent
                       "
-                            type="text"
-                            value="451268594"
-                          />
-                        </div>
-                      </div>
-                      {/* <!-- 3 row --> */}
+                                type="text"
+                                value="451268594"
+                              />
+                            </div>
+                          </div>
+                          {/* <!-- 3 row --> */}
 
-                      {/* <!-- 5 row --> */}
-                      <div
-                        className="
+                          {/* <!-- 5 row --> */}
+                          <div
+                            className="
                     grid grid-cols-1
                     md:grid-cols-3
                     gap-5
@@ -972,20 +1040,20 @@ function Students() {
                     mt-5
                     mx-7
                   "
-                      >
-                        <div className="grid grid-cols-1 ">
-                          <label
-                            className="
+                          >
+                            <div className="grid grid-cols-1 ">
+                              <label
+                                className="
                       uppercase
                       md:text-sm
                       text-xs text-gray-500 text-light
                       font-semibold
                     "
-                          >
-                            Email
-                          </label>
-                          <input
-                            className="
+                              >
+                                Email
+                              </label>
+                              <input
+                                className="
                       py-2
                       px-3
                       rounded-lg
@@ -996,69 +1064,69 @@ function Students() {
                       focus:ring-gray-600
                       focus:border-transparent
                     "
-                            type="text"
-                            value="testemail@test.com"
-                          />
-                        </div>
-                        <div className="grid grid-cols-1">
-                          <label
-                            className="
+                                type="text"
+                                value="testemail@test.com"
+                              />
+                            </div>
+                            <div className="grid grid-cols-1">
+                              <label
+                                className="
                         uppercase
                         md:text-sm
                         text-xs text-gray-500 text-light
                         font-semibold
                         mb-1
                       "
-                          >
-                            CNIC PHOTO
-                          </label>
-                          <div className="flex items-center justify-left w-full">
-                            <button
-                              id="imageCn"
-                              className="w-auto h-8 px-2 mb-3  bg-gray-100 usm:mb-3 border border-gray-500"
-                              onClick={() => {
-                                changeCnPhoto();
-                              }}
-                            >
-                              Check Image
-                            </button>
-                          </div>
-                          <div className="flex items-center justify-left w-full">
-                            <input type="file" />
-                          </div>
-                        </div>
-                        <div className="grid grid-cols-1">
-                          <label
-                            className="
+                              >
+                                CNIC PHOTO
+                              </label>
+                              <div className="flex items-center justify-left w-full">
+                                <button
+                                  id="imageCn"
+                                  className="w-auto h-8 px-2 mb-3  bg-gray-100 usm:mb-3 border border-gray-500"
+                                  onClick={() => {
+                                    changeCnPhoto();
+                                  }}
+                                >
+                                  Check Image
+                                </button>
+                              </div>
+                              <div className="flex items-center justify-left w-full">
+                                <input type="file" />
+                              </div>
+                            </div>
+                            <div className="grid grid-cols-1">
+                              <label
+                                className="
                         uppercase
                         md:text-sm
                         text-xs text-gray-500 text-light
                         font-semibold
                         mb-1
                       "
-                          >
-                            STUDENT PHOTO
-                          </label>
-                          <div className="flex items-center justify-left w-full">
-                            <button
-                              id="imageCn"
-                              className="w-auto h-8 px-2 mb-3  bg-gray-100 usm:mb-3 border border-gray-500"
-                              onClick={() => {
-                                changeStPhoto();
-                              }}
-                            >
-                              Check Image
-                            </button>
+                              >
+                                STUDENT PHOTO
+                              </label>
+                              <div className="flex items-center justify-left w-full">
+                                <button
+                                  id="imageCn"
+                                  className="w-auto h-8 px-2 mb-3  bg-gray-100 usm:mb-3 border border-gray-500"
+                                  onClick={() => {
+                                    changeStPhoto();
+                                  }}
+                                >
+                                  Check Image
+                                </button>
+                              </div>
+                              <div className="flex items-center justify-left w-full">
+                                <input type="file" />
+                              </div>
+                            </div>
                           </div>
-                          <div className="flex items-center justify-left w-full">
-                            <input type="file" />
-                          </div>
-                        </div>
-                      </div>
-                      <hr className="mt-5 border" />
-                      {/* <!-- 6row --> */}
-                      <div
-                        className="
+                          <hr className="mt-5 border" />
+                          {/* <!-- 6row --> */}
+                          <div
+                            className="
                     grid grid-cols-1
                     md:grid-cols-3
                     gap-5
@@ -1066,20 +1134,20 @@ function Students() {
                     mt-5
                     mx-7
                   "
-                      >
-                        <div className="grid grid-cols-1">
-                          <label
-                            className="
+                          >
+                            <div className="grid grid-cols-1">
+                              <label
+                                className="
                         uppercase
                         md:text-sm
                         text-xs text-gray-500 text-light
                         font-semibold
                       "
-                          >
-                            Guardian/Parent
-                          </label>
-                          <select
-                            className="
+                              >
+                                Guardian/Parent
+                              </label>
+                              <select
+                                className="
                         py-2
                         px-3
                         rounded-lg
@@ -1091,27 +1159,27 @@ function Students() {
                         focus:ring-gray-600
                         focus:border-transparent
                       "
-                          >
-                            <option>Parent1</option>
-                            <option>Parent2</option>
-                          </select>
-                        </div>
+                              >
+                                <option>Parent1</option>
+                                <option>Parent2</option>
+                              </select>
+                            </div>
 
-                        {/* <!-- hidden form --> */}
+                            {/* <!-- hidden form --> */}
 
-                        <div className="grid grid-cols-1 mx-7">
-                          <label
-                            className="
+                            <div className="grid grid-cols-1 mx-7">
+                              <label
+                                className="
                       uppercase
                       md:text-sm
                       text-xs text-gray-500 text-light
                       font-semibold
                     "
-                          >
-                            Type
-                          </label>
-                          <select
-                            className="
+                              >
+                                Type
+                              </label>
+                              <select
+                                className="
                       py-2
                       px-3
                       rounded-lg
@@ -1121,23 +1189,23 @@ function Students() {
                       bg-gray-100
                       focus:ring-gray-600 focus:border-transparent
                     "
-                          >
-                            <option>Parent</option>
-                          </select>
-                        </div>
-                        <div className="grid grid-cols-1">
-                          <label
-                            className="
+                              >
+                                <option>Parent</option>
+                              </select>
+                            </div>
+                            <div className="grid grid-cols-1">
+                              <label
+                                className="
                         uppercase
                         md:text-sm
                         text-xs text-gray-500 text-light
                         font-semibold
                       "
-                          >
-                            Gender
-                          </label>
-                          <select
-                            className="
+                              >
+                                Gender
+                              </label>
+                              <select
+                                className="
                         py-2
                         px-3
                         rounded-lg
@@ -1149,13 +1217,13 @@ function Students() {
                         focus:ring-gray-600
                         focus:border-transparent
                       "
-                          >
-                            <option>Male</option>
-                          </select>
-                        </div>
-                      </div>
-                      <div
-                        className="
+                              >
+                                <option>Male</option>
+                              </select>
+                            </div>
+                          </div>
+                          <div
+                            className="
                     grid grid-cols-1
                     md:grid-cols-2
                     gap-5
@@ -1163,20 +1231,20 @@ function Students() {
                     mt-5
                     mx-7
                   "
-                      >
-                        <div className="grid grid-cols-1">
-                          <label
-                            className="
+                          >
+                            <div className="grid grid-cols-1">
+                              <label
+                                className="
                         uppercase
                         md:text-sm
                         text-xs text-gray-500 text-light
                         font-semibold
                       "
-                          >
-                            Name
-                          </label>
-                          <input
-                            className="
+                              >
+                                Name
+                              </label>
+                              <input
+                                className="
                         py-2
                         px-3
                         rounded-lg
@@ -1187,23 +1255,23 @@ function Students() {
                         focus:ring-gray-600
                         focus:border-transparent
                       "
-                            type="text"
-                            value="Hamesh khan"
-                          />
-                        </div>
-                        <div className="grid grid-cols-1">
-                          <label
-                            className="
+                                type="text"
+                                value="Hamesh khan"
+                              />
+                            </div>
+                            <div className="grid grid-cols-1">
+                              <label
+                                className="
                         uppercase
                         md:text-sm
                         text-xs text-gray-500 text-light
                         font-semibold
                       "
-                          >
-                            CNIC
-                          </label>
-                          <input
-                            className="
+                              >
+                                CNIC
+                              </label>
+                              <input
+                                className="
                         py-2
                         px-3
                         rounded-lg
@@ -1214,13 +1282,13 @@ function Students() {
                         focus:ring-gray-600
                         focus:border-transparent
                       "
-                            type="text"
-                            value="1542578659452"
-                          />
-                        </div>
-                      </div>
-                      <div
-                        className="
+                                type="text"
+                                value="1542578659452"
+                              />
+                            </div>
+                          </div>
+                          <div
+                            className="
                     grid grid-cols-1
                     md:grid-cols-3
                     gap-5
@@ -1228,20 +1296,20 @@ function Students() {
                     mt-5
                     mx-7
                   "
-                      >
-                        <div className="grid grid-cols-1">
-                          <label
-                            className="
+                          >
+                            <div className="grid grid-cols-1">
+                              <label
+                                className="
                         uppercase
                         md:text-sm
                         text-xs text-gray-500 text-light
                         font-semibold
                       "
-                          >
-                            Email
-                          </label>
-                          <input
-                            className="
+                              >
+                                Email
+                              </label>
+                              <input
+                                className="
                         py-2
                         px-3
                         rounded-lg
@@ -1252,23 +1320,23 @@ function Students() {
                         focus:ring-gray-600
                         focus:border-transparent
                       "
-                            type="text"
-                            value="paren1@email.com"
-                          />
-                        </div>
-                        <div className="grid grid-cols-1">
-                          <label
-                            className="
+                                type="text"
+                                value="paren1@email.com"
+                              />
+                            </div>
+                            <div className="grid grid-cols-1">
+                              <label
+                                className="
                         uppercase
                         md:text-sm
                         text-xs text-gray-500 text-light
                         font-semibold
                       "
-                          >
-                            Mobile
-                          </label>
-                          <input
-                            className="
+                              >
+                                Mobile
+                              </label>
+                              <input
+                                className="
                         py-2
                         px-3
                         rounded-lg
@@ -1279,23 +1347,23 @@ function Students() {
                         focus:ring-gray-600
                         focus:border-transparent
                       "
-                            type="text"
-                            value="+54-569-5896-5896"
-                          />
-                        </div>
-                        <div className="grid grid-cols-1">
-                          <label
-                            className="
+                                type="text"
+                                value="+54-569-5896-5896"
+                              />
+                            </div>
+                            <div className="grid grid-cols-1">
+                              <label
+                                className="
                         uppercase
                         md:text-sm
                         text-xs text-gray-500 text-light
                         font-semibold
                       "
-                          >
-                            Phone
-                          </label>
-                          <input
-                            className="
+                              >
+                                Phone
+                              </label>
+                              <input
+                                className="
                         py-2
                         px-3
                         rounded-lg
@@ -1306,13 +1374,13 @@ function Students() {
                         focus:ring-gray-600
                         focus:border-transparent
                       "
-                            type="text"
-                            value="564587512"
-                          />
-                        </div>
-                      </div>
-                      <div
-                        className="
+                                type="text"
+                                value="564587512"
+                              />
+                            </div>
+                          </div>
+                          <div
+                            className="
                     grid grid-cols-1
                     md:grid-cols-3
                     gap-5
@@ -1320,82 +1388,82 @@ function Students() {
                     mt-5
                     mx-7
                   "
-                      >
-                        <div className="grid grid-cols-1">
-                          <label
-                            className="
+                          >
+                            <div className="grid grid-cols-1">
+                              <label
+                                className="
                         uppercase
                         md:text-sm
                         text-xs text-gray-500 text-light
                         font-semibold
                         mb-1
                       "
-                          >
-                            CNIC PHOTO
-                          </label>
-                          <div className="flex items-center justify-left w-full">
-                            <button
-                              id="imageCn"
-                              className="w-auto h-8 px-2 mb-3  bg-gray-100 usm:mb-3 border border-gray-500"
-                              onClick={() => {
-                                changePrPhoto();
-                              }}
-                            >
-                              Check Image
-                            </button>
-                          </div>
-                          <div className="flex items-center justify-left w-full">
-                            <input type="file" />
-                          </div>
-                        </div>
-                        <div className="grid grid-cols-1">
-                          <label
-                            className="
+                              >
+                                CNIC PHOTO
+                              </label>
+                              <div className="flex items-center justify-left w-full">
+                                <button
+                                  id="imageCn"
+                                  className="w-auto h-8 px-2 mb-3  bg-gray-100 usm:mb-3 border border-gray-500"
+                                  onClick={() => {
+                                    changePrPhoto();
+                                  }}
+                                >
+                                  Check Image
+                                </button>
+                              </div>
+                              <div className="flex items-center justify-left w-full">
+                                <input type="file" />
+                              </div>
+                            </div>
+                            <div className="grid grid-cols-1">
+                              <label
+                                className="
                         uppercase
                         md:text-sm
                         text-xs text-gray-500 text-light
                         font-semibold
                         mb-1
                       "
-                          >
-                            SALARY SLIP
-                          </label>
-                          <div className="flex items-center justify-left w-full">
-                            <button className="w-auto h-8 px-2 mb-3  bg-gray-100 usm:mb-3 border border-gray-500">
-                              Donwload file
-                            </button>
-                          </div>
-                          <div className="flex items-center justify-left w-full">
-                            <input type="file" />
-                          </div>
-                        </div>
-                        <div className="grid grid-cols-1 ">
-                          <label
-                            className="
+                              >
+                                SALARY SLIP
+                              </label>
+                              <div className="flex items-center justify-left w-full">
+                                <button className="w-auto h-8 px-2 mb-3  bg-gray-100 usm:mb-3 border border-gray-500">
+                                  Donwload file
+                                </button>
+                              </div>
+                              <div className="flex items-center justify-left w-full">
+                                <input type="file" />
+                              </div>
+                            </div>
+                            <div className="grid grid-cols-1 ">
+                              <label
+                                className="
                       uppercase
                       md:text-sm
                       text-xs text-gray-500 text-light
                       font-semibold
                       mb-1
                     "
-                          >
-                            QUALIFICATION DOCUMENT
-                          </label>
-                          <div className="flex items-center justify-left w-full">
-                            <button className="w-auto h-8 px-2 mb-3  bg-gray-100 usm:mb-3 border border-gray-500">
-                              Donwload file
-                            </button>
+                              >
+                                QUALIFICATION DOCUMENT
+                              </label>
+                              <div className="flex items-center justify-left w-full">
+                                <button className="w-auto h-8 px-2 mb-3  bg-gray-100 usm:mb-3 border border-gray-500">
+                                  Donwload file
+                                </button>
+                              </div>
+                              <div className="flex items-center justify-left w-full">
+                                <input type="file" />
+                              </div>
+                            </div>
                           </div>
-                          <div className="flex items-center justify-left w-full">
-                            <input type="file" />
-                          </div>
-                        </div>
-                      </div>
 
-                      <hr className="mt-5 border" />
-                      {/* <!-- institution --> */}
-                      <div
-                        className="
+                          <hr className="mt-5 border" />
+                          {/* <!-- institution --> */}
+                          <div
+                            className="
                     grid grid-cols-1
                     md:grid-cols-3
                     gap-5
@@ -1403,20 +1471,20 @@ function Students() {
                     mt-5
                     mx-7
                   "
-                      >
-                        <div className="grid grid-cols-1 ">
-                          <label
-                            className="
+                          >
+                            <div className="grid grid-cols-1 ">
+                              <label
+                                className="
                       uppercase
                       md:text-sm
                       text-xs text-gray-500 text-light
                       font-semibold
                     "
-                          >
-                            Select Class
-                          </label>
-                          <select
-                            className="
+                              >
+                                Select Class
+                              </label>
+                              <select
+                                className="
                       py-2
                       px-3
                       rounded-lg
@@ -1428,26 +1496,26 @@ function Students() {
                       focus:ring-gray-600
                       focus:border-transparent
                     "
-                          >
-                            <option>School</option>
-                            <option>School</option>
-                            <option>School</option>
-                            <option>School</option>
-                          </select>
-                        </div>
-                        <div className="grid grid-cols-1 ">
-                          <label
-                            className="
+                              >
+                                <option>School</option>
+                                <option>School</option>
+                                <option>School</option>
+                                <option>School</option>
+                              </select>
+                            </div>
+                            <div className="grid grid-cols-1 ">
+                              <label
+                                className="
                       uppercase
                       md:text-sm
                       text-xs text-gray-500 text-light
                       font-semibold
                     "
-                          >
-                            institution/School Name
-                          </label>
-                          <input
-                            className="
+                              >
+                                institution/School Name
+                              </label>
+                              <input
+                                className="
                       py-2
                       px-3
                       rounded-lg
@@ -1458,23 +1526,23 @@ function Students() {
                       focus:ring-gray-600
                       focus:border-transparent
                     "
-                            type="text"
-                            value="xyz school"
-                          />
-                        </div>
-                        <div className="grid grid-cols-1 ">
-                          <label
-                            className="
+                                type="text"
+                                value="xyz school"
+                              />
+                            </div>
+                            <div className="grid grid-cols-1 ">
+                              <label
+                                className="
                       uppercase
                       md:text-sm
                       text-xs text-gray-500 text-light
                       font-semibold
                     "
-                          >
-                            Institution Type
-                          </label>
-                          <select
-                            className="
+                              >
+                                Institution Type
+                              </label>
+                              <select
+                                className="
                       py-2
                       px-3
                       rounded-lg
@@ -1486,13 +1554,13 @@ function Students() {
                       focus:ring-gray-600
                       focus:border-transparent
                     "
-                          >
-                            <option>School</option>
-                          </select>
-                        </div>
-                      </div>
-                      <div
-                        className="
+                              >
+                                <option>School</option>
+                              </select>
+                            </div>
+                          </div>
+                          <div
+                            className="
                     grid grid-cols-1
                     md:grid-cols-2
                     gap-5
@@ -1500,20 +1568,20 @@ function Students() {
                     mt-5
                     mx-7
                   "
-                      >
-                        <div className="grid grid-cols-1">
-                          <label
-                            className="
+                          >
+                            <div className="grid grid-cols-1">
+                              <label
+                                className="
                         uppercase
                         md:text-sm
                         text-xs text-gray-500 text-light
                         font-semibold
                       "
-                          >
-                            Which level/Grade/Semester are you in?
-                          </label>
-                          <select
-                            className="
+                              >
+                                Which level/Grade/Semester are you in?
+                              </label>
+                              <select
+                                className="
                         py-2
                         px-3
                         rounded-lg
@@ -1525,23 +1593,23 @@ function Students() {
                         focus:ring-gray-600
                         focus:border-transparent
                       "
-                          >
-                            <option>School</option>
-                          </select>
-                        </div>
-                        <div className="grid grid-cols-1">
-                          <label
-                            className="
+                              >
+                                <option>School</option>
+                              </select>
+                            </div>
+                            <div className="grid grid-cols-1">
+                              <label
+                                className="
                         uppercase
                         md:text-sm
                         text-xs text-gray-500 text-light
                         font-semibold
                       "
-                          >
-                            Education you are pursuing
-                          </label>
-                          <select
-                            className="
+                              >
+                                Education you are pursuing
+                              </label>
+                              <select
+                                className="
                         py-2
                         px-3
                         rounded-lg
@@ -1553,13 +1621,13 @@ function Students() {
                         focus:ring-gray-600
                         focus:border-transparent
                       "
-                          >
-                            <option>School</option>
-                          </select>
-                        </div>
-                      </div>
-                      <div
-                        className="
+                              >
+                                <option>School</option>
+                              </select>
+                            </div>
+                          </div>
+                          <div
+                            className="
                     grid grid-cols-1
                     md:grid-cols-3
                     gap-5
@@ -1567,20 +1635,20 @@ function Students() {
                     mt-5
                     mx-7
                   "
-                      >
-                        <div className="grid grid-cols-1">
-                          <label
-                            className="
+                          >
+                            <div className="grid grid-cols-1">
+                              <label
+                                className="
                         uppercase
                         md:text-sm
                         text-xs text-gray-500 text-light
                         font-semibold
                       "
-                          >
-                            Institution/School Phone
-                          </label>
-                          <input
-                            className="
+                              >
+                                Institution/School Phone
+                              </label>
+                              <input
+                                className="
                         py-2
                         px-3
                         rounded-lg
@@ -1591,23 +1659,23 @@ function Students() {
                         focus:ring-gray-600
                         focus:border-transparent
                       "
-                            type="text"
-                            value="1524562548"
-                          />
-                        </div>
-                        <div className="grid grid-cols-1">
-                          <label
-                            className="
+                                type="text"
+                                value="1524562548"
+                              />
+                            </div>
+                            <div className="grid grid-cols-1">
+                              <label
+                                className="
                         uppercase
                         md:text-sm
                         text-xs text-gray-500 text-light
                         font-semibold
                       "
-                          >
-                            Institution/School Joining Date
-                          </label>
-                          <input
-                            className="
+                              >
+                                Institution/School Joining Date
+                              </label>
+                              <input
+                                className="
                         py-2
                         px-3
                         rounded-lg
@@ -1618,23 +1686,23 @@ function Students() {
                         focus:ring-gray-600
                         focus:border-transparent
                       "
-                            type="text"
-                            value="24/10/2020"
-                          />
-                        </div>
-                        <div className="grid grid-cols-1">
-                          <label
-                            className="
+                                type="text"
+                                value="24/10/2020"
+                              />
+                            </div>
+                            <div className="grid grid-cols-1">
+                              <label
+                                className="
                         uppercase
                         md:text-sm
                         text-xs text-gray-500 text-light
                         font-semibold
                       "
-                          >
-                            Institution/School Address
-                          </label>
-                          <input
-                            className="
+                              >
+                                Institution/School Address
+                              </label>
+                              <input
+                                className="
                         py-2
                         px-3
                         rounded-lg
@@ -1645,13 +1713,13 @@ function Students() {
                         focus:ring-gray-600
                         focus:border-transparent
                       "
-                            type="text"
-                            value="Xyz street"
-                          />
-                        </div>
-                      </div>
-                      <div
-                        className="
+                                type="text"
+                                value="Xyz street"
+                              />
+                            </div>
+                          </div>
+                          <div
+                            className="
                     grid grid-cols-1
                     md:grid-cols-3
                     gap-5
@@ -1659,20 +1727,20 @@ function Students() {
                     mt-5
                     mx-7
                   "
-                      >
-                        <div className="grid grid-cols-1">
-                          <label
-                            className="
+                          >
+                            <div className="grid grid-cols-1">
+                              <label
+                                className="
                         uppercase
                         md:text-sm
                         text-xs text-gray-500 text-light
                         font-semibold
                       "
-                          >
-                            Institution/School Email
-                          </label>
-                          <input
-                            className="
+                              >
+                                Institution/School Email
+                              </label>
+                              <input
+                                className="
                         py-2
                         px-3
                         rounded-lg
@@ -1683,72 +1751,72 @@ function Students() {
                         focus:ring-gray-600
                         focus:border-transparent
                       "
-                            type="text"
-                            value="xyzschool@email.com"
-                          />
-                        </div>
-                        <div className="grid grid-cols-1">
-                          <label
-                            className="
+                                type="text"
+                                value="xyzschool@email.com"
+                              />
+                            </div>
+                            <div className="grid grid-cols-1">
+                              <label
+                                className="
                         uppercase
                         md:text-sm
                         text-xs text-gray-500 text-light
                         font-semibold
                         mb-1
                       "
-                          >
-                            ID CARD PHOTO
-                          </label>
-                          <div className="flex items-center justify-left w-full">
-                            <button
-                              className="w-auto h-8 px-2 mb-3  bg-gray-100 usm:mb-3 border border-gray-500"
-                              onClick={() => changeIdPhoto()}
-                            >
-                              Check Image
-                            </button>
-                          </div>
-                          <div className="flex items-center justify-left w-full">
-                            <input type="file" />
-                          </div>
-                        </div>
-                        <div className="grid grid-cols-1">
-                          <label
-                            className="
+                              >
+                                ID CARD PHOTO
+                              </label>
+                              <div className="flex items-center justify-left w-full">
+                                <button
+                                  className="w-auto h-8 px-2 mb-3  bg-gray-100 usm:mb-3 border border-gray-500"
+                                  onClick={() => changeIdPhoto()}
+                                >
+                                  Check Image
+                                </button>
+                              </div>
+                              <div className="flex items-center justify-left w-full">
+                                <input type="file" />
+                              </div>
+                            </div>
+                            <div className="grid grid-cols-1">
+                              <label
+                                className="
                         uppercase
                         md:text-sm
                         text-xs text-gray-500 text-light
                         font-semibold
                         mb-1
                       "
-                          >
-                            ADMISSION RECEIPT COPY
-                          </label>
-                          <div className="flex items-center justify-left w-full">
-                            <button className="w-auto h-8 px-2 mb-3  bg-gray-100 usm:mb-3 border border-gray-500">
-                              Donwload file
-                            </button>
+                              >
+                                ADMISSION RECEIPT COPY
+                              </label>
+                              <div className="flex items-center justify-left w-full">
+                                <button className="w-auto h-8 px-2 mb-3  bg-gray-100 usm:mb-3 border border-gray-500">
+                                  Donwload file
+                                </button>
+                              </div>
+                              <div className="flex items-center justify-left w-full">
+                                <input type="file" />
+                              </div>
+                            </div>
                           </div>
-                          <div className="flex items-center justify-left w-full">
-                            <input type="file" />
-                          </div>
-                        </div>
-                      </div>
 
-                      <hr className="mt-5 border" />
-                      {/* <!-- FEES --> */}
-                      <div className="grid grid-cols-1 mt-5 mx-7">
-                        <label
-                          className="
+                          <hr className="mt-5 border" />
+                          {/* <!-- FEES --> */}
+                          <div className="grid grid-cols-1 mt-5 mx-7">
+                            <label
+                              className="
                       uppercase
                       md:text-sm
                       text-xs text-gray-500 text-light
                       font-semibold
                     "
-                        >
-                          Required Fees
-                        </label>
-                        <input
-                          className="
+                            >
+                              Required Fees
+                            </label>
+                            <input
+                              className="
                       py-2
                       px-3
                       rounded-lg
@@ -1759,14 +1827,14 @@ function Students() {
                       focus:ring-gray-600
                       focus:border-transparent
                     "
-                          type="text"
-                          value="i need 500 dollars to finish the school year"
-                        />
-                      </div>
-                      <hr className="mt-5 border" />
-                      {/* <!-- bank account --> */}
-                      <div
-                        className="
+                              type="text"
+                              value="i need 500 dollars to finish the school year"
+                            />
+                          </div>
+                          <hr className="mt-5 border" />
+                          {/* <!-- bank account --> */}
+                          <div
+                            className="
                     grid grid-cols-1
                     md:grid-cols-3
                     gap-5
@@ -1774,20 +1842,20 @@ function Students() {
                     mt-5
                     mx-7
                   "
-                      >
-                        <div className="grid grid-cols-1 ">
-                          <label
-                            className="
+                          >
+                            <div className="grid grid-cols-1 ">
+                              <label
+                                className="
                       uppercase
                       md:text-sm
                       text-xs text-gray-500 text-light
                       font-semibold
                     "
-                          >
-                            Bank Account
-                          </label>
-                          <select
-                            className="
+                              >
+                                Bank Account
+                              </label>
+                              <select
+                                className="
                       py-2
                       px-3
                       rounded-lg
@@ -1799,24 +1867,24 @@ function Students() {
                       focus:ring-gray-600
                       focus:border-transparent
                     "
-                          >
-                            <option>Bank1</option>
-                            <option>Bank2</option>
-                          </select>
-                        </div>
-                        <div className="grid grid-cols-1">
-                          <label
-                            className="
+                              >
+                                <option>Bank1</option>
+                                <option>Bank2</option>
+                              </select>
+                            </div>
+                            <div className="grid grid-cols-1">
+                              <label
+                                className="
                         uppercase
                         md:text-sm
                         text-xs text-gray-500 text-light
                         font-semibold
                       "
-                          >
-                            Bank
-                          </label>
-                          <select
-                            className="
+                              >
+                                Bank
+                              </label>
+                              <select
+                                className="
                         py-2
                         px-3
                         rounded-lg
@@ -1828,24 +1896,24 @@ function Students() {
                         focus:ring-gray-600
                         focus:border-transparent
                       "
-                          >
-                            <option>Meezan Bank Limited</option>
-                            <option>Bank2</option>
-                          </select>
-                        </div>
-                        <div className="grid grid-cols-1">
-                          <label
-                            className="
+                              >
+                                <option>Meezan Bank Limited</option>
+                                <option>Bank2</option>
+                              </select>
+                            </div>
+                            <div className="grid grid-cols-1">
+                              <label
+                                className="
                         uppercase
                         md:text-sm
                         text-xs text-gray-500 text-light
                         font-semibold
                       "
-                          >
-                            Branch Name
-                          </label>
-                          <input
-                            className="
+                              >
+                                Branch Name
+                              </label>
+                              <input
+                                className="
                         py-2
                         px-3
                         rounded-lg
@@ -1856,14 +1924,14 @@ function Students() {
                         focus:ring-gray-600
                         focus:border-transparent
                       "
-                            type="text"
-                            value="Abdullah Haroon Road Branch"
-                          />
-                        </div>
-                      </div>
-                      {/* end here */}
-                      <div
-                        className="
+                                type="text"
+                                value="Abdullah Haroon Road Branch"
+                              />
+                            </div>
+                          </div>
+                          {/* end here */}
+                          <div
+                            className="
                     grid grid-cols-1
                     md:grid-cols-3
                     gap-5
@@ -1871,20 +1939,20 @@ function Students() {
                     mt-5
                     mx-7
                   "
-                      >
-                        <div className="grid grid-cols-1">
-                          <label
-                            className="
+                          >
+                            <div className="grid grid-cols-1">
+                              <label
+                                className="
                       uppercase
                       md:text-sm
                       text-xs text-gray-500 text-light
                       font-semibold
                     "
-                          >
-                            Account Title
-                          </label>
-                          <input
-                            className="
+                              >
+                                Account Title
+                              </label>
+                              <input
+                                className="
                       py-2
                       px-3
                       rounded-lg
@@ -1895,23 +1963,23 @@ function Students() {
                       focus:ring-gray-600
                       focus:border-transparent
                     "
-                            type="text"
-                            value="Hamesh Khan"
-                          />
-                        </div>
-                        <div className="grid grid-cols-1 ">
-                          <label
-                            className="
+                                type="text"
+                                value="Hamesh Khan"
+                              />
+                            </div>
+                            <div className="grid grid-cols-1 ">
+                              <label
+                                className="
                       uppercase
                       md:text-sm
                       text-xs text-gray-500 text-light
                       font-semibold
                     "
-                          >
-                            Account Number
-                          </label>
-                          <input
-                            className="
+                              >
+                                Account Number
+                              </label>
+                              <input
+                                className="
                       py-2
                       px-3
                       rounded-lg
@@ -1922,23 +1990,23 @@ function Students() {
                       focus:ring-gray-600
                       focus:border-transparent
                     "
-                            type="text"
-                            value="123564875962"
-                          />
-                        </div>
-                        <div className="grid grid-cols-1 ">
-                          <label
-                            className="
+                                type="text"
+                                value="123564875962"
+                              />
+                            </div>
+                            <div className="grid grid-cols-1 ">
+                              <label
+                                className="
                       uppercase
                       md:text-sm
                       text-xs text-gray-500 text-light
                       font-semibold
                     "
-                          >
-                            Account IBAN
-                          </label>
-                          <input
-                            className="
+                              >
+                                Account IBAN
+                              </label>
+                              <input
+                                className="
                       py-2
                       px-3
                       rounded-lg
@@ -1949,13 +2017,13 @@ function Students() {
                       focus:ring-gray-600
                       focus:border-transparent
                     "
-                            type="text"
-                            value="Account IBAN"
-                          />
-                        </div>
-                      </div>
-                      <div
-                        className="
+                                type="text"
+                                value="Account IBAN"
+                              />
+                            </div>
+                          </div>
+                          <div
+                            className="
                     grid grid-cols-1
                     md:grid-cols-2
                     gap-5
@@ -1963,36 +2031,36 @@ function Students() {
                     mt-5
                     mx-7
                   "
-                      >
-                        <div className="grid grid-cols-1">
-                          <label
-                            className="
+                          >
+                            <div className="grid grid-cols-1">
+                              <label
+                                className="
                         uppercase
                         md:text-sm
                         text-xs text-gray-500 text-light
                         font-semibold
                         mb-1
                       "
-                          >
-                            Copy of CHEQUE
-                          </label>
-                          <div className="flex items-center justify-left w-full">
-                            <button
-                              className="w-auto h-8 px-2 mb-3  bg-gray-100 usm:mb-3 border border-gray-500"
-                              onClick={() => changeBkPhoto()}
-                            >
-                              Check Image
-                            </button>
+                              >
+                                Copy of CHEQUE
+                              </label>
+                              <div className="flex items-center justify-left w-full">
+                                <button
+                                  className="w-auto h-8 px-2 mb-3  bg-gray-100 usm:mb-3 border border-gray-500"
+                                  onClick={() => changeBkPhoto()}
+                                >
+                                  Check Image
+                                </button>
+                              </div>
+                              <div className="flex items-center justify-left w-full">
+                                <input type="file" />
+                              </div>
+                            </div>
                           </div>
-                          <div className="flex items-center justify-left w-full">
-                            <input type="file" />
-                          </div>
-                        </div>
-                      </div>
-                      {/* <!-- buttons --> */}
-                      <hr className="mt-5 border" />
-                      <div
-                        className="
+                          {/* <!-- buttons --> */}
+                          <hr className="mt-5 border" />
+                          <div
+                            className="
                     flex
                     items-center
                     justify-center
@@ -2001,9 +2069,9 @@ function Students() {
                     pt-5
                     pb-5
                   "
-                      >
-                        <button
-                          className="
+                          >
+                            <button
+                              className="
                       w-auto
                       bg-red-400
                       hover:bg-red-200
@@ -2014,14 +2082,17 @@ function Students() {
                       px-4
                       py-2
                     "
-                          onClick={() => changeStudentInfoPop()}
-                        >
-                          Go back
-                        </button>
+                              onClick={() => changeStudentInfoPop()}
+                            >
+                              Go back
+                            </button>
+                          </div>
+                        </div>
                       </div>
                     </div>
                   </div>
                 </div>
+
                 {/* end of student info pop up */}
               </div>
             </div>
@@ -2120,7 +2191,11 @@ function Students() {
   );
 }
 
-Students.propTypes = {};
-const mapStateToProps = (state) => ({});
+Students.propTypes = {
+  getStudents: PropTypes.func.isRequired,
+};
+const mapStateToProps = (state) => ({
+  students: state.students,
+});
 
-export default Students;
+export default connect(mapStateToProps, { getStudents })(Students);

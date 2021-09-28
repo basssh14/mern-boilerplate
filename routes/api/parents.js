@@ -9,13 +9,13 @@ const app = express();
 app.use(
     bodyParser.json({
         extended: true,
-        limit: "5mb",
+        limit: "50mb",
     })
 );
 app.use(
     bodyParser.urlencoded({
         extended: true,
-        limit: "5mb",
+        limit: "50mb",
     })
 );
 
@@ -71,6 +71,7 @@ router.post(
             .isEmpty(),
             check("utilityOne", "Please upload utility image").not().isEmpty(),
             check("utilitySec", "Please upload utility image").not().isEmpty(),
+            check("formB", "Please upload formB image").not().isEmpty(),
         ],
     ],
     async(req, res) => {
@@ -94,6 +95,7 @@ router.post(
             qualiDoc,
             utilityOne,
             utilitySec,
+            formB,
         } = req.body;
         const userId = req.user.id;
         const newParent = {
@@ -116,6 +118,8 @@ router.post(
             utilityOneImgType: "",
             utilitySecImgType: "",
             utilitySecImg: "",
+            formBImg: "",
+            formBImgType: "",
         };
         if (cnicFront !== null) {
             const newImg = JSON.parse(cnicFront);
@@ -157,6 +161,13 @@ router.post(
             if (newImg !== null) {
                 newParent.utilitySecImg = new Buffer.from(newImg.data, "base64");
                 newParent.utilitySecImgType = newImg.type;
+            }
+        }
+        if (formB !== null) {
+            const newImg = JSON.parse(formB);
+            if (newImg !== null) {
+                newParent.formBImg = new Buffer.from(newImg.data, "base64");
+                newParent.formBImgType = newImg.type;
             }
         }
         let parentsUser = await Parents.findOne({ user: userId });
@@ -231,6 +242,7 @@ router.post(
             .isEmpty(),
             check("utilityOne", "Please upload utility image").not().isEmpty(),
             check("utilitySec", "Please upload utility image").not().isEmpty(),
+            check("formB", "Please upload formB image").not().isEmpty(),
         ],
     ],
     async(req, res) => {
@@ -252,6 +264,7 @@ router.post(
             qualiDoc,
             utilityOne,
             utilitySec,
+            formB,
         } = req.body;
         const userId = req.user.id;
         const newParent = {
@@ -274,6 +287,8 @@ router.post(
             utilityOneImgType: "",
             utilitySecImg: "",
             utilitySecImgType: "",
+            formBImg: "",
+            formBImgType: "",
         };
         if (cnicFront !== null) {
             const newImg =
@@ -321,6 +336,14 @@ router.post(
             if (newImg !== null) {
                 newParent.utilitySecImg = new Buffer.from(newImg.data, "base64");
                 newParent.utilitySecImgType = newImg.type;
+            }
+        }
+        if (formB !== null) {
+            const newImg =
+                typeof formB === "string" ? JSON.parse(formB) : formB;
+            if (newImg !== null) {
+                newParent.formBImg = new Buffer.from(newImg.data, "base64");
+                newParent.formBImgType = newImg.type;
             }
         }
         try {

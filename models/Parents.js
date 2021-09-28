@@ -70,6 +70,12 @@ const parentsSchema = new mongoose.Schema({
         utilitySecImg: {
             type: Buffer,
         },
+        formBImg:{
+            type:Buffer,
+        },
+        formBImgType: {
+            type: String,
+        },
         date: {
             type: Date,
             default: Date.now,

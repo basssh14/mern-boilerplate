@@ -36,6 +36,7 @@ function ParentPopUp({
   const [qualiDoc, setQualiDoc] = useState();
   const [utilityOne, setUtilityOne] = useState();
   const [utilitySec, setUtilitySec] = useState();
+  const [formB, setFormB] = useState();
   //display image center of screen
   const [imgTop, setImgTop] = useState(0);
   //take care of the data
@@ -92,6 +93,10 @@ function ParentPopUp({
       clickedParent !== null ? reverseImg(clickedParent.utilitySecImg) : " ",
     utilitySecImgType:
       clickedParent !== null ? clickedParent.utilitySecImgType : " ",
+      formBImg:
+      clickedParent !== null ? reverseImg(clickedParent.formBImg) : " ",
+    formBImgType:
+      clickedParent !== null ? clickedParent.formBImgType : " ",
   });
   //handle images
   const updateCnicFrontImg = async (e) => {
@@ -122,6 +127,11 @@ function ParentPopUp({
   const updateUtilitySec = async (e) => {
     const form = new FormData(e.target);
     const data = form.get("utilitySec");
+    return data;
+  };
+  const updateFormB = async (e) => {
+    const form = new FormData(e.target);
+    const data = form.get("formB");
     return data;
   };
   const displayCnicFront = () => {
@@ -196,6 +206,18 @@ function ParentPopUp({
       ).toString("base64")}`;
     }
   };
+  const displayFormB = () => {
+    if (
+      clickedParent.formBImg != null &&
+      clickedParent.formBImgType != null
+    ) {
+      return `data: ${
+        clickedParent.formBImgType
+      };charset=utf-8;base64,${Buffer.from(
+        clickedParent.formBImg
+      ).toString("base64")}`;
+    }
+  };
   //-----------------------------------------------
   const onChange = (e) =>
     setFormData({ ...formData, [e.target.name]: e.target.value });
@@ -209,6 +231,7 @@ function ParentPopUp({
   const [imagePopCnicBack, setImagePopCnicBack] = useState("hidden");
   const [imageUtilityOne, setImageUtilityOne] = useState("hidden");
   const [imageUtilitySec, setImageUtilitySec] = useState("hidden");
+  const [imageFormB, setImageFormB] = useState("hidden");
   const changeImagePopCnic = () => {
     getPosition("something");
     if (imagePopCnic === "hidden") {
@@ -255,6 +278,14 @@ function ParentPopUp({
       setImageUtilitySec("hidden");
     }
   };
+  const changeImageFormB = () => {
+    getPosition("something");
+    if (imageFormB === "hidden") {
+      setImageFormB(" ");
+    } else {
+      setImageFormB("hidden");
+    }
+  };
 
   const onSubmit = async (e) => {
     e.preventDefault();
@@ -264,6 +295,7 @@ function ParentPopUp({
     const qualiDocData = await updateQualiDoc(e);
     const utilityOneData = await updateUtilityOne(e);
     const utilitySecData = await updateUtilitySec(e);
+    const formBData = await updateFormB(e);
     const newInfo = {
       type: formData.type,
       gender: formData.gender,
@@ -296,6 +328,10 @@ function ParentPopUp({
         utilitySecData.size === 0
           ? { data: formData.utilitySecImg, type: formData.utilitySecImgType }
           : utilitySecData,
+          formB:
+          formBData.size === 0
+            ? { data: formData.formBImg, type: formData.formBImgType }
+            : formBData,
     };
     updateParent(newInfo, parentId.id);
     getParents();
@@ -788,6 +824,43 @@ function ParentPopUp({
                 </div>
               </div>
             </div>
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-5 md:gap-8 mt-0 mx-7">
+              <div className="grid grid-cols-1">
+                <label
+                  className="
+                    uppercase
+                    md:text-sm
+                    text-xs text-gray-500 text-light
+                    font-semibold
+                    mb-1
+                  "
+                >
+                 Form-B/FRC 
+                </label>
+                <div className="flex items-center justify-left w-full">
+                  <button
+                    className="w-auto h-8 px-2 mb-0  bg-gray-100 usm:mb-3 border border-gray-500"
+                    type="button"
+                    onClick={() => changeImageFormB()}
+                  >
+                    Check Image
+                  </button>
+                </div>
+                <div className="flex items-center justify-left w-full -ml-2">
+                  <FilePond
+                    files={formB}
+                    allowMultiple={false}
+                    allowFileEncode={true}
+                    name="formB"
+                    labelIdle='Drag & Drop your files or <span class="filepond--label-action">Browse</span>'
+                    className="w-full h-auto "
+                    allowImagePreview={false}
+                  >
+                    {" "}
+                  </FilePond>
+                </div>
+              </div>
+            </div>
             <div className="flex items-center justify-center md:gap-8 gap-4 pt-5 pb-5">
               <button
                 className="
@@ -928,6 +1001,24 @@ function ParentPopUp({
               <button
                 className="w-10 h-10 absolute top-0 right-0 text-4xl text-gray-400"
                 onClick={() => changeImageUtilitySec()}
+                type="button"
+              >
+                X
+              </button>
+            </div>
+          </div>
+          <div
+            style={{ top: imgTop }}
+            className={`w-1/5 h-1/2 bg-white fixed centerHorizontal usm:h-1/3 border ${imageFormB}`}
+          >
+            <div className="w-full h-full relative">
+              <img
+                src={clickedParent !== null ? displayFormB() : " "}
+                className="w-full h-full bg-cover"
+              />
+              <button
+                className="w-10 h-10 absolute top-0 right-0 text-4xl text-gray-400"
+                onClick={() => changeImageFormB()}
                 type="button"
               >
                 X

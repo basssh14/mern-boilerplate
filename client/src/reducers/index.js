@@ -7,6 +7,7 @@ import parents from "./parents";
 import banks from "./banks";
 import aplicants from "./aplicants";
 import scholarships from "./scholarships";
+import students from "./students";
 // import notes from "./notes";
 
 export default combineReducers({
@@ -16,4 +17,5 @@ export default combineReducers({
     banks,
     aplicants,
     scholarships,
+    students,
 });

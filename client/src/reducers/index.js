@@ -8,14 +8,16 @@ import banks from "./banks";
 import aplicants from "./aplicants";
 import scholarships from "./scholarships";
 import students from "./students";
+import scholarshipsAdmin from "./scholarshipsAdmin";
 // import notes from "./notes";
 
 export default combineReducers({
-    alert,
-    auth,
-    parents,
-    banks,
-    aplicants,
-    scholarships,
-    students,
+  alert,
+  auth,
+  parents,
+  banks,
+  aplicants,
+  scholarships,
+  students,
+  scholarshipsAdmin,
 });

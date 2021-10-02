@@ -3,10 +3,11 @@ const router = express.Router();
 
 const { check, validationResult } = require("express-validator");
 const auth = require("../../middleware/auth");
-const Applicants = require("../../models/Applicants");
-const User = require("../../models/Users");
+
 const app = express();
 const bodyParser = require("body-parser");
+const Scholarships = require("../../models/Scholarships");
+const User = require("../../models/Users");
 app.use(
   bodyParser.json({
     extended: true,
@@ -19,17 +20,25 @@ app.use(
     limit: "5mb",
   })
 );
+//app.use(bodyParser.urlencoded({ limit: "500MB", extended: true }));
 
-//@route GET api/applicants
+//@route GET api/scholarships
 //@desc give us the req.user object back
 //@access private
 
-router.get("/", auth, async (req, res) => {
+router.get("/:userId", auth, async (req, res) => {
   try {
     let user = await User.findOne({ _id: req.user.id });
     if (user.tipo === "admin") {
-      let students = await Applicants.find();
-      res.send(students);
+      let scholarships = await Scholarships.find();
+      let userScho = scholarships.map((scho) =>
+        scho.scholarships.find((scholarship) => {
+          if (scholarship.applicant == req.params.userId) {
+            return scholarship;
+          }
+        })
+      );
+      res.send(userScho === undefined ? null : userScho);
     }
   } catch (err) {
     console.log(err.message);
@@ -38,3 +47,4 @@ router.get("/", auth, async (req, res) => {
 });
 
 module.exports = router;
+//613a61042ec69d5e6cd584a3

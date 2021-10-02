@@ -6,11 +6,18 @@ import Header from "../individual/Header";
 import "@material-tailwind/react/Dropdown";
 import { connect } from "react-redux";
 import { getStudents } from "../../actions/students";
+import { getScholarshipsAdmin } from "../../actions/scholarshipsAdmin";
 import Spinner from "./Spinner";
+import StudentReportsAdmin from "./StudentReportsAdmin";
 
-function Students({ getStudents, students }) {
+function Students({
+  getStudents,
+  students,
+  getScholarshipsAdmin,
+  scholarshipsAdmin,
+}) {
   const [paymentsPop, setPaymentsPop] = useState("hidden");
-  const [reportsPop, setReportsPop] = useState("hidden");
+  const [reportsPop, setReportsPop] = useState(false);
   const [studentInfoPop, setStudentInfoPop] = useState("hidden");
   const [cnPhoto, setCnPhoto] = useState("hidden");
   const [stPhoto, setStPhoto] = useState("hidden");
@@ -18,6 +25,7 @@ function Students({ getStudents, students }) {
   const [idPhoto, setIdPhoto] = useState("hidden");
   const [bkPhoto, setBkPhoto] = useState("hidden");
   const [imgTop, setImgTop] = useState(0);
+  const [reportId, setReportId] = useState(0);
   //getElementPosition
   const getPosition = (buttonName) => {
     setImgTop(window.scrollY + 100);
@@ -39,22 +47,17 @@ function Students({ getStudents, students }) {
   };
   const changePaymentsPop = () => {
     getPosition("something");
-    if (paymentsPop === "hidden") {
-      setReportsPop("hidden");
-      setPaymentsPop(" ");
-    } else {
-      setPaymentsPop("hidden");
-    }
+
+    setReportsPop(!reportsPop);
     //paymentsPop === "hidden" ? setPaymentsPop(" ") : setPaymentsPop("hidden");
   };
-  const changeReportsPop = () => {
+  const changeReportPopClose = () => {
+    setReportsPop(!reportsPop);
+  };
+  const changeReportsPop = (e) => {
     getPosition("something");
-    if (reportsPop === "hidden") {
-      setPaymentsPop("hidden");
-      setReportsPop(" ");
-    } else {
-      setReportsPop("hidden");
-    }
+    setReportId(e.target.id);
+    setReportsPop(!reportsPop);
     //paymentsPop === "hidden" ? setPaymentsPop(" ") : setPaymentsPop("hidden");
   };
   const changeStudentInfoPop = () => {
@@ -190,49 +193,52 @@ function Students({ getStudents, students }) {
                     </thead>
                     <tbody className="w-full bg-white">
                       {students.students !== null ? (
-                        students.students.map((stu) => (
-                          <tr className="text-gray-700">
-                            <td className="px-4 py-3 border">
-                              <div className="flex items-center text-sm">
-                                <div className="relative w-8 h-8 mr-3 rounded-full md:block">
-                                  <img
-                                    className="object-cover w-full h-full rounded-full"
-                                    src="https://images.pexels.com/photos/5212324/pexels-photo-5212324.jpeg?auto=compress&cs=tinysrgb&dpr=3&h=750&w=1260"
-                                    alt=""
-                                    loading="lazy"
-                                  />
-                                  <div
-                                    className="absolute inset-0 rounded-full shadow-inner"
-                                    aria-hidden="true"
-                                  ></div>
+                        students.students.map((stu) =>
+                          stu.applicants.map((student) => (
+                            <tr className="text-gray-700">
+                              <td className="px-4 py-3 border">
+                                <div className="flex items-center text-sm">
+                                  <div className="relative w-8 h-8 mr-3 rounded-full md:block">
+                                    <img
+                                      className="object-cover w-full h-full rounded-full"
+                                      src="https://images.pexels.com/photos/5212324/pexels-photo-5212324.jpeg?auto=compress&cs=tinysrgb&dpr=3&h=750&w=1260"
+                                      alt=""
+                                      loading="lazy"
+                                    />
+                                    <div
+                                      className="absolute inset-0 rounded-full shadow-inner"
+                                      aria-hidden="true"
+                                    ></div>
+                                  </div>
+                                  <div>
+                                    <p
+                                      className="font-semibold text-black"
+                                      onClick={() => changeStudentInfoPop()}
+                                    >
+                                      {student.name}
+                                    </p>
+                                  </div>
                                 </div>
-                                <div>
-                                  <p
-                                    className="font-semibold text-black"
-                                    onClick={() => changeStudentInfoPop()}
-                                  >
-                                    {stu.name}
-                                  </p>
-                                </div>
-                              </div>
-                            </td>
-                            <td
-                              className="px-4 py-3 text-ms font-semibold border"
-                              onClick={() => changeReportsPop()}
-                            >
-                              Student Reports
-                            </td>
-                            <td
-                              className="px-4 py-3 border text-md font-semibold"
-                              onClick={() => changePaymentsPop()}
-                            >
-                              Student Payments
-                            </td>
-                            <td className="px-4 py-3 text-sm border">
-                              From: 6/4/2000 to: 6/4/2004
-                            </td>
-                          </tr>
-                        ))
+                              </td>
+                              <td
+                                id={student._id}
+                                className="px-4 py-3 text-ms font-semibold border"
+                                onClick={(e) => changeReportsPop(e)}
+                              >
+                                Student Reports
+                              </td>
+                              <td
+                                className="px-4 py-3 border text-md font-semibold"
+                                onClick={() => changePaymentsPop()}
+                              >
+                                Student Payments
+                              </td>
+                              <td className="px-4 py-3 text-sm border">
+                                From: 6/4/2000 to: 6/4/2004
+                              </td>
+                            </tr>
+                          ))
+                        )
                       ) : (
                         <Spinner />
                       )}
@@ -530,117 +536,13 @@ function Students({ getStudents, students }) {
                   </table>
                 </div>
                 {/* reports student */}
-                <div
-                  style={{ top: imgTop }}
-                  className={`w-2/3 h-1/2 bg-white fixed centerHorizontal usm:h-1/3 border ${reportsPop}`}
-                >
-                  <div className="w-full h-full relative">
-                    <table className="w-full h-180/2">
-                      <thead className="w-full">
-                        <tr
-                          className="
-                              text-md
-                              font-semibold
-                              tracking-wide
-                              text-left text-gray-900
-                              bg-gray-100
-                              uppercase
-                              border-b border-gray-600
-                              w-full
-                            "
-                        >
-                          <th className="px-4 py-3 w-full">Number</th>
-                          <th className="px-4 py-3 w-full">Report</th>
-                          <th className="px-4 py-3 w-full">Date</th>
-                        </tr>
-                      </thead>
-                      <tbody className="bg-white w-full">
-                        <tr className="text-gray-700 w-full">
-                          <td className="px-4 py-3 border">
-                            <div className="flex items-center text-sm">
-                              <div>
-                                <p className="font-semibold text-black">1</p>
-                              </div>
-                            </div>
-                          </td>
-                          <td className="px-4 py-3 text-ms font-semibold border">
-                            Report 1
-                          </td>
-                          <td className="px-4 py-3 text-sm border">
-                            24/01/2021
-                          </td>
-                        </tr>
-                        <tr className="text-gray-700">
-                          <td className="px-4 py-3 border">
-                            <div className="flex items-center text-sm">
-                              <div>
-                                <p className="font-semibold text-black">2</p>
-                              </div>
-                            </div>
-                          </td>
-                          <td className="px-4 py-3 text-ms font-semibold border">
-                            Report 2
-                          </td>
-                          <td className="px-4 py-3 text-sm border">
-                            24/01/2021
-                          </td>
-                        </tr>
-                        <tr className="text-gray-700">
-                          <td className="px-4 py-3 border">
-                            <div className="flex items-center text-sm">
-                              <div>
-                                <p className="font-semibold text-black">3</p>
-                              </div>
-                            </div>
-                          </td>
-                          <td className="px-4 py-3 text-ms font-semibold border">
-                            Report 3
-                          </td>
-                          <td className="px-4 py-3 text-sm border">
-                            24/01/2021
-                          </td>
-                        </tr>
-                        <tr className="text-gray-700">
-                          <td className="px-4 py-3 border">
-                            <div className="flex items-center text-sm">
-                              <div>
-                                <p className="font-semibold text-black">4</p>
-                              </div>
-                            </div>
-                          </td>
-                          <td className="px-4 py-3 text-ms font-semibold border">
-                            Report 4
-                          </td>
-                          <td className="px-4 py-3 text-sm border">
-                            24/01/2021
-                          </td>
-                        </tr>
-                        <tr className="text-gray-700">
-                          <td className="px-4 py-3 border">
-                            <div className="flex items-center text-sm">
-                              <div>
-                                <p className="font-semibold text-black">5</p>
-                              </div>
-                            </div>
-                          </td>
-                          <td className="px-4 py-3 text-ms font-semibold border">
-                            Report 5
-                          </td>
-                          <td className="px-4 py-3 text-sm border">
-                            24/01/2021
-                          </td>
-                        </tr>
-                      </tbody>
-                    </table>
-                    <button
-                      className="w-10 h-10 absolute top-0 right-0 text-3xl text-black"
-                      onClick={() => changeReportsPop()}
-                      type="button"
-                    >
-                      X
-                    </button>
-                  </div>
-                </div>
+                {reportsPop && (
+                  <StudentReportsAdmin
+                    imgTop={imgTop}
+                    changeReportPopClose={changeReportPopClose}
+                    reportId={reportId}
+                  />
+                )}
                 {/* students payments */}
                 <div
                   style={{ top: imgTop }}
@@ -2193,9 +2095,13 @@ function Students({ getStudents, students }) {
 
 Students.propTypes = {
   getStudents: PropTypes.func.isRequired,
+  getScholarshipsAdmin: PropTypes.func.isRequired,
 };
 const mapStateToProps = (state) => ({
   students: state.students,
+  scholarshipsAdmin: state.scholarshipsAdmin,
 });
 
-export default connect(mapStateToProps, { getStudents })(Students);
+export default connect(mapStateToProps, { getStudents, getScholarshipsAdmin })(
+  Students
+);

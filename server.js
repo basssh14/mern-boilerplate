@@ -52,6 +52,7 @@ app.use("/api/applicants", require("./routes/api/applicants"));
 app.use("/api/scholarships", require("./routes/api/scholarships"));
 //admin stuff
 app.use("/api/applicantsAdmin", require("./routes/api/applicantsAdmin"));
+app.use("/api/scholarshipsAdmin", require("./routes/api/scholarshipsAdmin"));
 
 //heroku stuff
 //Serve static assets into production

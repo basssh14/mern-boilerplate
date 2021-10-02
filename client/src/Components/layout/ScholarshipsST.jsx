@@ -63,6 +63,8 @@ function ScholarshipsST({
     institutionPhone: "",
     institutionJoinDate: "",
     institutionAddress: "",
+    scholarshipStartDate: "",
+    scholarshipEndDate: "",
     requiredFees: "",
     // reports: [
     //     {
@@ -132,6 +134,8 @@ function ScholarshipsST({
       institutionPhone: formData.institutionPhone,
       institutionJoinDate: formData.institutionJoinDate,
       institutionAddress: formData.institutionAddress,
+      scholarshipStartDate: formData.scholarshipStartDate,
+      scholarshipEndDate: formData.scholarshipEndDate,
       requiredFees: formData.requiredFees,
       // reports: [
       //     {
@@ -599,6 +603,73 @@ function ScholarshipsST({
                           />
                         </div>
                         <hr className="mt-5 border" />
+                        {/* select scholarship date */}
+                        <div className="grid grid-cols-1 md:grid-cols-2 gap-5 md:gap-8 mt-5 mx-7">
+                          <div className="grid grid-cols-1">
+                            <label
+                              className="
+                    uppercase
+                    md:text-sm
+                    text-xs text-gray-500 text-light
+                    font-semibold
+                  "
+                            >
+                              Scholarship Start Date
+                            </label>
+                            <input
+                              className="
+                    py-2
+                    px-3
+                    rounded-lg
+                    border border-gray-300
+                    mt-1
+                    focus:outline-none
+                    focus:ring-1
+                    focus:ring-gray-600
+                    focus:border-transparent
+                  "
+                              type="date"
+                              placeholder="start date"
+                              name="scholarshipStartDate"
+                              required
+                              value={formData.scholarshipStartDate}
+                              onChange={(e) => onChangeFormData(e)}
+                            />
+                          </div>
+                          <div className="grid grid-cols-1">
+                            <label
+                              className="
+                    uppercase
+                    md:text-sm
+                    text-xs text-gray-500 text-light
+                    font-semibold
+                  "
+                            >
+                              Scholarship End Date
+                            </label>
+                            <input
+                              className="
+                    py-2
+                    px-3
+                    rounded-lg
+                    border border-gray-300
+                    mt-1
+                    focus:outline-none
+                    focus:ring-1
+                    focus:ring-gray-600
+                    focus:border-transparent
+                  "
+                              type="date"
+                              placeholder="end date"
+                              name="scholarshipEndDate"
+                              required
+                              value={formData.scholarshipEndDate}
+                              onChange={(e) => onChangeFormData(e)}
+                            />
+                          </div>
+                          
+                        </div>
+                        <hr className="mt-5 border" />
                         {/* <!-- institution --> */}
                         <div className="grid grid-cols-1 mt-5 mx-7">
                           <label
@@ -661,9 +732,10 @@ function ScholarshipsST({
                             onChange={(e) => onChangeFormData(e)}
                           >
                             <option defualt>Select</option>
-                            <option value="Pre-School">Pre-School</option>
-                            <option value="School">School</option>
-                            <option value="High-School">High School</option>
+                            <option value="Pre School">Pre School(Nursery, KG)</option>
+                            <option value="School">School (Class 1-8)</option>
+                            <option value="High School">High School (Class 9-10, Class 9-11</option>
+                              <option value="Technical Institute">Tecnichal Institute</option>
                             <option value="College">College</option>
                             <option value="University">University</option>
                           </select>
@@ -699,11 +771,34 @@ function ScholarshipsST({
                               onChange={(e) => onChangeFormData(e)}
                             >
                               <option defualt>Select</option>
-                              <option value="Pre-School">Pre-School</option>
-                              <option value="School">School</option>
-                              <option value="High-School">High School</option>
-                              <option value="College">College</option>
-                              <option value="University">University</option>
+                              <option value="KG 1">KG 1</option>
+                              <option value="Pre School">Pre School</option>
+                              <option value="KG 2">KG 2</option>
+                              <option value="School Class1">School Class1</option>
+                              <option value="School Class2">School Class2</option>
+                              <option value="School Class3">School Class3</option>
+                              <option value="School Class4">School Class4</option>
+                              <option value="School Class5">School Class5</option>
+                              <option value="School Class6">School Class6</option>
+                              <option value="School Class7">School Class7</option>
+                              <option value="School Class8">School Class8</option>
+                              <option value="Secondary School Class 9">Secondary School Class 9</option>
+                              <option value="Secondary School Class 10">Secondary School Class 10</option>
+                              <option value="Secondary School Class 11">Secondary School Class 11</option>
+                              <option value="Year 1 - College/University">Year 1 - College/University</option>
+                              <option value="Year 2 - College/University">Year 2 - College/University</option>
+                              <option value="Year 3 - College/University">Year 3 - College/University</option>
+                              <option value="Year 4 - College/University">Year 4 - College/University</option>
+                              <option value="Semester 1 - University">Semester 1 - University</option>
+                              <option value="Semester 2 - University">Semester 2 - University</option>
+                              <option value="Semester 3 - University">Semester 3 - University</option>
+                              <option value="Semester 4 - University">Semester 4 - University</option>
+                              <option value="Semester 5 - University">Semester 5 - University</option>
+                              <option value="Semester 6 - University">Semester 6 - University</option>
+                              <option value="Semester 7 - University">Semester 7 - University</option>
+                              <option value="Semester 8 - University">Semester 8 - University</option>
+                              <option value="Semester 9 - University">Semester 9 - University</option>
+                              <option value="Semester 10 - University">Semester 10 - University</option>
                             </select>
                           </div>
                           <div className="grid grid-cols-1">
@@ -736,11 +831,17 @@ function ScholarshipsST({
                               onChange={(e) => onChangeFormData(e)}
                             >
                               <option defualt>Select</option>
-                              <option value="Pre-School">Pre-School</option>
-                              <option value="School">School</option>
-                              <option value="High-School">High School</option>
-                              <option value="College">College</option>
-                              <option value="University">University</option>
+                              <option value="Pre School">Pre-School (nursery, KG)</option>
+                              <option value="School">School ( Class 1 - 8)</option>
+                              <option value="O-levels">O-levels</option>
+                              <option value="Secondary School Certificate">Secondary School Certificate</option>
+                              <option value="High School Certificate">High School Certificate</option>
+                              <option value="A-levels">A-levels</option>
+                              <option value="Diploma">Diploma</option>
+                              <option value="LLB">LLB</option>
+                              <option value="Pharm. D">Pharm. D</option>
+                              <option value="DPT">DPT</option>
+                              <option value="Bachelor of Medicine And Bachelor of Surgery">Bachelor of Medicine And Bachelor of Surgery</option>
                             </select>
                           </div>
                         </div>

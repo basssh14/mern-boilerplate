@@ -1,7 +1,10 @@
 import React, { useEffect, useState } from "react";
 import PropTypes from "prop-types";
 import { connect } from "react-redux";
-import { getScholarshipsAdmin } from "../../actions/scholarshipsAdmin";
+import {
+  getScholarshipsAdmin,
+  deleteReportData,
+} from "../../actions/scholarshipsAdmin";
 import Spinner from "./Spinner";
 
 function StudentReportsAdmin({
@@ -10,6 +13,7 @@ function StudentReportsAdmin({
   reportId,
   getScholarshipsAdmin,
   scholarshipsAdmin,
+  deleteReportData,
 }) {
   const [reportImg, setReportImg] = useState();
   const [reportImgType, setReportImgType] = useState();
@@ -32,15 +36,19 @@ function StudentReportsAdmin({
     setReportImgType(imgType);
     setReportImg(img);
   };
+  const closeReportWindow = () => {
+    deleteReportData();
+    changeReportPopClose();
+  };
   useEffect(() => {
     getScholarshipsAdmin(reportId);
   }, []);
   return (
     <div
       style={{ top: imgTop }}
-      className={`w-3/4 h-1/2 bg-white overflow-y-auto fixed centerHorizontal usm:h-1/3 border`}
+      className={`w-3/4 h-1/2 bg-white  fixed centerHorizontal usm:h-1/3 border`}
     >
-      <div className="w-full h-full relative ">
+      <div className="w-full h-4/5 relative overflow-y-auto">
         <table className="w-full h-auto">
           <thead className="w-full">
             <tr
@@ -111,12 +119,36 @@ function StudentReportsAdmin({
             )}
           </tbody>
         </table>
+      </div>
+      <div
+        className="
+          w-full
+          h-1/5
+          flex
+          items-center
+          justify-center
+          md:gap-8
+          gap-4
+          pt-5
+          pb-5
+        "
+      >
         <button
-          className="w-10 h-10 absolute top-0 right-0 text-3xl text-black"
-          onClick={() => changeReportPopClose()}
+          className="
+            w-auto
+            bg-red-400
+            hover:bg-red-200
+            rounded-lg
+            shadow-xl
+            font-medium
+            text-white
+            px-4
+            py-2
+          "
           type="button"
+          onClick={() => closeReportWindow()}
         >
-          X
+          Close
         </button>
       </div>
       {/* handle images */}
@@ -147,11 +179,13 @@ StudentReportsAdmin.propTypes = {
   reportId: PropTypes.string.isRequired,
   changeReportPopClose: PropTypes.func.isRequired,
   getScholarshipsAdmin: PropTypes.func.isRequired,
+  deleteReportData: PropTypes.func.isRequired,
 };
 const mapStateToProps = (state) => ({
   scholarshipsAdmin: state.scholarshipsAdmin,
 });
 
-export default connect(mapStateToProps, { getScholarshipsAdmin })(
-  StudentReportsAdmin
-);
+export default connect(mapStateToProps, {
+  getScholarshipsAdmin,
+  deleteReportData,
+})(StudentReportsAdmin);

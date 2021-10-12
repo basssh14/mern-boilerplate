@@ -2680,7 +2680,8 @@ function Applications({ getFullScho, fullScho, updateScho, setAlert }) {
                       px-4
                       py-2
                     "
-                            onClick={() => changeAppPop()}
+                            type="button"
+                            onClick={(e) => changeAppPop(e)}
                           >
                             Cancel
                           </button>

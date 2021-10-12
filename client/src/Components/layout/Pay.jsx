@@ -614,6 +614,7 @@ function Pay({
                             px-4
                             py-2
                           "
+                            type="button"
                             onClick={() => changePayPop()}
                           >
                             Cancel

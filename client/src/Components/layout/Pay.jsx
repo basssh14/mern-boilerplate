@@ -615,7 +615,7 @@ function Pay({
                             py-2
                           "
                             type="button"
-                            onClick={() => changePayPop()}
+                            onClick={() => changePayPopClose()}
                           >
                             Cancel
                           </button>

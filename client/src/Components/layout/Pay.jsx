@@ -1,26 +1,91 @@
-import React, { Fragment, useState } from "react";
-//import PropTypes from "prop-types";
+import React, { Fragment, useState, useEffect } from "react";
+import PropTypes from "prop-types";
 //import Spinner from "./Spinner";
 import Header from "../individual/Header";
 import "@material-tailwind/react/Dropdown";
+import { connect } from "react-redux";
+import { getStudents } from "../../actions/students";
+import { getAllScholarshipsAdmin } from "../../actions/scholarshipsAdmin";
+import { getPayments, newPayment } from "../../actions/payments";
+import Spinner from "./Spinner";
+import Students from "./Students";
+import StudentReportsAdmin from "./StudentReportsAdmin";
+import { setAlert } from "../../actions/alert";
 
-function Pay() {
-  const [reportsPop, setReportsPop] = useState("hidden");
+function Pay({
+  getAllScholarshipsAdmin,
+  scholarshipsInfo,
+  newPayment,
+  setAlert,
+}) {
+  const [formData, setFormData] = useState({
+    cheqDate: "",
+    cheqNumber: "",
+    startMonth: "",
+    endMonth: "",
+    amount: "",
+    dateOfApproval: "",
+    approvedAmount: "",
+    approvedTo: "",
+    approvedFrom: "",
+    status: "",
+  });
+  const [reportsPop, setReportsPop] = useState(false);
   const [payPop, setPayPop] = useState("hidden");
-  const changeReportsPop = () => {
-    if (reportsPop === "hidden") {
-      setReportsPop(" ");
-    } else {
-      setReportsPop("hidden");
-    }
+  const [reportId, setReportId] = useState(0);
+  const [imgTop, setImgTop] = useState(0);
+  const [studentId, setStudentId] = useState(0);
+  const onChangeFormData = (e) =>
+    setFormData({ ...formData, [e.target.name]: e.target.value });
+  //getElementPosition
+  const getPosition = (buttonName) => {
+    setImgTop(window.scrollY + 100);
   };
-  const changePayPop = () => {
+  const changeReportPopClose = () => {
+    setReportsPop(!reportsPop);
+  };
+  const changeReportsPop = (e) => {
+    getPosition("something");
+    setReportId(e.target.id);
+    setReportsPop(!reportsPop);
+  };
+  const changePayPopClose = () => {
     if (payPop === "hidden") {
       setPayPop(" ");
     } else {
       setPayPop("hidden");
     }
   };
+  const changePayPop = (e) => {
+    setStudentId(e.target.id);
+    if (payPop === "hidden") {
+      setPayPop(" ");
+    } else {
+      setPayPop("hidden");
+    }
+  };
+  const createPayment = (e) => {
+    e.preventDefault();
+    const data = {
+      cheqDate: formData.cheqDate,
+      cheqNumber: formData.cheqNumber,
+      startMonth: formData.startMonth,
+      endMonth: formData.endMonth,
+      amount: formData.amount,
+      dateOfApproval: formData.dateOfApproval,
+      approvedAmount: formData.approvedAmount,
+      approvalGivenBy: studentId,
+      approvedTo: formData.approvedTo,
+      approvedFrom: formData.approvedFrom,
+      status: formData.status,
+    };
+    newPayment(data);
+    changePayPopClose();
+    setAlert("Creating payment, Please Wait", "success", 8000);
+  };
+  useEffect(() => {
+    getAllScholarshipsAdmin();
+  }, []);
   return (
     <Fragment>
       <div className="w-full h-full relative">
@@ -126,490 +191,113 @@ function Pay() {
                     <thead>
                       <tr className="text-md font-semibold tracking-wide text-left text-gray-900 bg-gray-100 uppercase border-b border-gray-600">
                         <th className="px-4 py-3">#</th>
-                        <th className="px-4 py-3">PaymentID</th>
-                        <th className="px-4 py-3">Student</th>
+                        <th className="px-4 py-3">CNIC</th>
+                        <th className="px-4 py-3">Student Name</th>
                         <th className="px-4 py-3">Student reports</th>
                         <th className="px-4 py-3">Bank</th>
-                        <th className="px-4 py-3">Amount</th>
+                        <th className="px-4 py-3">Account Number</th>
                         <th className="px-4 py-3">Approved funds</th>
-                        <th className="px-4 py-3">funds Used</th>
-                        <th className="px-4 py-3">Unused funds</th>
-                        <th className="px-4 py-3">Payments left</th>
-                        <th className="px-4 py-3">Payment date</th>
+                        <th className="px-4 py-3">Pay</th>
                       </tr>
                     </thead>
                     <tbody className="bg-white">
-                      <tr className="text-gray-700">
-                        <td className="px-2 py-2 border">1</td>
-                        <td
-                          className="px-2 py-2 border"
-                          onClick={() => changePayPop()}
-                        >
-                          02145678524
-                        </td>
-                        <td className="px-4 py-3 border">
-                          <div className="flex items-center text-sm">
-                            <div className="relative w-8 h-8 mr-3 rounded-full md:block">
-                              <img
-                                className="object-cover w-full h-full rounded-full"
-                                src="https://images.pexels.com/photos/5212324/pexels-photo-5212324.jpeg?auto=compress&cs=tinysrgb&dpr=3&h=750&w=1260"
-                                alt=""
-                                loading="lazy"
-                              />
-                              <div
-                                className="absolute inset-0 rounded-full shadow-inner"
-                                aria-hidden="true"
-                              ></div>
-                            </div>
-                            <div>
-                              <p className="font-semibold text-black">
-                                Sufyan Khan
-                              </p>
-                            </div>
-                          </div>
-                        </td>
-                        <td
-                          className="px-4 py-3 text-md font-semibold border"
-                          onClick={() => changeReportsPop()}
-                        >
-                          Student Reports
-                        </td>
-                        <td className="px-4 py-3 text-ms font-semibold border">
-                          Meezan Bank Limited
-                        </td>
-                        <td className="px-2 py-2 border">20$</td>
-                        <td className="px-2 py-2 border">500$</td>
-                        <td className="px-2 py-2 border">240$</td>
-                        <td className="px-2 py-2 border">260$</td>
-                        <td className="px-2 py-2 border">13</td>
-                        <td className="px-4 py-3 text-sm border">6/4/2021</td>
-                      </tr>
-                      <tr className="h-auto bg-white hidden">
-                        <td className=" col-span-4"></td>
-                      </tr>
-                      {/* Students Reports */}
-                      <tr className={`h-auto bg-white ${reportsPop}`}>
-                        <td colSpan="11" className="col-span-4">
-                          <table className="w-full h-180/2">
-                            <thead>
-                              <tr
-                                className="
-                              text-md
-                              font-semibold
-                              tracking-wide
-                              text-left text-gray-900
-                              bg-gray-100
-                              uppercase
-                              border-b border-gray-600
-                            "
+                      {scholarshipsInfo.scholarshipsInfo !== null ? (
+                        scholarshipsInfo.scholarshipsInfo.map((scho1) =>
+                          scho1.scholarships.map((schoFinal) => (
+                            <tr className="text-gray-700">
+                              <td className="px-2 py-2 border">1</td>
+                              <td className="px-2 py-2 border">
+                                {schoFinal.cnic}
+                              </td>
+                              <td className="px-4 py-3 border">
+                                <div className="flex items-center text-sm">
+                                  <div className="relative w-8 h-8 mr-3 rounded-full md:block">
+                                    <img
+                                      className="object-cover w-full h-full rounded-full"
+                                      src="https://images.pexels.com/photos/5212324/pexels-photo-5212324.jpeg?auto=compress&cs=tinysrgb&dpr=3&h=750&w=1260"
+                                      alt=""
+                                      loading="lazy"
+                                    />
+                                    <div
+                                      className="absolute inset-0 rounded-full shadow-inner"
+                                      aria-hidden="true"
+                                    ></div>
+                                  </div>
+                                  <div>
+                                    <p className="font-semibold text-black">
+                                      {schoFinal.name}
+                                    </p>
+                                  </div>
+                                </div>
+                              </td>
+                              <td
+                                id={schoFinal.studentId}
+                                className="px-4 py-3 text-md font-semibold border cursor-pointer"
+                                onClick={(e) => changeReportsPop(e)}
                               >
-                                <th className="px-4 py-3">Number</th>
-                                <th className="px-4 py-3">Report</th>
-                                <th className="px-4 py-3">Date</th>
-                              </tr>
-                            </thead>
-                            <tbody className="bg-white">
-                              <tr className="text-gray-700">
-                                <td className="px-4 py-3 border">
-                                  <div className="flex items-center text-sm">
-                                    <div>
-                                      <p className="font-semibold text-black">
-                                        1
-                                      </p>
-                                    </div>
-                                  </div>
-                                </td>
-                                <td className="px-4 py-3 text-ms font-semibold border">
-                                  Report 1
-                                </td>
-                                <td className="px-4 py-3 text-sm border">
-                                  24/01/2021
-                                </td>
-                              </tr>
-                              <tr className="text-gray-700">
-                                <td className="px-4 py-3 border">
-                                  <div className="flex items-center text-sm">
-                                    <div>
-                                      <p className="font-semibold text-black">
-                                        2
-                                      </p>
-                                    </div>
-                                  </div>
-                                </td>
-                                <td className="px-4 py-3 text-ms font-semibold border">
-                                  Report 2
-                                </td>
-                                <td className="px-4 py-3 text-sm border">
-                                  24/01/2021
-                                </td>
-                              </tr>
-                              <tr className="text-gray-700">
-                                <td className="px-4 py-3 border">
-                                  <div className="flex items-center text-sm">
-                                    <div>
-                                      <p className="font-semibold text-black">
-                                        3
-                                      </p>
-                                    </div>
-                                  </div>
-                                </td>
-                                <td className="px-4 py-3 text-ms font-semibold border">
-                                  Report 3
-                                </td>
-                                <td className="px-4 py-3 text-sm border">
-                                  24/01/2021
-                                </td>
-                              </tr>
-                              <tr className="text-gray-700">
-                                <td className="px-4 py-3 border">
-                                  <div className="flex items-center text-sm">
-                                    <div>
-                                      <p className="font-semibold text-black">
-                                        4
-                                      </p>
-                                    </div>
-                                  </div>
-                                </td>
-                                <td className="px-4 py-3 text-ms font-semibold border">
-                                  Report 4
-                                </td>
-                                <td className="px-4 py-3 text-sm border">
-                                  24/01/2021
-                                </td>
-                              </tr>
-                              <tr className="text-gray-700">
-                                <td className="px-4 py-3 border">
-                                  <div className="flex items-center text-sm">
-                                    <div>
-                                      <p className="font-semibold text-black">
-                                        5
-                                      </p>
-                                    </div>
-                                  </div>
-                                </td>
-                                <td className="px-4 py-3 text-ms font-semibold border">
-                                  Report 5
-                                </td>
-                                <td className="px-4 py-3 text-sm border">
-                                  24/01/2021
-                                </td>
-                              </tr>
-                            </tbody>
-                          </table>
-                        </td>
-                      </tr>
-                      {/* End of students  Reports */}
-                      <tr className="text-gray-700">
-                        <td className="px-2 py-2 border">2</td>
-                        <td className="px-2 py-2 border">02145678524</td>
-                        <td className="px-4 py-3 border">
-                          <div className="flex items-center text-sm">
-                            <div className="relative w-8 h-8 mr-3 rounded-full">
-                              <img
-                                className="object-cover w-full h-full rounded-full"
-                                src="https://images.pexels.com/photos/5212324/pexels-photo-5212324.jpeg?auto=compress&cs=tinysrgb&dpr=3&h=750&w=1260"
-                                alt=""
-                                loading="lazy"
-                              />
-                              <div
-                                className="absolute inset-0 rounded-full shadow-inner"
-                                aria-hidden="true"
-                              ></div>
-                            </div>
-                            <div>
-                              <p className="font-semibold text-black">
-                                Amin Mehmood{" "}
-                              </p>
-                            </div>
-                          </div>
-                        </td>
-                        <td className="px-4 py-3 text-md font-semibold border">
-                          Student Reports
-                        </td>
-                        <td className="px-4 py-3 text-ms font-semibold border">
-                          Meezan Bank Limited
-                        </td>
-                        <td className="px-2 py-2 border">20$</td>
-                        <td className="px-2 py-2 border">500$</td>
-                        <td className="px-2 py-2 border">240$</td>
-                        <td className="px-2 py-2 border">260$</td>
-                        <td className="px-2 py-2 border">13</td>
-                        <td className="px-4 py-3 text-sm border">6/4/2021</td>
-                      </tr>
-                      <tr className="text-gray-700">
-                        <td className="px-2 py-2 border">3</td>
-                        <td className="px-2 py-2 border">02145678524</td>
-                        <td className="px-4 py-3 border">
-                          <div className="flex items-center text-sm">
-                            <div className="relative w-8 h-8 mr-3 rounded-full">
-                              <img
-                                className="object-cover w-full h-full rounded-full"
-                                src="https://images.pexels.com/photos/5212324/pexels-photo-5212324.jpeg?auto=compress&cs=tinysrgb&dpr=3&h=750&w=1260"
-                                alt=""
-                                loading="lazy"
-                              />
-                              <div
-                                className="absolute inset-0 rounded-full shadow-inner"
-                                aria-hidden="true"
-                              ></div>
-                            </div>
-                            <div>
-                              <p className="font-semibold">Ibrahim Akbar </p>
-                            </div>
-                          </div>
-                        </td>
-                        <td className="px-4 py-3 text-md font-semibold border">
-                          Student Reports
-                        </td>
-                        <td className="px-4 py-3 text-ms font-semibold border">
-                          Meezan Bank Limited
-                        </td>
-                        <td className="px-2 py-2 border">20$</td>
-                        <td className="px-2 py-2 border">500$</td>
-                        <td className="px-2 py-2 border">240$</td>
-                        <td className="px-2 py-2 border">260$</td>
-                        <td className="px-2 py-2 border">13</td>
-                        <td className="px-4 py-3 text-sm border">6/4/2021</td>
-                      </tr>
-                      <tr className="text-gray-700">
-                        <td className="px-2 py-2 border">4</td>
-                        <td className="px-2 py-2 border">02145678524</td>
-                        <td className="px-4 py-3 border">
-                          <div className="flex items-center text-sm">
-                            <div className="relative w-8 h-8 mr-3 rounded-full">
-                              <img
-                                className="object-cover w-full h-full rounded-full"
-                                src="https://images.pexels.com/photos/5212324/pexels-photo-5212324.jpeg?auto=compress&cs=tinysrgb&dpr=3&h=750&w=1260"
-                                alt=""
-                                loading="lazy"
-                              />
-                              <div
-                                className="absolute inset-0 rounded-full shadow-inner"
-                                aria-hidden="true"
-                              ></div>
-                            </div>
-                            <div>
-                              <p className="font-semibold">Ali Ur rehman</p>
-                            </div>
-                          </div>
-                        </td>
-                        <td className="px-4 py-3 text-md font-semibold border">
-                          Student Reports
-                        </td>
-                        <td className="px-4 py-3 text-ms font-semibold border">
-                          Meezan Bank Limited
-                        </td>
-                        <td className="px-2 py-2 border">20$</td>
-                        <td className="px-2 py-2 border">500$</td>
-                        <td className="px-2 py-2 border">240$</td>
-                        <td className="px-2 py-2 border">260$</td>
-                        <td className="px-2 py-2 border">13</td>
-                        <td className="px-4 py-3 text-sm border">6/4/2021</td>
-                      </tr>
-                      <tr className="text-gray-700">
-                        <td className="px-2 py-2 border">5</td>
-                        <td className="px-2 py-2 border">02145678524</td>
-                        <td className="px-4 py-3 border">
-                          <div className="flex items-center text-sm">
-                            <div className="relative w-8 h-8 mr-3 rounded-full">
-                              <img
-                                className="object-cover w-full h-full rounded-full"
-                                src="https://images.pexels.com/photos/5212324/pexels-photo-5212324.jpeg?auto=compress&cs=tinysrgb&dpr=3&h=750&w=1260"
-                                alt=""
-                                loading="lazy"
-                              />
-                              <div
-                                className="absolute inset-0 rounded-full shadow-inner"
-                                aria-hidden="true"
-                              ></div>
-                            </div>
-                            <div>
-                              <p className="font-semibold">Khalid Arshad</p>
-                            </div>
-                          </div>
-                        </td>
-                        <td className="px-4 py-3 text-md font-semibold border">
-                          Student Reports
-                        </td>
-                        <td className="px-4 py-3 text-ms font-semibold border">
-                          Meezan Bank Limited
-                        </td>
-                        <td className="px-2 py-2 border">20$</td>
-                        <td className="px-2 py-2 border">500$</td>
-                        <td className="px-2 py-2 border">240$</td>
-                        <td className="px-2 py-2 border">260$</td>
-                        <td className="px-2 py-2 border">13</td>
-                        <td className="px-4 py-3 text-sm border">6/4/2021</td>
-                      </tr>
-                      <tr className="text-gray-700">
-                        <td className="px-2 py-2 border">6</td>
-                        <td className="px-2 py-2 border">02145678524</td>
-                        <td className="px-4 py-3 border">
-                          <div className="flex items-center text-sm">
-                            <div className="relative w-8 h-8 mr-3 rounded-full">
-                              <img
-                                className="object-cover w-full h-full rounded-full"
-                                src="https://images.pexels.com/photos/5212324/pexels-photo-5212324.jpeg?auto=compress&cs=tinysrgb&dpr=3&h=750&w=1260"
-                                alt=""
-                                loading="lazy"
-                              />
-                              <div
-                                className="absolute inset-0 rounded-full shadow-inner"
-                                aria-hidden="true"
-                              ></div>
-                            </div>
-                            <div>
-                              <p className="font-semibold">Nasser Mustafa</p>
-                            </div>
-                          </div>
-                        </td>
-                        <td className="px-4 py-3 text-md font-semibold border">
-                          Student Reports
-                        </td>
-                        <td className="px-4 py-3 text-ms font-semibold border">
-                          Meezan Bank Limited
-                        </td>
-                        <td className="px-2 py-2 border">20$</td>
-                        <td className="px-2 py-2 border">500$</td>
-                        <td className="px-2 py-2 border">240$</td>
-                        <td className="px-2 py-2 border">260$</td>
-                        <td className="px-2 py-2 border">13</td>
-                        <td className="px-4 py-3 text-sm border">6/4/2021</td>
-                      </tr>
-                      <tr className="text-gray-700">
-                        <td className="px-2 py-2 border">7</td>
-                        <td className="px-2 py-2 border">02145678524</td>
-                        <td className="px-4 py-3 border">
-                          <div className="flex items-center text-sm">
-                            <div className="relative w-8 h-8 mr-3 rounded-full">
-                              <img
-                                className="object-cover w-full h-full rounded-full"
-                                src="https://images.pexels.com/photos/5212324/pexels-photo-5212324.jpeg?auto=compress&cs=tinysrgb&dpr=3&h=750&w=1260"
-                                alt=""
-                                loading="lazy"
-                              />
-                              <div
-                                className="absolute inset-0 rounded-full shadow-inner"
-                                aria-hidden="true"
-                              ></div>
-                            </div>
-                            <div>
-                              <p className="font-semibold">Mohammed Yousaf</p>
-                            </div>
-                          </div>
-                        </td>
-                        <td className="px-4 py-3 text-md font-semibold border">
-                          Student Reports
-                        </td>
-                        <td className="px-4 py-3 text-ms font-semibold border">
-                          Meezan Bank Limited
-                        </td>
-                        <td className="px-2 py-2 border">20$</td>
-                        <td className="px-2 py-2 border">500$</td>
-                        <td className="px-2 py-2 border">240$</td>
-                        <td className="px-2 py-2 border">260$</td>
-                        <td className="px-2 py-2 border">13</td>
-                        <td className="px-4 py-3 text-sm border">6/4/2021</td>
-                      </tr>
-                      <tr className="text-gray-700">
-                        <td className="px-2 py-2 border">8</td>
-                        <td className="px-2 py-2 border">02145678524</td>
-                        <td className="px-4 py-3 border">
-                          <div className="flex items-center text-sm">
-                            <div className="relative w-8 h-8 mr-3 rounded-full">
-                              <img
-                                className="object-cover w-full h-full rounded-full"
-                                src="https://images.pexels.com/photos/5212324/pexels-photo-5212324.jpeg?auto=compress&cs=tinysrgb&dpr=3&h=750&w=1260"
-                                alt=""
-                                loading="lazy"
-                              />
-                              <div
-                                className="absolute inset-0 rounded-full shadow-inner"
-                                aria-hidden="true"
-                              ></div>
-                            </div>
-                            <div>
-                              <p className="font-semibold">Saad Server</p>
-                            </div>
-                          </div>
-                        </td>
-                        <td className="px-4 py-3 text-md font-semibold border">
-                          Student Reports
-                        </td>
-                        <td className="px-4 py-3 text-ms font-semibold border">
-                          Meezan Bank Limited
-                        </td>
-                        <td className="px-2 py-2 border">20$</td>
-                        <td className="px-2 py-2 border">500$</td>
-                        <td className="px-2 py-2 border">240$</td>
-                        <td className="px-2 py-2 border">260$</td>
-                        <td className="px-2 py-2 border">13</td>
-                        <td className="px-4 py-3 text-sm border">6/4/2021</td>
-                      </tr>
-                      <tr className="text-gray-700">
-                        <td className="px-2 py-2 border">9</td>
-                        <td className="px-2 py-2 border">02145678524</td>
-                        <td className="px-4 py-3 border">
-                          <div className="flex items-center text-sm">
-                            <div className="relative w-8 h-8 mr-3 rounded-full">
-                              <img
-                                className="object-cover w-full h-full rounded-full"
-                                src="https://images.pexels.com/photos/5212324/pexels-photo-5212324.jpeg?auto=compress&cs=tinysrgb&dpr=3&h=750&w=1260"
-                                alt=""
-                                loading="lazy"
-                              />
-                              <div
-                                className="absolute inset-0 rounded-full shadow-inner"
-                                aria-hidden="true"
-                              ></div>
-                            </div>
-                            <div>
-                              <p className="font-semibold">Sami Shahzad </p>
-                            </div>
-                          </div>
-                        </td>
-                        <td className="px-4 py-3 text-md font-semibold border">
-                          Student Reports
-                        </td>
-                        <td className="px-4 py-3 text-ms font-semibold border">
-                          Meezan Bank Limited
-                        </td>
-                        <td className="px-2 py-2 border">20$</td>
-                        <td className="px-2 py-2 border">500$</td>
-                        <td className="px-2 py-2 border">240$</td>
-                        <td className="px-2 py-2 border">260$</td>
-                        <td className="px-2 py-2 border">13</td>
-                        <td className="px-4 py-3 text-sm border">6/4/2021</td>
-                      </tr>
+                                Student Reports
+                              </td>
+                              <td className="px-4 py-3 text-ms font-semibold border">
+                                {schoFinal.bankName}
+                              </td>
+                              <td className="px-2 py-2 border">
+                                {" "}
+                                {schoFinal.bankAcc}
+                              </td>
+                              <td className="px-2 py-2 border">{`${schoFinal.requiredFees}$`}</td>
+                              <td
+                                id={schoFinal.studentId}
+                                className="px-2 py-2 border cursor-pointer"
+                                onClick={(e) => changePayPop(e)}
+                              >
+                                Pay
+                              </td>
+                            </tr>
+                          ))
+                        )
+                      ) : (
+                        <Spinner />
+                      )}
                     </tbody>
                   </table>
                   {/* <!-- pop up section --> */}
+                  {/* reports section */}
+                  {reportsPop && (
+                    <StudentReportsAdmin
+                      imgTop={imgTop}
+                      changeReportPopClose={changeReportPopClose}
+                      reportId={reportId}
+                    />
+                  )}
+                  {/* end of reports */}
+                  {/* payment section */}
                   <div
                     className={`h-full w-full bg-white absolute top-0 left-0 ${payPop}`}
                   >
-                    <div className="grid h-auto bg-white rounded-lg shadow-xl w-full">
-                      <div className="flex justify-center">
-                        <div className="flex">
-                          <h1 className="text-gray-600 font-bold pt-5 md:text-2xl text-xl">
-                            Pay Scholarship
-                          </h1>
+                    <form onSubmit={(e) => createPayment(e)}>
+                      <div className="grid h-auto bg-white rounded-lg shadow-xl w-full">
+                        <div className="flex justify-center">
+                          <div className="flex">
+                            <h1 className="text-gray-600 font-bold pt-5 md:text-2xl text-xl">
+                              Pay Scholarship
+                            </h1>
+                          </div>
                         </div>
-                      </div>
-                      {/* <!-- 1 row --> */}
-                      <div className="grid grid-cols-1 md:grid-cols-2 gap-5 md:gap-8 mt-5 mx-7">
-                        <div className="grid grid-cols-1">
-                          <label
-                            className="
+                        {/* <!-- 1 row --> */}
+                        <div className="grid grid-cols-1 md:grid-cols-2 gap-5 md:gap-8 mt-5 mx-7">
+                          <div className="grid grid-cols-1">
+                            <label
+                              className="
                               uppercase
                               md:text-sm
                               text-xs text-gray-500 text-light
                               font-semibold
                             "
-                          >
-                            Cheque Date
-                          </label>
-                          <input
-                            className="
+                            >
+                              Cheque Date
+                            </label>
+                            <input
+                              className="
                               py-2
                               px-3
                               rounded-lg
@@ -620,23 +308,25 @@ function Pay() {
                               focus:ring-gray-600
                               focus:border-transparent
                             "
-                            type="text"
-                            placeholder="Cheque Date"
-                          />
-                        </div>
-                        <div className="grid grid-cols-1">
-                          <label
-                            className="
+                              type="date"
+                              name="cheqDate"
+                              value={formData.cheqDate}
+                              onChange={(e) => onChangeFormData(e)}
+                            />
+                          </div>
+                          <div className="grid grid-cols-1">
+                            <label
+                              className="
                               uppercase
                               md:text-sm
                               text-xs text-gray-500 text-light
                               font-semibold
                             "
-                          >
-                            Cheque #
-                          </label>
-                          <input
-                            className="
+                            >
+                              Cheque #
+                            </label>
+                            <input
+                              className="
                               py-2
                               px-3
                               rounded-lg
@@ -647,25 +337,28 @@ function Pay() {
                               focus:ring-gray-600
                               focus:border-transparent
                             "
-                            type="text"
-                            placeholder="Cheque #"
-                          />
+                              type="text"
+                              name="cheqNumber"
+                              value={formData.cheqNumber}
+                              onChange={(e) => onChangeFormData(e)}
+                              placeholder="Cheque #"
+                            />
+                          </div>
                         </div>
-                      </div>
-                      <div className="grid grid-cols-1 md:grid-cols-2 gap-5 md:gap-8 mt-5 mx-7">
-                        <div className="grid grid-cols-1">
-                          <label
-                            className="
+                        <div className="grid grid-cols-1 md:grid-cols-2 gap-5 md:gap-8 mt-5 mx-7">
+                          <div className="grid grid-cols-1">
+                            <label
+                              className="
                               uppercase
                               md:text-sm
                               text-xs text-gray-500 text-light
                               font-semibold
                             "
-                          >
-                            Starting Month
-                          </label>
-                          <input
-                            className="
+                            >
+                              Starting Month
+                            </label>
+                            <input
+                              className="
                               py-2
                               px-3
                               rounded-lg
@@ -676,22 +369,25 @@ function Pay() {
                               focus:ring-gray-600
                               focus:border-transparent
                             "
-                            type="date"
-                          />
-                        </div>
-                        <div className="grid grid-cols-1">
-                          <label
-                            className="
+                              type="date"
+                              name="startMonth"
+                              value={formData.startMonth}
+                              onChange={(e) => onChangeFormData(e)}
+                            />
+                          </div>
+                          <div className="grid grid-cols-1">
+                            <label
+                              className="
                               uppercase
                               md:text-sm
                               text-xs text-gray-500 text-light
                               font-semibold
                             "
-                          >
-                            Ending Month:
-                          </label>
-                          <input
-                            className="
+                            >
+                              Ending Month:
+                            </label>
+                            <input
+                              className="
                               py-2
                               px-3
                               rounded-lg
@@ -702,24 +398,27 @@ function Pay() {
                               focus:ring-gray-600
                               focus:border-transparent
                             "
-                            type="date"
-                          />
+                              type="date"
+                              name="endMonth"
+                              value={formData.endMonth}
+                              onChange={(e) => onChangeFormData(e)}
+                            />
+                          </div>
                         </div>
-                      </div>
-                      <div className="grid grid-cols-1 md:grid-cols-2 gap-5 md:gap-8 mt-5 mx-7">
-                        <div className="grid grid-cols-1">
-                          <label
-                            className="
+                        <div className="grid grid-cols-1 md:grid-cols-2 gap-5 md:gap-8 mt-5 mx-7">
+                          <div className="grid grid-cols-1">
+                            <label
+                              className="
                               uppercase
                               md:text-sm
                               text-xs text-gray-500 text-light
                               font-semibold
                             "
-                          >
-                            Amount
-                          </label>
-                          <input
-                            className="
+                            >
+                              Amount
+                            </label>
+                            <input
+                              className="
                               py-2
                               px-3
                               rounded-lg
@@ -730,23 +429,26 @@ function Pay() {
                               focus:ring-gray-600
                               focus:border-transparent
                             "
-                            type="text"
-                            placeholder="Amount"
-                          />
-                        </div>
-                        <div className="grid grid-cols-1">
-                          <label
-                            className="
+                              type="text"
+                              placeholder="Amount"
+                              name="amount"
+                              value={formData.amount}
+                              onChange={(e) => onChangeFormData(e)}
+                            />
+                          </div>
+                          <div className="grid grid-cols-1">
+                            <label
+                              className="
                               uppercase
                               md:text-sm
                               text-xs text-gray-500 text-light
                               font-semibold
                             "
-                          >
-                            Date of Approval
-                          </label>
-                          <input
-                            className="
+                            >
+                              Date of Approval
+                            </label>
+                            <input
+                              className="
                               py-2
                               px-3
                               rounded-lg
@@ -757,24 +459,27 @@ function Pay() {
                               focus:ring-gray-600
                               focus:border-transparent
                             "
-                            type="date"
-                          />
+                              type="date"
+                              name="dateOfApproval"
+                              value={formData.dateOfApproval}
+                              onChange={(e) => onChangeFormData(e)}
+                            />
+                          </div>
                         </div>
-                      </div>
-                      <div className="grid grid-cols-1 md:grid-cols-2 gap-5 md:gap-8 mt-5 mx-7">
-                        <div className="grid grid-cols-1">
-                          <label
-                            className="
+                        <div className="grid grid-cols-1 md:grid-cols-2 gap-5 md:gap-8 mt-5 mx-7">
+                          <div className="grid grid-cols-1">
+                            <label
+                              className="
                               uppercase
                               md:text-sm
                               text-xs text-gray-500 text-light
                               font-semibold
                             "
-                          >
-                            Approved Amount:{" "}
-                          </label>
-                          <input
-                            className="
+                            >
+                              Approved Amount:{" "}
+                            </label>
+                            <input
+                              className="
                               py-2
                               px-3
                               rounded-lg
@@ -785,157 +490,25 @@ function Pay() {
                               focus:ring-gray-600
                               focus:border-transparent
                             "
-                            type="text"
-                          />
-                        </div>
-                        <div className="grid grid-cols-1">
-                          <label
-                            className="
-                              uppercase
-                              md:text-sm
-                              text-xs text-gray-500 text-light
-                              font-semibold
-                            "
-                          >
-                            Approval given by:{" "}
-                          </label>
-                          <input
-                            className="
-                              py-2
-                              px-3
-                              rounded-lg
-                              border border-gray-300
-                              mt-1
-                              focus:outline-none
-                              focus:ring-1
-                              focus:ring-gray-600
-                              focus:border-transparent
-                            "
-                            type="text"
-                          />
-                        </div>
-                      </div>
-                      <div className="grid grid-cols-1 md:grid-cols-2 gap-5 md:gap-8 mt-5 mx-7">
-                        <div className="grid grid-cols-1">
-                          <label
-                            className="
-                              uppercase
-                              md:text-sm
-                              text-xs text-gray-500 text-light
-                              font-semibold
-                            "
-                          >
-                            Approved From:{" "}
-                          </label>
-                          <input
-                            className="
-                              py-2
-                              px-3
-                              rounded-lg
-                              border border-gray-300
-                              mt-1
-                              focus:outline-none
-                              focus:ring-1
-                              focus:ring-gray-600
-                              focus:border-transparent
-                            "
-                            type="date"
-                          />
-                        </div>
-                        <div className="grid grid-cols-1">
-                          <label
-                            className="
-                              uppercase
-                              md:text-sm
-                              text-xs text-gray-500 text-light
-                              font-semibold
-                            "
-                          >
-                            Approval to:{" "}
-                          </label>
-                          <input
-                            className="
-                              py-2
-                              px-3
-                              rounded-lg
-                              border border-gray-300
-                              mt-1
-                              focus:outline-none
-                              focus:ring-1
-                              focus:ring-gray-600
-                              focus:border-transparent
-                            "
-                            type="date"
-                          />
-                        </div>
-                      </div>
-                      <div className="grid grid-cols-1 md:grid-cols-2 gap-5 md:gap-8 mt-5 mx-7">
-                        <div className="grid grid-cols-1">
-                          <label
-                            className="
-                              uppercase
-                              md:text-sm
-                              text-xs text-gray-500 text-light
-                              font-semibold
-                            "
-                          >
-                            Unused Funds:{" "}
-                          </label>
-                          <input
-                            className="
-                              py-2
-                              px-3
-                              rounded-lg
-                              border border-gray-300
-                              mt-1
-                              focus:outline-none
-                              focus:ring-1
-                              focus:ring-gray-600
-                              focus:border-transparent
-                            "
-                            type="text"
-                          />
-                        </div>
-                        <div className="grid grid-cols-1">
-                          <label
-                            className="
-                              uppercase
-                              md:text-sm
-                              text-xs text-gray-500 text-light
-                              font-semibold
-                            "
-                          >
-                            Months Left:{" "}
-                          </label>
-                          <input
-                            className="
-                              py-2
-                              px-3
-                              rounded-lg
-                              border border-gray-300
-                              mt-1
-                              focus:outline-none
-                              focus:ring-1
-                              focus:ring-gray-600
-                              focus:border-transparent
-                            "
-                            type="text"
-                          />
-                        </div>
-                      </div>
-                      <div className="grid grid-cols-1 mx-7">
-                        <label
-                          className="
+                              type="text"
+                              name="approvedAmount"
+                              value={formData.approvedAmount}
+                              onChange={(e) => onChangeFormData(e)}
+                            />
+                          </div>
+                          <div className="grid grid-cols-1">
+                            <label
+                              className="
                             uppercase
                             md:text-sm
                             text-xs text-gray-500 text-light
                             font-semibold
                           "
-                        >
-                          sTATUS
-                        </label>
-                        <select
-                          className="
+                            >
+                              STATUS
+                            </label>
+                            <select
+                              className="
                             py-2
                             px-3
                             rounded-lg
@@ -945,15 +518,81 @@ function Pay() {
                             bg-gray-100
                             focus:ring-gray-600 focus:border-transparent
                           "
-                        >
-                          <option>Approved</option>
-                          <option>Denied</option>
-                        </select>
-                      </div>
-                      {/* <!-- buttons --> */}
-                      <hr className="mt-5 border" />
-                      <div
-                        className="
+                              value={formData.status}
+                              name="status"
+                              onChange={(e) => onChangeFormData(e)}
+                            >
+                              <option defualt>Select</option>
+                              <option value="approved">Approved</option>
+                              <option value="denied">Denied</option>
+                            </select>
+                          </div>
+                        </div>
+                        <div className="grid grid-cols-1 md:grid-cols-2 gap-5 md:gap-8 mt-5 mx-7">
+                          <div className="grid grid-cols-1">
+                            <label
+                              className="
+                              uppercase
+                              md:text-sm
+                              text-xs text-gray-500 text-light
+                              font-semibold
+                            "
+                            >
+                              Approved From:{" "}
+                            </label>
+                            <input
+                              className="
+                              py-2
+                              px-3
+                              rounded-lg
+                              border border-gray-300
+                              mt-1
+                              focus:outline-none
+                              focus:ring-1
+                              focus:ring-gray-600
+                              focus:border-transparent
+                            "
+                              type="date"
+                              name="approvedFrom"
+                              value={formData.approvedFrom}
+                              onChange={(e) => onChangeFormData(e)}
+                            />
+                          </div>
+                          <div className="grid grid-cols-1">
+                            <label
+                              className="
+                              uppercase
+                              md:text-sm
+                              text-xs text-gray-500 text-light
+                              font-semibold
+                            "
+                            >
+                              Approval to:{" "}
+                            </label>
+                            <input
+                              className="
+                              py-2
+                              px-3
+                              rounded-lg
+                              border border-gray-300
+                              mt-1
+                              focus:outline-none
+                              focus:ring-1
+                              focus:ring-gray-600
+                              focus:border-transparent
+                            "
+                              type="date"
+                              name="approvedTo"
+                              value={formData.approvedTo}
+                              onChange={(e) => onChangeFormData(e)}
+                            />
+                          </div>
+                        </div>
+
+                        {/* <!-- buttons --> */}
+                        <hr className="mt-5 border" />
+                        <div
+                          className="
                           flex
                           items-center
                           justify-center
@@ -962,9 +601,9 @@ function Pay() {
                           pt-5
                           pb-5
                         "
-                      >
-                        <button
-                          className="
+                        >
+                          <button
+                            className="
                             w-auto
                             bg-red-400
                             hover:bg-red-200
@@ -975,12 +614,12 @@ function Pay() {
                             px-4
                             py-2
                           "
-                          onClick={() => changePayPop()}
-                        >
-                          Cancel
-                        </button>
-                        <button
-                          className="
+                            onClick={() => changePayPop()}
+                          >
+                            Cancel
+                          </button>
+                          <button
+                            className="
                             w-auto
                             bg-green-400
                             hover:bg-green-200
@@ -991,11 +630,12 @@ function Pay() {
                             px-4
                             py-2
                           "
-                        >
-                          PAY
-                        </button>
+                          >
+                            PAY
+                          </button>
+                        </div>
                       </div>
-                    </div>
+                    </form>
                   </div>
                 </div>
               </div>
@@ -1007,7 +647,25 @@ function Pay() {
   );
 }
 
-Pay.propTypes = {};
-const mapStateToProps = (state) => ({});
+Pay.propTypes = {
+  getStudents: PropTypes.func.isRequired,
+  getAllScholarshipsAdmin: PropTypes.func.isRequired,
+  getPayments: PropTypes.func.isRequired,
+  newPayment: PropTypes.func.isRequired,
+  setAlert: PropTypes.func.isRequired,
+};
 
-export default Pay;
+Pay.propTypes = {};
+const mapStateToProps = (state) => ({
+  students: state.students,
+  scholarshipsInfo: state.scholarshipsInfo,
+  payments: state.payments,
+});
+
+export default connect(mapStateToProps, {
+  getStudents,
+  getAllScholarshipsAdmin,
+  getPayments,
+  newPayment,
+  setAlert,
+})(Pay);

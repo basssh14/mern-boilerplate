@@ -11,6 +11,7 @@ import "filepond-plugin-image-preview/dist/filepond-plugin-image-preview.css";
 //redux stuff
 import { connect } from "react-redux";
 import { getBanks, updateBank } from "../../actions/banks";
+import { getOptions } from "../../actions/options";
 //filepond
 registerPlugin(FilePondPluginFileEncode);
 registerPlugin(FilePondPluginImagePreview);
@@ -22,6 +23,8 @@ function BankPopUp({
   getBanks,
   updateBank,
   setAlert,
+  getOptions,
+  options,
 }) {
   //display image center of screen
   const [imgTop, setImgTop] = useState(0);
@@ -31,8 +34,6 @@ function BankPopUp({
   const clickedBank =
     banks.banks !== null &&
     banks.banks.banks.find((account) => account._id === bankId.id);
-  console.log(clickedBank);
-  console.log(Buffer.from(clickedBank.checkImg).toString("base64"));
   const imgDisplay = () => {
     if (clickedBank.checkImg != null && clickedBank.checkImgType != null) {
       return `data: ${
@@ -161,60 +162,13 @@ function BankPopUp({
                   onChange={(e) => onChangeFormData(e)}
                 >
                   <option defualt>Select</option>
-                  <option value="Meezan Bank Limited.">
-                    Meezan Bank Limited.
-                  </option>
-                  <option value="Soneri Mustaqeem Islamic Bank.">
-                    Soneri Mustaqeem Islamic Bank.
-                  </option>
-                  <option value="Al Baraka Bank Pakistan Limited">
-                    Al Baraka Bank Pakistan Limited
-                  </option>
-                  <option value="Allied Bank Limited">
-                    Allied Bank Limited
-                  </option>
-                  <option value="Askari Bank">Askari Bank</option>
-                  <option value="Bank Alfalah Limited">
-                    Bank Alfalah Limited
-                  </option>
-                  <option value="Bank Al-Habib Limited">
-                    Bank Al-Habib Limited
-                  </option>
-                  <option value="BankIslami Pakistan Limited">
-                    BankIslami Pakistan Limited
-                  </option>
-                  <option value="Citi Bank">Citi Bank</option>
-                  <option value="Deutsche Bank A.G">Deutsche Bank A.G</option>
-                  <option value="Dubai Islamic Bank Pakistan Limited">
-                    Dubai Islamic Bank Pakistan Limited
-                  </option>
-                  <option value="Faysal Bank Limited">
-                    Faysal Bank Limited
-                  </option>
-                  <option value="First Women Bank Limited">
-                    First Women Bank Limited
-                  </option>
-                  <option value="Habib Bank Limited">Habib Bank Limited</option>
-                  <option value="Standard Chartered Bank (Pakistan) Limited">
-                    Standard Chartered Bank Pakistan Limited
-                  </option>
-                  <option value="Habib Metropolitan Bank Limited">
-                    Habib Metropolitan Bank Limited
-                  </option>
-                  <option value="Industrial and Commercial Bank of China">
-                    Industrial and Commercial Bank of China
-                  </option>
-                  <option value="Industrial Development Bank of Pakistan">
-                    Industrial Development Bank of Pakistan
-                  </option>
-                  <option value="JS Bank Limited">JS Bank Limited</option>
-                  <option value="MCB Bank Limited">MCB Bank Limited</option>
-                  <option value="MCB Islamic Bank Limited">
-                    MCB Islamic Bank Limited
-                  </option>
-                  <option value="National Bank of Pakistan">
-                    National Bank of Pakistan
-                  </option>
+                  {options.options !== null
+                    ? options.options
+                        .filter((opt) => opt.type === "bank")
+                        .map((opti) => (
+                          <option value={opti.name}>{opti.name}</option>
+                        ))
+                    : ""}
                 </select>
               </div>
               <div className="grid grid-cols-1">
@@ -466,6 +420,15 @@ BankPopUp.propTypes = {
   getBanks: PropTypes.func.isRequired,
   updateBank: PropTypes.func.isRequired,
   setAlert: PropTypes.func.isRequired,
+  getOptions: PropTypes.func.isRequired,
 };
+const mapStateToProps = (state) => ({
+  options: state.options,
+});
 
-export default connect(null, { setAlert, getBanks, updateBank })(BankPopUp);
+export default connect(mapStateToProps, {
+  setAlert,
+  getBanks,
+  updateBank,
+  getOptions,
+})(BankPopUp);

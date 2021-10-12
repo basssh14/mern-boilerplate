@@ -14,7 +14,7 @@ const scholarshipsSchema = new mongoose.Schema(
         },
         status: {
           type: String,
-          default: "PENDING",
+          default: "Pending",
         },
         adminNotes: {
           type: String,

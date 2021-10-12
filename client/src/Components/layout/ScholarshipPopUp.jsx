@@ -36,6 +36,7 @@ function ScholarshipPopUp({
   getBanks,
   banks,
   setAlert,
+  options,
 }) {
   console.log("try here333");
   //handle images
@@ -407,7 +408,14 @@ function ScholarshipPopUp({
                   onChange={(e) => onChangeReportData(e)}
                 >
                   <option defualt>Select</option>
-                  <option value="KG 1">KG 1</option>
+                  {options.options !== null
+                    ? options.options
+                        .filter((opt) => opt.type === "Grade,Level,Semester")
+                        .map((opti) => (
+                          <option value={opti.name}>{opti.name}</option>
+                        ))
+                    : ""}
+                  {/* <option value="KG 1">KG 1</option>
                   <option value="Pre School">Pre School</option>
                   <option value="KG 2">KG 2</option>
                   <option value="School Class1">School Class1</option>
@@ -468,7 +476,7 @@ function ScholarshipPopUp({
                   </option>
                   <option value="Semester 10 - University">
                     Semester 10 - University
-                  </option>
+                  </option> */}
                 </select>
               </div>
               <div className="grid grid-cols-1">
@@ -738,7 +746,7 @@ function ScholarshipPopUp({
                         mb-5
                       "
                 type="text"
-                value="Default notes from test."
+                value={clickedScholarship.adminNotes}
               />
             </div>
           </div>
@@ -1268,14 +1276,13 @@ function ScholarshipPopUp({
               onChange={(e) => onChangeFormData(e)}
             >
               <option defualt>Select</option>
-              <option value="Pre School">Pre School(Nursery, KG)</option>
-              <option value="School">School (Class 1-8)</option>
-              <option value="High School">
-                High School (Class 9-10, Class 9-11
-              </option>
-              <option value="Technical Institute">Tecnichal Institute</option>
-              <option value="College">College</option>
-              <option value="University">University</option>
+              {options.options !== null
+                ? options.options
+                    .filter((opt) => opt.type === "Institution Type")
+                    .map((opti) => (
+                      <option value={opti.name}>{opti.name}</option>
+                    ))
+                : ""}
             </select>
           </div>
           <div className="grid grid-cols-1 md:grid-cols-2 gap-5 md:gap-8 mt-5 mx-7">
@@ -1309,7 +1316,14 @@ function ScholarshipPopUp({
                 onChange={(e) => onChangeFormData(e)}
               >
                 <option defualt>Select</option>
-                <option value="KG 1">KG 1</option>
+                {options.options !== null
+                  ? options.options
+                      .filter((opt) => opt.type === "Grade,Level,Semester")
+                      .map((opti) => (
+                        <option value={opti.name}>{opti.name}</option>
+                      ))
+                  : ""}
+                {/* <option value="KG 1">KG 1</option>
                 <option value="Pre School">Pre School</option>
                 <option value="KG 2">KG 2</option>
                 <option value="School Class1">School Class1</option>
@@ -1370,7 +1384,7 @@ function ScholarshipPopUp({
                 </option>
                 <option value="Semester 10 - University">
                   Semester 10 - University
-                </option>
+                </option> */}
               </select>
             </div>
             <div className="grid grid-cols-1">
@@ -1403,7 +1417,14 @@ function ScholarshipPopUp({
                 onChange={(e) => onChangeFormData(e)}
               >
                 <option defualt>Select</option>
-                <option value="Pre School">Pre-School (nursery, KG)</option>
+                {options.options !== null
+                  ? options.options
+                      .filter((opt) => opt.type === "Pursuing Education")
+                      .map((opti) => (
+                        <option value={opti.name}>{opti.name}</option>
+                      ))
+                  : ""}
+                {/* <option value="Pre School">Pre-School (nursery, KG)</option>
                 <option value="School">School ( Class 1 - 8)</option>
                 <option value="O-levels">O-levels</option>
                 <option value="Secondary School Certificate">
@@ -1419,7 +1440,7 @@ function ScholarshipPopUp({
                 <option value="DPT">DPT</option>
                 <option value="Bachelor of Medicine And Bachelor of Surgery">
                   Bachelor of Medicine And Bachelor of Surgery
-                </option>
+                </option> */}
               </select>
             </div>
           </div>
@@ -2180,6 +2201,7 @@ const mapStateToProps = (state) => ({
   applicants: state.aplicants,
   parents: state.parents,
   banks: state.banks,
+  options: state.options,
 });
 
 export default connect(mapStateToProps, {

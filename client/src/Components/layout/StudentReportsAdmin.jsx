@@ -72,7 +72,7 @@ function StudentReportsAdmin({
           </thead>
           <tbody className="bg-white w-full h-auto">
             {scholarshipsAdmin.scholarshipsAdmin !== null ? (
-              scholarshipsAdmin.scholarshipsAdmin[0] !== null ? (
+              scholarshipsAdmin.scholarshipsAdmin[0].reports.length > 0 ? (
                 scholarshipsAdmin.scholarshipsAdmin.map((scho) =>
                   scho.reports.map((report) => (
                     <tr className="text-gray-700 w-full h-10">

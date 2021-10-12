@@ -192,7 +192,6 @@ function Students({
                       >
                         <th className="px-4 py-3">Name</th>
                         <th className="px-4 py-3">Reports</th>
-                        <th className="px-4 py-3">Payments</th>
                         <th className="px-4 py-3">Cnic</th>
                       </tr>
                     </thead>
@@ -233,13 +232,6 @@ function Students({
                                 onClick={(e) => changeReportsPop(e)}
                               >
                                 Student Reports
-                              </td>
-                              <td
-                                id={student._id}
-                                className="px-4 py-3 border text-md font-semibold cursor-pointer"
-                                onClick={(e) => changePaymentsPop(e)}
-                              >
-                                Student Payments
                               </td>
                               <td className="px-4 py-3 text-sm border">
                                 {student.cnic}

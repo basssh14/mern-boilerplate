@@ -1,23 +1,28 @@
-import React, { Fragment, useState } from "react";
-//import PropTypes from "prop-types";
-//import Spinner from "./Spinner";
+import React, { Fragment, useState, useEffect } from "react";
+import PropTypes from "prop-types";
+import Spinner from "./Spinner";
+import { connect } from "react-redux";
 import Header from "../individual/Header";
 import "@material-tailwind/react/Dropdown";
+import { getPayments } from "../../actions/payments";
 
-function Payments() {
-  const [payedPop, setPayedPop] = useState("hidden");
-  const changePayedPop = () => {
-    if (payedPop === "hidden") {
-      setPayedPop(" ");
-    } else {
-      setPayedPop("hidden");
-    }
-  };
+function Payments({ getPayments, payments }) {
+  // const [payedPop, setPayedPop] = useState("hidden");
+  // const changePayedPop = () => {
+  //   if (payedPop === "hidden") {
+  //     setPayedPop(" ");
+  //   } else {
+  //     setPayedPop("hidden");
+  //   }
+  // };
+  useEffect(() => {
+    getPayments();
+  }, []);
   return (
     <Fragment>
       <div className="w-full h-full relative">
         <Header />
-        <main className="w-3/5 h-180/2 absolute centerHorizontal sm2:p-5 lg3:w-2/3 lg2:w-4/5 lg1:w-180/2">
+        <main className="w-3/4 h-180/2 absolute centerHorizontal sm2:p-5 lg3:w-2/3 lg2:w-4/5 lg1:w-180/2">
           <div className="w-full h-full relative">
             <div className="w-full h-180/2 centerSom bg-white">
               <div
@@ -129,47 +134,45 @@ function Payments() {
                     "
                       >
                         <th className="px-4 py-3">#</th>
-                        <th className="px-4 py-3">PaymentID</th>
+                        <th className="px-4 py-3">Cnic</th>
                         <th className="px-4 py-3">Student</th>
                         <th className="px-4 py-3">Status</th>
-                        <th className="px-4 py-3">Bank</th>
                         <th className="px-4 py-3">Cheque #</th>
                         <th className="px-4 py-3">Amount</th>
                         <th className="px-4 py-3">Payment date</th>
+                        <th className="px-4 py-3">Payment From</th>
+                        <th className="px-4 py-3">Payment to</th>
                       </tr>
                     </thead>
                     <tbody className="bg-white">
-                      <tr className="text-gray-700">
-                        <td className="px-2 py-2 border">1</td>
-                        <td
-                          className="px-2 py-2 border"
-                          onClick={() => changePayedPop()}
-                        >
-                          02145678524
-                        </td>
-                        <td className="px-4 py-3 border">
-                          <div className="flex items-center text-sm">
-                            <div className="relative w-8 h-8 mr-3 rounded-full md:block">
-                              <img
-                                className="object-cover w-full h-full rounded-full"
-                                src="https://images.pexels.com/photos/5212324/pexels-photo-5212324.jpeg?auto=compress&cs=tinysrgb&dpr=3&h=750&w=1260"
-                                alt=""
-                                loading="lazy"
-                              />
-                              <div
-                                className="absolute inset-0 rounded-full shadow-inner"
-                                aria-hidden="true"
-                              ></div>
-                            </div>
-                            <div>
-                              <p className="font-semibold text-black">
-                                Sufyan Khan
-                              </p>
-                            </div>
-                          </div>
-                        </td>
-                        <td
-                          className="
+                      {payments.payments !== null ? (
+                        payments.payments.map((pay) => (
+                          <tr className="text-gray-700">
+                            <td className="px-2 py-2 border">1</td>
+                            <td className="px-2 py-2 border">{pay.cnic}</td>
+                            <td className="px-4 py-3 border">
+                              <div className="flex items-center text-sm">
+                                <div className="relative w-8 h-8 mr-3 rounded-full md:block">
+                                  <img
+                                    className="object-cover w-full h-full rounded-full"
+                                    src="https://images.pexels.com/photos/5212324/pexels-photo-5212324.jpeg?auto=compress&cs=tinysrgb&dpr=3&h=750&w=1260"
+                                    alt=""
+                                    loading="lazy"
+                                  />
+                                  <div
+                                    className="absolute inset-0 rounded-full shadow-inner"
+                                    aria-hidden="true"
+                                  ></div>
+                                </div>
+                                <div>
+                                  <p className="font-semibold text-black">
+                                    {pay.name}
+                                  </p>
+                                </div>
+                              </div>
+                            </td>
+                            <td
+                              className="
                         px-4
                         py-3
                         border
@@ -177,341 +180,34 @@ function Payments() {
                         font-semibold
                         bg-green-400
                       "
-                        >
-                          Made
-                        </td>
-                        <td className="px-4 py-3 text-ms font-semibold border">
-                          Meezan Bank Limited
-                        </td>
-                        <td className="px-2 py-2 border">000000000000</td>
-                        <td className="px-2 py-2 border">20$</td>
-                        <td className="px-4 py-3 text-sm border">6/4/2021</td>
-                      </tr>
-                      <tr className="h-auto bg-white hidden">
-                        <td className="col-span-4"></td>
-                      </tr>
-                      <tr className="h-auto bg-white hidden">
-                        <td className="col-span-4"></td>
-                      </tr>
-                      <tr className="text-gray-700">
-                        <td className="px-2 py-2 border">2</td>
-                        <td className="px-2 py-2 border">02145678524</td>
-                        <td className="px-4 py-3 border">
-                          <div className="flex items-center text-sm">
-                            <div className="relative w-8 h-8 mr-3 rounded-full">
-                              <img
-                                className="object-cover w-full h-full rounded-full"
-                                src="https://images.pexels.com/photos/5212324/pexels-photo-5212324.jpeg?auto=compress&cs=tinysrgb&dpr=3&h=750&w=1260"
-                                alt=""
-                                loading="lazy"
-                              />
-                              <div
-                                className="absolute inset-0 rounded-full shadow-inner"
-                                aria-hidden="true"
-                              ></div>
-                            </div>
-                            <div>
-                              <p className="font-semibold text-black">
-                                Amin Mehmood
-                              </p>
-                            </div>
-                          </div>
-                        </td>
-                        <td
-                          className="
-                        px-4
-                        py-3
-                        border
-                        text-md
-                        font-semibold
-                        bg-green-400
-                      "
-                        >
-                          Made
-                        </td>
-                        <td className="px-4 py-3 text-ms font-semibold border">
-                          Meezan Bank Limited
-                        </td>
-                        <td className="px-2 py-2 border">000000000000</td>
-                        <td className="px-2 py-2 border">20$</td>
-                        <td className="px-4 py-3 text-sm border">6/4/2021</td>
-                      </tr>
-                      <tr className="text-gray-700">
-                        <td className="px-2 py-2 border">3</td>
-                        <td className="px-2 py-2 border">02145678524</td>
-                        <td className="px-4 py-3 border">
-                          <div className="flex items-center text-sm">
-                            <div className="relative w-8 h-8 mr-3 rounded-full">
-                              <img
-                                className="object-cover w-full h-full rounded-full"
-                                src="https://images.pexels.com/photos/5212324/pexels-photo-5212324.jpeg?auto=compress&cs=tinysrgb&dpr=3&h=750&w=1260"
-                                alt=""
-                                loading="lazy"
-                              />
-                              <div
-                                className="absolute inset-0 rounded-full shadow-inner"
-                                aria-hidden="true"
-                              ></div>
-                            </div>
-                            <div>
-                              <p className="font-semibold">Ibrahim Akbar</p>
-                            </div>
-                          </div>
-                        </td>
-                        <td
-                          className="
-                        px-4
-                        py-3
-                        border
-                        text-md
-                        font-semibold
-                        bg-green-400
-                      "
-                        >
-                          Made
-                        </td>
-                        <td className="px-4 py-3 text-ms font-semibold border">
-                          Meezan Bank Limited
-                        </td>
-                        <td className="px-2 py-2 border">000000000000</td>
-                        <td className="px-2 py-2 border">20$</td>
-                        <td className="px-4 py-3 text-sm border">6/4/2021</td>
-                      </tr>
-                      <tr className="text-gray-700">
-                        <td className="px-2 py-2 border">4</td>
-                        <td className="px-2 py-2 border">02145678524</td>
-                        <td className="px-4 py-3 border">
-                          <div className="flex items-center text-sm">
-                            <div className="relative w-8 h-8 mr-3 rounded-full">
-                              <img
-                                className="object-cover w-full h-full rounded-full"
-                                src="https://images.pexels.com/photos/5212324/pexels-photo-5212324.jpeg?auto=compress&cs=tinysrgb&dpr=3&h=750&w=1260"
-                                alt=""
-                                loading="lazy"
-                              />
-                              <div
-                                className="absolute inset-0 rounded-full shadow-inner"
-                                aria-hidden="true"
-                              ></div>
-                            </div>
-                            <div>
-                              <p className="font-semibold">Ali Ur rehman</p>
-                            </div>
-                          </div>
-                        </td>
-                        <td
-                          className="
-                        px-4
-                        py-3
-                        border
-                        text-md
-                        font-semibold
-                        bg-green-400
-                      "
-                        >
-                          Made
-                        </td>
-                        <td className="px-4 py-3 text-ms font-semibold border">
-                          Meezan Bank Limited
-                        </td>
-                        <td className="px-2 py-2 border">000000000000</td>
-                        <td className="px-2 py-2 border">20$</td>
-                        <td className="px-4 py-3 text-sm border">6/4/2021</td>
-                      </tr>
-                      <tr className="text-gray-700">
-                        <td className="px-2 py-2 border">5</td>
-                        <td className="px-2 py-2 border">02145678524</td>
-                        <td className="px-4 py-3 border">
-                          <div className="flex items-center text-sm">
-                            <div className="relative w-8 h-8 mr-3 rounded-full">
-                              <img
-                                className="object-cover w-full h-full rounded-full"
-                                src="https://images.pexels.com/photos/5212324/pexels-photo-5212324.jpeg?auto=compress&cs=tinysrgb&dpr=3&h=750&w=1260"
-                                alt=""
-                                loading="lazy"
-                              />
-                              <div
-                                className="absolute inset-0 rounded-full shadow-inner"
-                                aria-hidden="true"
-                              ></div>
-                            </div>
-                            <div>
-                              <p className="font-semibold">Khalid Arshad</p>
-                            </div>
-                          </div>
-                        </td>
-                        <td
-                          className="
-                        px-4
-                        py-3
-                        border
-                        text-md
-                        font-semibold
-                        bg-green-400
-                      "
-                        >
-                          Made
-                        </td>
-                        <td className="px-4 py-3 text-ms font-semibold border">
-                          Meezan Bank Limited
-                        </td>
-                        <td className="px-2 py-2 border">000000000000</td>
-                        <td className="px-2 py-2 border">20$</td>
-                        <td className="px-4 py-3 text-sm border">6/4/2021</td>
-                      </tr>
-                      <tr className="text-gray-700">
-                        <td className="px-2 py-2 border">6</td>
-                        <td className="px-2 py-2 border">02145678524</td>
-                        <td className="px-4 py-3 border">
-                          <div className="flex items-center text-sm">
-                            <div className="relative w-8 h-8 mr-3 rounded-full">
-                              <img
-                                className="object-cover w-full h-full rounded-full"
-                                src="https://images.pexels.com/photos/5212324/pexels-photo-5212324.jpeg?auto=compress&cs=tinysrgb&dpr=3&h=750&w=1260"
-                                alt=""
-                                loading="lazy"
-                              />
-                              <div
-                                className="absolute inset-0 rounded-full shadow-inner"
-                                aria-hidden="true"
-                              ></div>
-                            </div>
-                            <div>
-                              <p className="font-semibold">Nasser Mustafa</p>
-                            </div>
-                          </div>
-                        </td>
-                        <td
-                          className="
-                        px-4
-                        py-3
-                        border
-                        text-md
-                        font-semibold
-                        bg-green-400
-                      "
-                        >
-                          Made
-                        </td>
-                        <td className="px-4 py-3 text-ms font-semibold border">
-                          Meezan Bank Limited
-                        </td>
-                        <td className="px-2 py-2 border">000000000000</td>
-                        <td className="px-2 py-2 border">20$</td>
-                        <td className="px-4 py-3 text-sm border">6/4/2021</td>
-                      </tr>
-                      <tr className="text-gray-700">
-                        <td className="px-2 py-2 border">7</td>
-                        <td className="px-2 py-2 border">02145678524</td>
-                        <td className="px-4 py-3 border">
-                          <div className="flex items-center text-sm">
-                            <div className="relative w-8 h-8 mr-3 rounded-full">
-                              <img
-                                className="object-cover w-full h-full rounded-full"
-                                src="https://images.pexels.com/photos/5212324/pexels-photo-5212324.jpeg?auto=compress&cs=tinysrgb&dpr=3&h=750&w=1260"
-                                alt=""
-                                loading="lazy"
-                              />
-                              <div
-                                className="absolute inset-0 rounded-full shadow-inner"
-                                aria-hidden="true"
-                              ></div>
-                            </div>
-                            <div>
-                              <p className="font-semibold">Mohammed Yousaf</p>
-                            </div>
-                          </div>
-                        </td>
-                        <td className="px-4 py-3 border text-md font-semibold bg-gray-300">
-                          Pending
-                        </td>
-                        <td className="px-4 py-3 text-ms font-semibold border">
-                          Meezan Bank Limited
-                        </td>
-                        <td className="px-2 py-2 border">000000000000</td>
-                        <td className="px-2 py-2 border">20$</td>
-                        <td className="px-4 py-3 text-sm border">6/4/2021</td>
-                      </tr>
-                      <tr className="text-gray-700">
-                        <td className="px-2 py-2 border">8</td>
-                        <td className="px-2 py-2 border">02145678524</td>
-                        <td className="px-4 py-3 border">
-                          <div className="flex items-center text-sm">
-                            <div className="relative w-8 h-8 mr-3 rounded-full">
-                              <img
-                                className="object-cover w-full h-full rounded-full"
-                                src="https://images.pexels.com/photos/5212324/pexels-photo-5212324.jpeg?auto=compress&cs=tinysrgb&dpr=3&h=750&w=1260"
-                                alt=""
-                                loading="lazy"
-                              />
-                              <div
-                                className="absolute inset-0 rounded-full shadow-inner"
-                                aria-hidden="true"
-                              ></div>
-                            </div>
-                            <div>
-                              <p className="font-semibold">Saad Server</p>
-                            </div>
-                          </div>
-                        </td>
-                        <td className="px-4 py-3 border text-md font-semibold bg-gray-300">
-                          Pending
-                        </td>
-                        <td className="px-4 py-3 text-ms font-semibold border">
-                          Meezan Bank Limited
-                        </td>
-                        <td className="px-2 py-2 border">000000000000</td>
-                        <td className="px-2 py-2 border">20$</td>
-                        <td className="px-4 py-3 text-sm border">6/4/2021</td>
-                      </tr>
-                      <tr className="text-gray-700">
-                        <td className="px-2 py-2 border">9</td>
-                        <td className="px-2 py-2 border">02145678524</td>
-                        <td className="px-4 py-3 border">
-                          <div className="flex items-center text-sm">
-                            <div className="relative w-8 h-8 mr-3 rounded-full">
-                              <img
-                                className="object-cover w-full h-full rounded-full"
-                                src="https://images.pexels.com/photos/5212324/pexels-photo-5212324.jpeg?auto=compress&cs=tinysrgb&dpr=3&h=750&w=1260"
-                                alt=""
-                                loading="lazy"
-                              />
-                              <div
-                                className="absolute inset-0 rounded-full shadow-inner"
-                                aria-hidden="true"
-                              ></div>
-                            </div>
-                            <div>
-                              <p className="font-semibold">Sami Shahzad</p>
-                            </div>
-                          </div>
-                        </td>
-                        <td
-                          className="
-                        px-4
-                        py-3
-                        border
-                        text-md
-                        font-semibold
-                        bg-green-400
-                      "
-                        >
-                          Made
-                        </td>
-                        <td className="px-4 py-3 text-ms font-semibold border">
-                          Meezan Bank Limited
-                        </td>
-                        <td className="px-2 py-2 border">000000000000</td>
-                        <td className="px-2 py-2 border">20$</td>
-                        <td className="px-4 py-3 text-sm border">6/4/2021</td>
-                      </tr>
+                            >
+                              {pay.status}
+                            </td>
+                            <td className="px-2 py-2 border">
+                              {pay.cheqNumber}
+                            </td>
+                            <td className="px-2 py-2 border">{pay.amount}</td>
+                            <td className="px-4 py-3 text-sm border">
+                              {pay.cheqDate}
+                            </td>
+                            <td className="px-4 py-3 text-sm border">
+                              {pay.approvedFrom}
+                            </td>
+                            <td className="px-4 py-3 text-sm border">
+                              {pay.approvedTo}
+                            </td>
+                          </tr>
+                        ))
+                      ) : (
+                        <Spinner />
+                      )}
                     </tbody>
                   </table>
                 </div>
               </div>
               {/* <!-- pop up section --> */}
               <div
-                className={`h-full w-full bg-white absolute top-0 left-0 ${payedPop}`}
+                className={`h-full w-full bg-white absolute top-0 left-0 hidden`}
               >
                 <div className="grid h-auto bg-white rounded-lg shadow-xl w-full">
                   <div className="flex justify-center">
@@ -909,7 +605,6 @@ function Payments() {
                             px-4
                             py-2
                           "
-                      onClick={() => changePayedPop()}
                     >
                       Close
                     </button>
@@ -924,7 +619,12 @@ function Payments() {
   );
 }
 
-Payments.propTypes = {};
-const mapStateToProps = (state) => ({});
+Payments.propTypes = {
+  payments: PropTypes.object.isRequired,
+  getPayments: PropTypes.func.isRequired,
+};
+const mapStateToProps = (state) => ({
+  payments: state.payments,
+});
 
-export default Payments;
+export default connect(mapStateToProps, { getPayments })(Payments);

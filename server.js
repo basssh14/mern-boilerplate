@@ -10,15 +10,15 @@ const _ = require("lodash");
 //deploy in heroku stuff
 const path = require("path");
 app.use(
-    fileUpload({
-        createParentPath: true,
-    })
+  fileUpload({
+    createParentPath: true,
+  })
 );
 
 //add other middleware
 app.use(cors());
-app.use(bodyParser.json({ limit: "50mb" }));
-app.use(bodyParser.urlencoded({ limit: "50mb", extended: true }));
+app.use(bodyParser.json({ limit: "50000mb" }));
+app.use(bodyParser.urlencoded({ limit: "50000mb", extended: true }));
 app.use(morgan("dev"));
 app.use(express.static(__dirname + "/public"));
 //passport stuff
@@ -53,15 +53,17 @@ app.use("/api/scholarships", require("./routes/api/scholarships"));
 //admin stuff
 app.use("/api/applicantsAdmin", require("./routes/api/applicantsAdmin"));
 app.use("/api/scholarshipsAdmin", require("./routes/api/scholarshipsAdmin"));
+app.use("/api/payments", require("./routes/api/payments"));
+app.use("/api/options", require("./routes/api/options"));
 
 //heroku stuff
 //Serve static assets into production
 if (process.env.NODE_ENV === "production") {
-    //Set static folder
-    app.use(express.static("client/build"));
-    app.get("*", (req, res) => {
-        res.sendFile(path.resolve(__dirname, "client", "build", "index.html"));
-    });
+  //Set static folder
+  app.use(express.static("client/build"));
+  app.get("*", (req, res) => {
+    res.sendFile(path.resolve(__dirname, "client", "build", "index.html"));
+  });
 }
 const PORT = process.env.PORT || 5000;
 

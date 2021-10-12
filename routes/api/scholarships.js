@@ -160,6 +160,7 @@ router.post(
     } = req.body;
     const userId = req.user.id;
     const newScholarship = {
+      userApplicant2: req.user.id,
       applicant,
       parent1,
       parent2,
@@ -210,6 +211,7 @@ router.post(
       try {
         const ScholarshipUser = new Scholarships({
           user: req.user.id,
+          userApplicant: req.user.id,
           scholarships: [newScholarship],
         });
         await ScholarshipUser.save();

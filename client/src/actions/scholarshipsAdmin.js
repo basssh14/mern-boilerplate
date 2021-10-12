@@ -1,4 +1,8 @@
-import { GET_ADMIN_SCHOLARSHIPS, ERROR_ADMIN_SCHOLARSHIPS } from "./types";
+import {
+  GET_ADMIN_SCHOLARSHIPS,
+  GET_ADMIN_ALL_SCHOLARSHIPS,
+  ERROR_ADMIN_SCHOLARSHIPS,
+} from "./types";
 import axios from "axios";
 import { setAlert } from "./alert";
 
@@ -8,6 +12,20 @@ export const getScholarshipsAdmin = (reportId) => async (dispatch) => {
     const res = await axios.get(`/api/scholarshipsAdmin/${reportId}`);
     dispatch({
       type: GET_ADMIN_SCHOLARSHIPS,
+      payload: res.data,
+    });
+  } catch (err) {
+    dispatch({
+      type: ERROR_ADMIN_SCHOLARSHIPS,
+    });
+  }
+};
+//Get all the scholarships
+export const getAllScholarshipsAdmin = () => async (dispatch) => {
+  try {
+    const res = await axios.get(`/api/scholarshipsAdmin`);
+    dispatch({
+      type: GET_ADMIN_ALL_SCHOLARSHIPS,
       payload: res.data,
     });
   } catch (err) {

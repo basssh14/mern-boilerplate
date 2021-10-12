@@ -36,7 +36,7 @@ function Header({ logout }) {
               <Link to="/">Scholarship App</Link>
             </div>
             {/* </Link> */}
-            <nav className="mt-4 lg1:mt-1 z-50">
+            <nav className="mt-4 lg1:mt-1 z-40">
               <div className="nav-mobile bg-transparent z-50">
                 <a id="nav-toggle" href="#!" onClick={() => controlMobMenu()}>
                   <span></span>

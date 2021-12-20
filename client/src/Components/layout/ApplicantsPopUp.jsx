@@ -172,11 +172,11 @@ function ApplicantsPopUp({
           ? { data: formData.studentImg, type: formData.studentImgType }
           : studentPhotoData,
     };
-    console.log(newInfo);
-    updateApplicant(newInfo, appId.id);
-    getApplicants();
+    setAlert("Updating applicant, please wait", "success", 5000);
     changeVisibility();
-    setAlert("Updating applicant, please wait", "success", 7000);
+    await updateApplicant(newInfo, appId.id).then(() => {
+      getApplicants();
+    });
   };
   return (
     <div className={`h-full w-full bg-white absolute top-0 left-0`}>

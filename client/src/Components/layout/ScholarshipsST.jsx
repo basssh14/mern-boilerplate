@@ -158,7 +158,7 @@ function ScholarshipsST({
     getApplicants();
     getScholarships();
     changeNewSchoPop();
-    setAlert("Creating Scholarship, please wait", "success", 7000);
+    setAlert("Creating Scholarship, please wait", "success", 30000);
   };
   //get all the scholarships on render
   useEffect(() => {

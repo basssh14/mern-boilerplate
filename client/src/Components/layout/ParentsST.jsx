@@ -155,7 +155,7 @@ function ParentsST({
     newParent(newInfo);
     getParents();
     changeNewParentPop();
-    setAlert("Creating Parent, Please Wait", "success", 20000);
+    setAlert("Creating Parent, Please Wait", "success", 40000);
   };
   //000000000000000000000000000000000000000000000000000000000000000000000000000000000
   useEffect(() => {
@@ -681,7 +681,6 @@ function ParentsST({
                               </FilePond>
                             </div>
                           </div>
-                          
                         </div>
                         <div className="flex items-center justify-center md:gap-8 gap-4 pt-5 pb-5">
                           <button

@@ -100,7 +100,7 @@ function BankSt({
     newBank(newInfo);
     getBanks();
     changeNewBankPop();
-    setAlert("Creating account, please wait", "success", 7000);
+    setAlert("Creating account, please wait", "success", 15000);
   };
   //get all the banks on render
   useEffect(() => {

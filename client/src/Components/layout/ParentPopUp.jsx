@@ -93,10 +93,8 @@ function ParentPopUp({
       clickedParent !== null ? reverseImg(clickedParent.utilitySecImg) : " ",
     utilitySecImgType:
       clickedParent !== null ? clickedParent.utilitySecImgType : " ",
-      formBImg:
-      clickedParent !== null ? reverseImg(clickedParent.formBImg) : " ",
-    formBImgType:
-      clickedParent !== null ? clickedParent.formBImgType : " ",
+    formBImg: clickedParent !== null ? reverseImg(clickedParent.formBImg) : " ",
+    formBImgType: clickedParent !== null ? clickedParent.formBImgType : " ",
   });
   //handle images
   const updateCnicFrontImg = async (e) => {
@@ -207,15 +205,12 @@ function ParentPopUp({
     }
   };
   const displayFormB = () => {
-    if (
-      clickedParent.formBImg != null &&
-      clickedParent.formBImgType != null
-    ) {
+    if (clickedParent.formBImg != null && clickedParent.formBImgType != null) {
       return `data: ${
         clickedParent.formBImgType
-      };charset=utf-8;base64,${Buffer.from(
-        clickedParent.formBImg
-      ).toString("base64")}`;
+      };charset=utf-8;base64,${Buffer.from(clickedParent.formBImg).toString(
+        "base64"
+      )}`;
     }
   };
   //-----------------------------------------------
@@ -328,15 +323,15 @@ function ParentPopUp({
         utilitySecData.size === 0
           ? { data: formData.utilitySecImg, type: formData.utilitySecImgType }
           : utilitySecData,
-          formB:
-          formBData.size === 0
-            ? { data: formData.formBImg, type: formData.formBImgType }
-            : formBData,
+      formB:
+        formBData.size === 0
+          ? { data: formData.formBImg, type: formData.formBImgType }
+          : formBData,
     };
     updateParent(newInfo, parentId.id);
     getParents();
     changeVisibility();
-    setAlert("Updating Parent, Please Wait", "success", 20000);
+    setAlert("Updating Parent, Please Wait", "success", 40000);
   };
   //000000000000000000000000000000000000000000000000000000000000000000000000000000000
   // useEffect(() => {
@@ -835,7 +830,7 @@ function ParentPopUp({
                     mb-1
                   "
                 >
-                 Form-B/FRC 
+                  Form-B/FRC
                 </label>
                 <div className="flex items-center justify-left w-full">
                   <button

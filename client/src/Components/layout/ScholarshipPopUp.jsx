@@ -251,7 +251,7 @@ function ScholarshipPopUp({
     getApplicants();
     getScholarships();
     changeVisibility();
-    setAlert("Updating Scholarship, please wait", "success", 7000);
+    setAlert("Updating Scholarship, please wait", "success", 30000);
   };
   const onSubmitReport = async (e) => {
     e.preventDefault();

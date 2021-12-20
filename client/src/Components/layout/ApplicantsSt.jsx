@@ -99,10 +99,21 @@ function ApplicantsSt({ getApplicants, newApplicant, applicants, setAlert }) {
       cnicBack: cnicBackData,
       studentPhoto: studentPhotoData,
     };
-    newApplicant(newInfo);
-    getApplicants();
+    console.log(cnicFronData.size);
+    if (
+      cnicFronData.size === 0 ||
+      cnicBackData.size === 0 ||
+      studentPhotoData.size === 0
+    ) {
+      changeNewApplicant();
+      setAlert("Please select the images", "error", 5000);
+      return;
+    }
+    setAlert("Creating Applicant, Please Wait", "success", 5000);
+    await newApplicant(newInfo).then(() => {
+      getApplicants();
+    });
     changeNewApplicant();
-    setAlert("Creating Applicant, Please Wait", "success", 7000);
   };
   //get all the applicants on render
   useEffect(() => {
@@ -330,7 +341,7 @@ function ApplicantsSt({ getApplicants, newApplicant, applicants, setAlert }) {
                                 value={formData.gender}
                                 onChange={(e) => onChangeFormData(e)}
                               >
-                                <option defualt>Select</option>
+                                <option default>Select</option>
                                 <option value="male">Male</option>
                                 <option value="female">Female</option>
                               </select>
@@ -394,7 +405,6 @@ function ApplicantsSt({ getApplicants, newApplicant, applicants, setAlert }) {
                     "
                                 type="date"
                                 name="dateOfBirth"
-                                required
                                 value={formData.dateOfBirth}
                                 onChange={(e) => onChangeFormData(e)}
                               />

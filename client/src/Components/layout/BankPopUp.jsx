@@ -108,7 +108,7 @@ function BankPopUp({
     updateBank(newInfo, bankId.id);
     getBanks();
     changeVisibility();
-    setAlert("Uploading account, please wait", "success", 7000);
+    setAlert("Uploading account, please wait", "success", 15000);
   };
   return (
     <Fragment>
